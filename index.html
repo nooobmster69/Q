@@ -633,11 +633,7 @@
     <button class="cancel-btn" id="cancel-module">❌ Cancel</button>
   </div>
   <canvas class="confetti" id="confetti-canvas"></canvas>
-  
-  <!-- Load external quiz data -->
-  <script src="quizData.js"></script>
-  
-  <script>
+    <script>
     // Enhanced QCM Quiz Application with proper shuffling using external data
     let currentModule = null;
     let shuffledQuestions = [];
@@ -647,17 +643,33 @@
     let timer;
     let timeLeft = 15;
     let startTime;
+    let modules = [];
 
-    // Convert external data to the required format
-    const modules = quizData.map(mod => ({
-      name: `📚 ${mod.name}`,
-      questions: mod.questions.map(q => ({
-        q: q.question,
-        opts: q.options,
-        correct: q.correctAnswer
-      }))
-    }));
-    
+    // DOM Elements
+    let quizTitle, quizProgress, timerEl, questionText, optionsContainer;
+    let prevBtn, nextBtn, quizCard, resultScreen, finalScore, resultMessage;
+    let restartBtn, submitBtn, moduleSelect, cancelModuleBtn, confettiCanvas;
+
+    // Initialize DOM elements after page loads
+    function initDOMElements() {
+      quizTitle = document.getElementById('quiz-title');
+      quizProgress = document.getElementById('quiz-progress');
+      timerEl = document.getElementById('timer');
+      questionText = document.getElementById('question');
+      optionsContainer = document.getElementById('options');
+      prevBtn = document.getElementById('prev-question');
+      nextBtn = document.getElementById('next-question');
+      quizCard = document.getElementById('quiz-card');
+      resultScreen = document.getElementById('result-screen');
+      finalScore = document.getElementById('final-score');
+      resultMessage = document.getElementById('result-message');
+      restartBtn = document.getElementById('restart-btn');
+      submitBtn = document.getElementById('submit-btn');
+      moduleSelect = document.getElementById('module-select');
+      cancelModuleBtn = document.getElementById('cancel-module');
+      confettiCanvas = document.getElementById('confetti-canvas');
+    }
+
     // Shuffle function
     function shuffleArray(array) {
       const shuffled = [...array];
@@ -667,26 +679,33 @@
       }
       return shuffled;
     }
-    
-    // DOM Elements
-    const quizTitle = document.getElementById('quiz-title');
-    const quizProgress = document.getElementById('quiz-progress');
-    const timerEl = document.getElementById('timer');
-    const questionText = document.getElementById('question');
-    const optionsContainer = document.getElementById('options');
-    const prevBtn = document.getElementById('prev-question');
-    const nextBtn = document.getElementById('next-question');
-    const quizCard = document.getElementById('quiz-card');
-    const resultScreen = document.getElementById('result-screen');
-    const finalScore = document.getElementById('final-score');
-    const resultMessage = document.getElementById('result-message');
-    const restartBtn = document.getElementById('restart-btn');
-    const submitBtn = document.getElementById('submit-btn');
-    const moduleSelect = document.getElementById('module-select');
-    const cancelModuleBtn = document.getElementById('cancel-module');
-    const confettiCanvas = document.getElementById('confetti-canvas');
-    
-    // Module selection
+
+    // Load quiz data and initialize app
+    async function loadQuizData() {
+      try {
+        const response = await fetch('quizData.json');
+        const quizData = await response.json();
+        
+        modules = quizData.map(mod => ({
+          name: `📚 ${mod.name}`,
+          questions: mod.questions.map(q => ({
+            q: q.q || q.question,
+            opts: q.opts || q.options,
+            correct: q.a || q.correctAnswer
+          }))
+        }));
+        
+        init();
+      } catch (error) {
+        console.error('Failed to load quiz data:', error);
+        if (questionText) {
+          questionText.textContent = 'Failed to load quiz data. Please refresh the page.';
+        }
+        if (quizCard) quizCard.style.display = '';
+        if (moduleSelect) moduleSelect.style.display = 'none';
+      }
+    }
+      // Module selection
     function showModuleSelect() {
       moduleSelect.style.display = '';
       quizCard.style.display = 'none';
@@ -725,10 +744,52 @@
         moduleSelect.insertBefore(btn, cancelModuleBtn);
       });
     }
-    
-    cancelModuleBtn.onclick = () => {
-      moduleSelect.style.display = 'none';
-    };
+
+    // Setup cancel button event listener
+    function setupEventListeners() {
+      if (cancelModuleBtn) {
+        cancelModuleBtn.onclick = () => {
+          // If no module is selected, just stay on module selection
+          if (currentModule === null) {
+            return;
+          }
+          // If a quiz is in progress, return to quiz
+          moduleSelect.style.display = 'none';
+          quizCard.style.display = '';
+          resultScreen.style.display = 'none';
+        };
+      }
+
+      if (restartBtn) {
+        restartBtn.onclick = () => {
+          init();
+        };
+      }
+
+      if (submitBtn) {
+        submitBtn.onclick = () => {
+          showResults();
+        };
+      }
+
+      if (prevBtn) {
+        prevBtn.onclick = () => {
+          if (currentQuestion > 0) {
+            currentQuestion--;
+            renderQuestion();
+          }
+        };
+      }
+
+      if (nextBtn) {
+        nextBtn.onclick = () => {
+          if (currentQuestion < shuffledQuestions.length - 1) {
+            currentQuestion++;
+            renderQuestion();
+          }
+        };
+      }
+    }
     
     // Timer functions
     function startTimer() {
@@ -947,21 +1008,26 @@
     };
     
     document.querySelector('.header').appendChild(homeBtn);
-    
-    // Initialize the quiz
+      // Initialize the quiz
     function init() {
       currentModule = null;
       currentQuestion = 0;
       userAnswers = [];
+      setupEventListeners();
       showModuleSelect();
     }
-    
-    init();
-    
-    // Responsive confetti canvas
+      // Responsive confetti canvas
     window.addEventListener('resize', () => {
-      confettiCanvas.width = window.innerWidth;
-      confettiCanvas.height = window.innerHeight;
+      if (confettiCanvas) {
+        confettiCanvas.width = window.innerWidth;
+        confettiCanvas.height = window.innerHeight;
+      }
+    });
+
+    // Initialize app when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      initDOMElements();
+      loadQuizData();
     });
   </script>
 </body>
