@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ultimate QCM Quiz - Final Version</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Fredoka+One&display=swap" rel="stylesheet">
+  <style>
+    /* Floating shapes animation */
+    @keyframes floatShape {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(180deg); }
+    }
+    @keyframes shimmer {
+      0% { background-position: -200px 0; }
+      100% { background-position: calc(200px + 100%) 0; }
+    }
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      60% { transform: translateY(-5px); }
+    }
+    
+    body {
+      font-family: 'Montserrat', Arial, sans-serif;
+      background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff9ff3);
+      background-size: 400% 400%;
+      animation: gradientShift 8s ease infinite;
+      margin: 0;
+      padding: 0;
+      color: #222;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+    
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    /* Floating shapes */
+    .floating-shapes {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+    
+    .shape {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.1;
+      animation: floatShape 6s ease-in-out infinite;
+    }
+    
+    .shape:nth-child(1) {
+      width: 80px;
+      height: 80px;
+      background: #ff6b6b;
+      top: 10%;
+      left: 10%;
+      animation-delay: -0.5s;
+    }
+    
+    .shape:nth-child(2) {
+      width: 60px;
+      height: 60px;
+      background: #4ecdc4;
+      top: 20%;
+      right: 15%;
+      animation-delay: -2s;
+    }
+    
+    .shape:nth-child(3) {
+      width: 100px;
+      height: 100px;
+      background: #45b7d1;
+      bottom: 20%;
+      left: 20%;
+      animation-delay: -3.5s;
+    }
+    
+    .shape:nth-child(4) {
+      width: 70px;
+      height: 70px;
+      background: #feca57;
+      bottom: 30%;
+      right: 10%;
+      animation-delay: -1s;
+    }
+    
+    .main {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .header {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      border-radius: 0 0 32px 32px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      padding: 36px 0 20px 0;
+      text-align: center;
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 2;
+      animation: fadeInDown 0.7s cubic-bezier(.68,-0.55,.27,1.55);
+      border: 3px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    @keyframes fadeInDown {
+      0% { opacity: 0; transform: translateY(-40px) scale(0.9); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    
+    .title {
+      font-family: 'Fredoka One', cursive;
+      font-size: 2.5em;
+      font-weight: 700;
+      background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+      letter-spacing: 2px;
+      animation: gradientShift 3s ease infinite, bounce 2s ease-in-out infinite;
+      text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .progress {
+      font-size: 1.2em;
+      background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0;
+      font-weight: 700;
+      animation: shimmer 2s ease-in-out infinite alternate;
+    }
+    
+    .timer {
+      font-size: 1.4em;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(45deg, #ff6b6b, #ff9ff3);
+      border-radius: 50%;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 18px auto;
+      box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+      animation: pop 0.5s, timerPulse 1s ease-in-out infinite;
+      transition: all 0.3s ease;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    @keyframes timerPulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3); }
+      50% { transform: scale(1.05); box-shadow: 0 12px 30px rgba(255, 107, 107, 0.5); }
+    }
+    
+    @keyframes pop {
+      0% { transform: scale(0.7); }
+      80% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 32px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      padding: 32px 24px 24px 24px;
+      width: 100%;
+      margin-bottom: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: fadeInUp 0.7s cubic-bezier(.68,-0.55,.27,1.55);
+      min-height: 280px;
+      position: relative;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      overflow: hidden;
+    }
+    
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      animation: cardShine 3s ease-in-out infinite;
+      pointer-events: none;
+    }
+    
+    @keyframes cardShine {
+      0% { transform: translateX(-100%) translateY(-100%) rotate(30deg); }
+      100% { transform: translateX(100%) translateY(100%) rotate(30deg); }
+    }
+    
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(40px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    
+    #question {
+      font-size: 1.3em;
+      font-weight: 700;
+      background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      background-size: 200% 200%;
+      animation: gradientShift 4s ease infinite;
+      margin-bottom: 24px;
+      text-align: center;
+      min-height: 60px;
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 2;
+    }
+    
+    #options label {
+      display: block;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(240, 248, 255, 0.9));
+      margin-bottom: 16px;
+      padding: 18px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      border: 3px solid transparent;
+      font-size: 1.1em;
+      color: #333;
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      position: relative;
+      text-align: left;
+      animation: fadeInOption 0.6s ease backwards;
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+    
+    #options label::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transition: left 0.5s ease;
+    }
+    
+    #options label:hover::before {
+      left: 100%;
+    }
+    
+    #options label:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      border-color: rgba(255, 107, 107, 0.3);
+    }
+    
+    @keyframes fadeInOption {
+      0% { opacity: 0; transform: translateX(-30px) scale(0.9); }
+      100% { opacity: 1; transform: translateX(0) scale(1); }
+    }
+    
+    #options input[type="radio"] {
+      margin-right: 16px;
+      accent-color: #ff6b6b;
+      transform: scale(1.3);
+    }
+    
+    #options label.selected {
+      background: linear-gradient(135deg, #ff6b6b, #ff9ff3);
+      border: 3px solid #fff;
+      color: #fff;
+      box-shadow: 0 8px 30px rgba(255, 107, 107, 0.4);
+      animation: selectedPulse 0.6s ease;
+      transform: scale(1.03);
+    }
+    
+    @keyframes selectedPulse {
+      0% { transform: scale(1); box-shadow: 0 8px 30px rgba(255, 107, 107, 0.4); }
+      50% { transform: scale(1.05); box-shadow: 0 12px 40px rgba(255, 107, 107, 0.6); }
+      100% { transform: scale(1.03); box-shadow: 0 8px 30px rgba(255, 107, 107, 0.4); }
+    }
+    
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 20px;
+      gap: 20px;
+    }
+    
+    .btn {
+      background: linear-gradient(135deg, #4ecdc4, #45b7d1);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 56px;
+      height: 56px;
+      font-size: 1.8em;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(69, 183, 209, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      transform: translate(-50%, -50%);
+    }
+    
+    .btn:hover::before {
+      width: 100%;
+      height: 100%;
+    }
+    
+    .btn:hover {
+      transform: translateY(-3px) scale(1.1);
+      box-shadow: 0 12px 30px rgba(69, 183, 209, 0.5);
+    }
+    
+    .btn:active {
+      transform: translateY(-1px) scale(1.05);
+    }
+    
+    .btn:disabled {
+      background: linear-gradient(135deg, #e0e0e0, #c0c0c0);
+      color: #999;
+      cursor: not-allowed;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      transform: none;
+    }
+    
+    .btn:disabled:hover {
+      transform: none;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    #submit-btn {
+      border-radius: 20px;
+      width: auto;
+      height: auto;
+      padding: 16px 40px;
+      font-size: 1.2em;
+      margin-top: 20px;
+      background: linear-gradient(135deg, #ff6b6b, #ff9ff3);
+      color: #fff;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+      animation: fadeInUp 0.5s;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    #submit-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s ease;
+    }
+    
+    #submit-btn:hover::before {
+      left: 100%;
+    }
+    
+    #submit-btn:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 12px 35px rgba(255, 107, 107, 0.5);
+    }
+    
+    #submit-btn:active {
+      transform: translateY(-1px) scale(1.02);
+    }
+    
+    .result {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 32px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      padding: 36px 24px 24px 24px;
+      width: 100%;
+      margin: 24px 0 0 0;
+      text-align: center;
+      animation: fadeInUp 0.7s cubic-bezier(.68,-0.55,.27,1.55);
+      min-height: 220px;
+      position: relative;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .result-title {
+      font-size: 2.2em;
+      background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+      margin-bottom: 12px;
+      animation: pop 0.5s;
+      font-family: 'Fredoka One', cursive;
+    }
+    
+    .result-score {
+      font-size: 1.8em;
+      background: linear-gradient(45deg, #feca57, #ff9ff3);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+      margin-bottom: 18px;
+      animation: pop 0.5s 0.2s backwards;
+    }
+    
+    .result-message {
+      font-size: 1.2em;
+      color: #333;
+      margin-bottom: 24px;
+      animation: fadeInUp 0.5s 0.3s backwards;
+      font-weight: 600;
+    }
+    
+    .confetti {
+      pointer-events: none;
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: 9999;
+      overflow: hidden;
+    }
+    
+    .module-select {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      width: 100vw;
+      background: linear-gradient(45deg, rgba(255, 107, 107, 0.9), rgba(78, 205, 196, 0.9), rgba(69, 183, 209, 0.9));
+      background-size: 400% 400%;
+      animation: gradientShift 6s ease infinite;
+      position: fixed;
+      top: 0; left: 0;
+      z-index: 1000;
+      backdrop-filter: blur(20px);
+    }
+    
+    .module-select-title {
+      font-size: 2em;
+      background: linear-gradient(45deg, #fff, #f0f8ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+      margin-bottom: 30px;
+      font-family: 'Fredoka One', cursive;
+      text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      animation: bounce 2s ease-in-out infinite;
+    }
+    
+    .module-btn {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 248, 255, 0.8));
+      backdrop-filter: blur(10px);
+      color: #333;
+      font-size: 1.1em;
+      font-weight: 700;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 20px;
+      padding: 18px 40px;
+      margin: 10px 0;
+      cursor: pointer;
+      width: 90vw;
+      max-width: 400px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      animation: fadeInUp 0.6s ease backwards;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .module-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transition: left 0.5s ease;
+    }
+    
+    .module-btn:hover::before {
+      left: 100%;
+    }
+    
+    .module-btn:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+      border-color: rgba(255, 107, 107, 0.5);
+    }
+    
+    .module-btn:active {
+      transform: translateY(-2px) scale(1.01);
+    }
+    
+    .cancel-btn {
+      background: linear-gradient(135deg, #ff6b6b, #ff9ff3);
+      color: #fff;
+      font-size: 1.1em;
+      font-weight: 700;
+      border: none;
+      border-radius: 20px;
+      padding: 16px 40px;
+      margin: 30px 0 0 0;
+      cursor: pointer;
+      width: 90vw;
+      max-width: 400px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: fadeInUp 0.6s ease backwards;
+      box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .cancel-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s ease;
+    }
+    
+    .cancel-btn:hover::before {
+      left: 100%;
+    }
+    
+    .cancel-btn:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 12px 35px rgba(255, 107, 107, 0.5);
+    }
+    
+    .cancel-btn:active {
+      transform: translateY(-1px) scale(1.01);
+    }
+    
+    @media (max-width: 600px) {
+      .main, .card, .result { max-width: 100vw; border-radius: 0; }
+      .header { border-radius: 0 0 24px 24px; }
+      .card { padding: 18px 4vw 12px 4vw; }
+      .result { padding: 24px 4vw 18px 4vw; }
+      .module-btn, .cancel-btn { font-size: 1em; }
+      .title { font-size: 2em; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Floating background shapes -->
+  <div class="floating-shapes">
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+  </div>
+  
+  <div class="main">
+    <div class="header">
+      <div class="title" id="quiz-title">🎯 Ultimate QCM Quiz</div>
+      <div class="progress" id="quiz-progress">Question 1/10</div>
+      <div class="timer" id="timer">15</div>
+    </div>
+    <div class="card" id="quiz-card">
+      <div id="question">Loading...</div>
+      <div id="options"></div>
+      <div class="controls">
+        <button id="prev-question" class="btn" aria-label="Previous">&#8592;</button>
+        <button id="next-question" class="btn" aria-label="Next">&#8594;</button>
+      </div>
+      <button id="submit-btn" style="display:none;">🚀 Submit Quiz</button>
+    </div>
+    <div class="result" id="result-screen" style="display:none;">
+      <div class="result-title">🎉 Quiz Complete!</div>
+      <div class="result-score" id="final-score"></div>
+      <div class="result-message" id="result-message"></div>
+      <button class="btn" id="restart-btn" style="border-radius:16px;width:auto;height:auto;padding:12px 32px;font-size:1.1em;">🔄 Try Again</button>
+    </div>
+  </div>
+  <div class="module-select" id="module-select">
+    <div class="module-select-title">🎓 Select a Module</div>
+    <!-- Module buttons will be injected here -->
+    <button class="cancel-btn" id="cancel-module">❌ Cancel</button>
+  </div>
+  <canvas class="confetti" id="confetti-canvas"></canvas>
+  
+  <!-- Load external quiz data -->
+  <script src="quizData.js"></script>
+  
+  <script>
+    // Enhanced QCM Quiz Application with proper shuffling using external data
+    let currentModule = null;
+    let shuffledQuestions = [];
+    let shuffledAnswers = [];
+    let userAnswers = [];
+    let currentQuestion = 0;
+    let timer;
+    let timeLeft = 15;
+    let startTime;
+
+    // Convert external data to the required format
+    const modules = quizData.map(mod => ({
+      name: `📚 ${mod.name}`,
+      questions: mod.questions.map(q => ({
+        q: q.question,
+        opts: q.options,
+        correct: q.correctAnswer
+      }))
+    }));
+    
+    // Shuffle function
+    function shuffleArray(array) {
+      const shuffled = [...array];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+    
+    // DOM Elements
+    const quizTitle = document.getElementById('quiz-title');
+    const quizProgress = document.getElementById('quiz-progress');
+    const timerEl = document.getElementById('timer');
+    const questionText = document.getElementById('question');
+    const optionsContainer = document.getElementById('options');
+    const prevBtn = document.getElementById('prev-question');
+    const nextBtn = document.getElementById('next-question');
+    const quizCard = document.getElementById('quiz-card');
+    const resultScreen = document.getElementById('result-screen');
+    const finalScore = document.getElementById('final-score');
+    const resultMessage = document.getElementById('result-message');
+    const restartBtn = document.getElementById('restart-btn');
+    const submitBtn = document.getElementById('submit-btn');
+    const moduleSelect = document.getElementById('module-select');
+    const cancelModuleBtn = document.getElementById('cancel-module');
+    const confettiCanvas = document.getElementById('confetti-canvas');
+    
+    // Module selection
+    function showModuleSelect() {
+      moduleSelect.style.display = '';
+      quizCard.style.display = 'none';
+      resultScreen.style.display = 'none';
+      
+      // Remove old module buttons
+      Array.from(moduleSelect.querySelectorAll('.module-btn')).forEach(btn => btn.remove());
+      
+      // Add module buttons with staggered animation
+      modules.forEach((mod, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'module-btn';
+        btn.textContent = mod.name;
+        btn.style.animationDelay = `${idx * 0.1}s`;
+        btn.onclick = () => {
+          currentModule = idx;
+          
+          // Shuffle questions for this module
+          const originalQuestions = modules[currentModule].questions;
+          shuffledQuestions = shuffleArray([...originalQuestions]);
+          
+          // Shuffle answers for each question while maintaining correct answer
+          shuffledAnswers = shuffledQuestions.map(q => {
+            const shuffledOpts = shuffleArray([...q.opts]);
+            return {
+              options: shuffledOpts,
+              correctAnswer: q.correct
+            };
+          });
+          
+          userAnswers = Array(shuffledQuestions.length).fill(null);
+          currentQuestion = 0;
+          moduleSelect.style.display = 'none';
+          renderQuiz();
+        };
+        moduleSelect.insertBefore(btn, cancelModuleBtn);
+      });
+    }
+    
+    cancelModuleBtn.onclick = () => {
+      moduleSelect.style.display = 'none';
+    };
+    
+    // Timer functions
+    function startTimer() {
+      clearInterval(timer);
+      timeLeft = 15;
+      timerEl.textContent = timeLeft;
+      timerEl.style.background = 'linear-gradient(45deg, #ff6b6b, #ff9ff3)';
+      
+      timer = setInterval(() => {
+        timeLeft--;
+        timerEl.textContent = timeLeft;
+        if (timeLeft <= 5) timerEl.style.background = 'linear-gradient(45deg, #feca57, #ff9ff3)';
+        if (timeLeft <= 2) timerEl.style.background = 'linear-gradient(45deg, #ff6b6b, #ff4757)';
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          autoNext();
+        }
+      }, 1000);
+    }
+    
+    function autoNext() {
+      if (userAnswers[currentQuestion] == null) userAnswers[currentQuestion] = null;
+      if (currentQuestion < shuffledQuestions.length - 1) {
+        currentQuestion++;
+        renderQuiz();
+      } else {
+        showResult();
+      }
+    }
+    
+    // Quiz rendering
+    function renderQuiz() {
+      if (currentModule === null) {
+        showModuleSelect();
+        return;
+      }
+      
+      const mod = modules[currentModule];
+      const q = shuffledQuestions[currentQuestion];
+      const shuffledAnswerData = shuffledAnswers[currentQuestion];
+      
+      quizTitle.textContent = mod.name;
+      quizProgress.textContent = `Question ${currentQuestion+1} / ${shuffledQuestions.length}`;
+      questionText.textContent = q.q;
+      optionsContainer.innerHTML = '';
+      
+      shuffledAnswerData.options.forEach((opt, idx) => {
+        const label = document.createElement('label');
+        label.textContent = opt;
+        const input = document.createElement('input');
+        input.type = 'radio';
+        input.name = 'option';
+        input.value = opt;
+        input.checked = userAnswers[currentQuestion] === opt;
+        input.onclick = () => {
+          userAnswers[currentQuestion] = opt;
+          Array.from(optionsContainer.children).forEach(lab => lab.classList.remove('selected'));
+          label.classList.add('selected');
+        };
+        label.prepend(input);
+        if (userAnswers[currentQuestion] === opt) {
+          label.classList.add('selected');
+        }
+        // Add staggered animation delay
+        label.style.animationDelay = `${idx * 0.1}s`;
+        optionsContainer.appendChild(label);
+      });
+      
+      prevBtn.disabled = currentQuestion === 0;
+      nextBtn.disabled = currentQuestion === shuffledQuestions.length - 1;
+      
+      prevBtn.onclick = () => {
+        if (currentQuestion > 0) {
+          currentQuestion--;
+          renderQuiz();
+        }
+      };
+      
+      nextBtn.onclick = () => {
+        if (currentQuestion < shuffledQuestions.length - 1) {
+          currentQuestion++;
+          renderQuiz();
+        }
+      };
+      
+      startTimer();
+      quizCard.style.display = '';
+      resultScreen.style.display = 'none';
+      
+      // Show submit button only on last question
+      submitBtn.style.display = (currentQuestion === shuffledQuestions.length - 1) ? '' : 'none';
+      submitBtn.onclick = () => {
+        showResult();
+      };
+    }
+    
+    // Enhanced confetti animation
+    function showConfetti() {
+      const ctx = confettiCanvas.getContext('2d');
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+      const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#a8e6cf', '#ffaaa5'];
+      let pieces = [];
+      
+      for (let i = 0; i < 150; i++) {
+        pieces.push({
+          x: Math.random() * confettiCanvas.width,
+          y: Math.random() * -confettiCanvas.height,
+          r: 4 + Math.random() * 12,
+          c: colors[Math.floor(Math.random() * colors.length)],
+          s: 1 + Math.random() * 4,
+          a: Math.random() * Math.PI * 2,
+          spin: (Math.random() - 0.5) * 0.3
+        });
+      }
+      
+      let frame = 0;
+      function draw() {
+        ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        pieces.forEach(p => {
+          ctx.save();
+          ctx.globalAlpha = 0.9;
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.a);
+          ctx.beginPath();
+          ctx.arc(0, 0, p.r, 0, 2 * Math.PI);
+          ctx.fillStyle = p.c;
+          ctx.fill();
+          ctx.restore();
+          p.y += p.s;
+          p.x += Math.sin(frame/15 + p.a) * 2;
+          p.a += p.spin;
+        });
+        frame++;
+        if (frame < 200) requestAnimationFrame(draw);
+        else ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      }
+      draw();
+    }
+    
+    // Result calculation with shuffled answers
+    function showResult() {
+      clearInterval(timer);
+      let score = 0;
+      
+      // Calculate score using correct answer text matching
+      userAnswers.forEach((userAnswer, i) => {
+        if (userAnswer && userAnswer === shuffledAnswers[i].correctAnswer) {
+          score++;
+        }
+      });
+      
+      finalScore.textContent = `Score: ${score} / ${shuffledQuestions.length}`;
+      let msg = '';
+      const percentage = score / shuffledQuestions.length;
+      
+      if (percentage === 1) {
+        msg = '🎉 PERFECT! You\'re absolutely amazing! 🌟✨';
+        showConfetti();
+      }
+      else if (percentage >= 0.8) msg = '🔥 Excellent! You\'re on fire! 🚀';
+      else if (percentage >= 0.6) msg = '👍 Great job! Keep up the good work! 💪';
+      else if (percentage >= 0.4) msg = '💡 Good effort! Practice makes perfect! 📚';
+      else msg = '🌱 Don\'t give up! Every expert was once a beginner! ✨';
+      
+      resultMessage.textContent = msg;
+      quizCard.style.display = 'none';
+      resultScreen.style.display = '';
+    }
+    
+    restartBtn.onclick = () => {
+      // Re-shuffle questions and answers for a new experience
+      const originalQuestions = modules[currentModule].questions;
+      shuffledQuestions = shuffleArray([...originalQuestions]);
+      
+      shuffledAnswers = shuffledQuestions.map(q => {
+        const shuffledOpts = shuffleArray([...q.opts]);
+        return {
+          options: shuffledOpts,
+          correctAnswer: q.correct
+        };
+      });
+      
+      userAnswers = Array(shuffledQuestions.length).fill(null);
+      currentQuestion = 0;
+      renderQuiz();
+    };
+    
+    // Home button (module select)
+    const homeBtn = document.createElement('button');
+    homeBtn.textContent = '🏠 Modules';
+    homeBtn.style.position = 'absolute';
+    homeBtn.style.left = '16px';
+    homeBtn.style.top = '16px';
+    homeBtn.style.background = 'rgba(255, 255, 255, 0.9)';
+    homeBtn.style.color = '#ff6b6b';
+    homeBtn.style.fontWeight = '700';
+    homeBtn.style.fontSize = '1em';
+    homeBtn.style.border = '2px solid #ff6b6b';
+    homeBtn.style.borderRadius = '12px';
+    homeBtn.style.padding = '8px 16px';
+    homeBtn.style.cursor = 'pointer';
+    homeBtn.style.backdropFilter = 'blur(10px)';
+    homeBtn.style.transition = 'all 0.3s ease';
+    homeBtn.onclick = showModuleSelect;
+    
+    homeBtn.onmouseover = () => {
+      homeBtn.style.background = '#ff6b6b';
+      homeBtn.style.color = '#fff';
+      homeBtn.style.transform = 'translateY(-2px)';
+    };
+    homeBtn.onmouseout = () => {
+      homeBtn.style.background = 'rgba(255, 255, 255, 0.9)';
+      homeBtn.style.color = '#ff6b6b';
+      homeBtn.style.transform = 'translateY(0)';
+    };
+    
+    document.querySelector('.header').appendChild(homeBtn);
+    
+    // Initialize the quiz
+    function init() {
+      currentModule = null;
+      currentQuestion = 0;
+      userAnswers = [];
+      showModuleSelect();
+    }
+    
+    init();
+    
+    // Responsive confetti canvas
+    window.addEventListener('resize', () => {
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
