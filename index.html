@@ -3,1156 +3,1444 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Centre Quest</title>
+    <title>Professional Quiz Assessment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Baloo 2', 'Comic Sans MS', sans-serif;
-            background: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c') no-repeat center center fixed;
-            background-size: cover;
+        * {
             margin: 0;
-            padding: 20px;
-            color: #333;
-            overflow-x: hidden;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .quiz-container {
-            max-width: 800px;
+        
+        body {
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        .app-container {
+            max-width: 900px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 25px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-            padding: 30px;
-            position: relative;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .app-header {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 24px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        
+        .app-title {
+            font-size: 28px;
+            font-weight: 500;
+            color: #1a73e8;
+            margin-bottom: 8px;
+        }
+        
+        .app-subtitle {
+            color: #5f6368;
+            font-size: 16px;
+            font-weight: 400;
+        }
+        
+        .content-section {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 32px;
+            flex: 1;
+        }
+        
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+        
+        .module-card {
+            border: 1px solid #e8eaed;
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #fff;
+        }
+        
+        .module-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+            border-color: #1a73e8;
+        }
+        
+        .module-title {
+            font-size: 18px;
+            font-weight: 500;
+            color: #202124;
+            margin-bottom: 8px;
+        }
+        
+        .module-description {
+            color: #5f6368;
+            font-size: 14px;
+        }
+        
+        .quiz-section {
+            display: none;
+        }
+        
+        .quiz-section.active {
+            display: block;
+        }
+        
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e8eaed;
+        }
+        
+        .quiz-title {
+            font-size: 24px;
+            font-weight: 500;
+            color: #202124;
+        }
+        
+        .quiz-progress {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .progress-text {
+            color: #5f6368;
+            font-size: 14px;
+        }
+        
+        .progress-bar {
+            width: 120px;
+            height: 4px;
+            background: #e8eaed;
+            border-radius: 2px;
             overflow: hidden;
         }
-        h1 {
-            text-align: center;
-            color: #ff4d4d;
-            font-size: 3em;
-            margin-bottom: 20px;
-            text-shadow: 3px 3px #ffd700;
+        
+        .progress-fill {
+            height: 100%;
+            background: #1a73e8;
+            transition: width 0.3s ease;
         }
-        h2 {
-            color: #4d79ff;
-            font-size: 2em;
-            text-align: center;
+        
+        .question-card {
+            margin-bottom: 32px;
         }
-        .module-selector, .summary {
-            display: none;
-            text-align: center;
+        
+        .question-text {
+            font-size: 20px;
+            font-weight: 400;
+            color: #202124;
+            margin-bottom: 24px;
+            line-height: 1.5;
         }
-        .module-selector.active, .quiz.active, .summary.active {
-            display: block;
-            animation: zoomIn 0.6s ease;
+        
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
-        .module-btn {
-            display: inline-block;
-            margin: 15px;
-            padding: 15px 35px;
-            background: #ffca28;
-            color: #333;
-            border-radius: 15px;
+        
+        .option-button {
+            padding: 16px 20px;
+            border: 1px solid #e8eaed;
+            border-radius: 8px;
+            background: white;
+            text-align: left;
             cursor: pointer;
-            font-size: 1.3em;
-            transition: transform 0.3s, background 0.3s;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            font-size: 16px;
+            transition: all 0.2s ease;
+            color: #202124;
         }
-        .module-btn:hover {
-            background: #ffab00;
-            transform: scale(1.15);
+        
+        .option-button:hover {
+            border-color: #1a73e8;
+            background: #f8f9fa;
         }
-        .question {
-            margin-bottom: 25px;
+        
+        .option-button.selected {
+            border-color: #1a73e8;
+            background: #e8f0fe;
+            color: #1a73e8;
+        }
+        
+        .quiz-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #e8eaed;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-primary {
+            background: #1a73e8;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1557b0;
+            box-shadow: 0 2px 8px rgba(26,115,232,0.3);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: #1a73e8;
+            border: 1px solid #1a73e8;
+        }
+        
+        .btn-secondary:hover {
+            background: #f8f9fa;
+        }
+        
+        .btn:disabled {
+            background: #e8eaed;
+            color: #9aa0a6;
+            cursor: not-allowed;
+        }
+        
+        .results-section {
             display: none;
-        }
-        .question.active {
-            display: block;
-            animation: bounceIn 0.7s ease;
-        }
-        .question p {
-            font-size: 1.6em;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #4a4a4a;
             text-align: center;
-            background: #e6f3ff;
-            padding: 15px;
-            border-radius: 12px;
         }
-        .options {
+        
+        .results-section.active {
+            display: block;
+        }
+        
+        .results-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 32px;
+            margin: 24px 0;
+        }
+        
+        .score-display {
+            font-size: 48px;
+            font-weight: 700;
+            color: #1a73e8;
+            margin-bottom: 16px;
+        }
+        
+        .score-text {
+            font-size: 18px;
+            color: #5f6368;
+            margin-bottom: 24px;
+        }
+        
+        .module-selector {
+            display: block;
+        }
+        
+        .section-title {
+            font-size: 24px;
+            font-weight: 500;
+            color: #202124;
+            margin-bottom: 16px;
+        }
+          .section-subtitle {
+            color: #5f6368;
+            font-size: 16px;
+            margin-bottom: 32px;
+        }
+        
+        /* Question Count Selector Styles */
+        .question-count-selector {
+            display: none;
+            text-align: center;
+        }
+        
+        .quiz-setup-card {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin: 24px auto;
+            max-width: 500px;
+            box-shadow: 0 1px 3px rgba(60,64,67,0.3);
+            border: 1px solid #dadce0;
+        }
+        
+        .setup-section {
+            margin-bottom: 32px;
+        }
+        
+        .setup-label {
+            display: block;
+            font-size: 16px;
+            font-weight: 500;
+            color: #202124;
+            margin-bottom: 16px;
+        }
+        
+        .question-count-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+        
+        .count-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #1a73e8;
+            background: white;
+            color: #1a73e8;
+            border-radius: 50%;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        
+        .count-btn:hover {
+            background: #1a73e8;
+            color: white;
+        }
+        
+        .count-btn:disabled {
+            border-color: #e8eaed;
+            color: #9aa0a6;
+            cursor: not-allowed;
+        }
+        
+        .count-btn:disabled:hover {
+            background: white;
+            color: #9aa0a6;
+        }
+        
+        #questionCount {
+            width: 80px;
+            height: 40px;
+            border: 2px solid #dadce0;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 500;
+            color: #202124;
+            background: #f8f9fa;
+        }
+        
+        .count-info {
+            color: #5f6368;
+            font-size: 14px;
+            margin: 0;
+        }
+        
+        .setup-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+        }
+        
+        /* Enhanced Results Styles */
+        .results-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .performance-indicator {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+        
+        .performance-comment {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        .performance-description {
+            color: #5f6368;
+            font-size: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .results-stats {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
         }
-        .option {
-            background: #b2f5ea;
+        
+        .stat-card {
+            background: #f8f9fa;
+            border-radius: 8px;
             padding: 20px;
-            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a73e8;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            color: #5f6368;
+            font-size: 14px;
+        }
+        
+        .question-review {
+            margin-top: 32px;
+        }
+        
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .review-toggle {
+            background: transparent;
+            border: none;
+            color: #1a73e8;
             cursor: pointer;
-            font-size: 1.2em;
-            transition: background 0.3s, transform 0.3s;
-            text-align: center;
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+            text-decoration: underline;
         }
-        .option:hover {
-            background: #81ecec;
-            transform: scale(1.1);
+        
+        .review-content {
+            display: none;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            padding: 16px;
+            background: white;
         }
-        .option.selected {
-            background: #ff7675;
-            color: #fff;
+        
+        .review-question {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f0f0f0;
         }
-        .timer {
-            text-align: center;
-            font-size: 1.8em;
-            color: #ff4d4d;
-            margin-bottom: 15px;
-            font-weight: bold;
-            background: #fff3cd;
-            padding: 10px;
-            border-radius: 10px;
+        
+        .review-question:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
         }
-        .summary h2 {
-            color: #ff4d4d;
-            font-size: 2.5em;
+        
+        .review-question-text {
+            font-weight: 500;
+            margin-bottom: 12px;
+            color: #202124;
         }
-        .summary-item {
-            background: #f0f0f0;
-            padding: 20px;
-            margin: 15px 0;
-            border-radius: 12px;
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        
+        .review-answer {
+            margin-bottom: 8px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
         }
-        .summary-item.correct {
-            background: #b2f5b2;
+        
+        .review-answer.correct {
+            background: #e8f5e8;
+            color: #137333;
+            border-left: 4px solid #34a853;
         }
-        .summary-item.wrong {
-            background: #f5b2b2;
+        
+        .review-answer.incorrect {
+            background: #fce8e6;
+            color: #d93025;
+            border-left: 4px solid #ea4335;
         }
-        footer {
-            text-align: center;
-            margin-top: 50px;
-            color: #fff;
-            font-size: 1em;
-            text-shadow: 2px 2px #333;
+        
+        .review-answer.user-choice {
+            font-weight: 500;
         }
-        @keyframes zoomIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+        
+        .answer-indicator {
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        @keyframes bounceIn {
-            0% { transform: scale(0.7); opacity: 0; }
-            60% { transform: scale(1.2); opacity: 1; }
-            100% { transform: scale(1); }
-        }
-        @media (max-width: 600px) {
-            .options {
-                grid-template-columns: 1fr;
+        
+        @media (max-width: 768px) {
+            .app-container {
+                padding: 16px;
             }
-            .quiz-container {
-                padding: 20px;
+            
+            .content-section {
+                padding: 24px;
             }
-            h1 {
-                font-size: 2.2em;
+            
+            .quiz-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
             }
-            .question p {
-                font-size: 1.3em;
+            
+            .quiz-controls {
+                flex-direction: column;
+                gap: 16px;
+            }
+            
+            .btn {
+                width: 100%;
             }
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="quiz-container">
-        <h1>Data Centre Quest</h1>
+    <div class="app-container">
+        <header class="app-header">
+            <h1 class="app-title">Professional Quiz Assessment</h1>
+            <p class="app-subtitle">Data Centre Knowledge Evaluation System</p>
+        </header>
 
-        <div class="module-selector active">
-            <h2>Pick Your Adventure!</h2>
-            <div class="module-btn" data-module="0">Data Centre Time Travel</div>
-            <div class="module-btn" data-module="1">Business Superhero</div>
-            <div class="module-btn" data-module="2">Standards Star</div>
-            <div class="module-btn" data-module="3">TIA-942 Explorer</div>
-            <div class="module-btn" data-module="4">Fire Safety Wizard</div>
-            <div class="module-btn" data-module="5">Fire Prevention Pal</div>
-            <div class="module-btn" data-module="6">Safety Squad</div>
-            <div class="module-btn" data-module="7">Monitoring Mission</div>
-            <div class="module-btn" data-module="8">Tech Tools Trek</div>
-        </div>
+        <main class="content-section">            <!-- Module Selection Screen -->
+            <div class="module-selector" id="moduleSelector">
+                <h2 class="section-title">Select a Module</h2>
+                <p class="section-subtitle">Choose a module to begin your assessment</p>
+                <div class="module-grid" id="moduleGrid">
+                    <!-- Modules will be dynamically loaded here -->
+                </div>
+            </div>
 
-        <div class="quiz">
-            <div class="timer">Time Left: <span id="time">15</span>s</div>
-            <div class="module" data-module="0">
-                <div class="question" data-correct="B">
-                    <p>1. What was the first super cool computer built during World War II?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Colossus</div>
-                        <div class="option" data-value="B">ENIAC</div>
-                        <div class="option" data-value="C">UNIVAC</div>
-                        <div class="option" data-value="D">IBM 701</div>
+            <!-- Question Count Selection Screen -->
+            <div class="question-count-selector" id="questionCountSelector" style="display: none;">
+                <h2 class="section-title" id="selectedModuleTitle">Module Quiz Setup</h2>
+                <p class="section-subtitle">Configure your quiz settings</p>
+                
+                <div class="quiz-setup-card">
+                    <div class="setup-section">
+                        <label for="questionCount" class="setup-label">Number of Questions:</label>
+                        <div class="question-count-controls">
+                            <button type="button" class="count-btn" onclick="changeQuestionCount(-1)">−</button>
+                            <input type="number" id="questionCount" value="10" min="5" max="25" readonly>
+                            <button type="button" class="count-btn" onclick="changeQuestionCount(1)">+</button>
+                        </div>
+                        <p class="count-info" id="availableQuestions">Available: 0 questions</p>
                     </div>
-                </div>
-                <div class="question" data-correct="C">
-                    <p>2. How many zaps per second could ENIAC do?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">1000</div>
-                        <div class="option" data-value="B">3000</div>
-                        <div class="option" data-value="C">5000</div>
-                        <div class="option" data-value="D">7000</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>3. Why did old computers get their own special room?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">To look pretty</div>
-                        <div class="option" data-value="B">They were super tricky to use</div>
-                        <div class="option" data-value="C">For everyone to see</div>
-                        <div class="option" data-value="D">To sell them</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="C">
-                    <p>4. When did computers start talking to each other in data centres?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Mainframe era</div>
-                        <div class="option" data-value="B">Microcomputer era</div>
-                        <div class="option" data-value="C">Client-server era</div>
-                        <div class="option" data-value="D">Cloud computing era</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>5. What’s the name for a computer’s special home?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Server farm</div>
-                        <div class="option" data-value="B">Data centre</div>
-                        <div class="option" data-value="C">Cloud hub</div>
-                        <div class="option" data-value="D">IT warehouse</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>6. What made Internet Data Centres super popular?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">New laws</div>
-                        <div class="option" data-value="B">Dot com boom</div>
-                        <div class="option" data-value="C">Tiny computers</div>
-                        <div class="option" data-value="D">Mobile phones</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>7. What’s special about an enterprise data centre?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">It’s rented</div>
-                        <div class="option" data-value="B">The company owns it</div>
-                        <div class="option" data-value="C">Shared with others</div>
-                        <div class="option" data-value="D">It’s temporary</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>8. What does a colocation data centre give its users?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Computers</div>
-                        <div class="option" data-value="B">Cool air and power</div>
-                        <div class="option" data-value="C">Apps</div>
-                        <div class="option" data-value="D">Workers</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>9. How is a wholesale data centre different from a colocation one?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Many users per space</div>
-                        <div class="option" data-value="B">One user per space</div>
-                        <div class="option" data-value="C">No cooling</div>
-                        <div class="option" data-value="D">Free to use</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>10. What tech made data centres grow super fast?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Virtual reality</div>
-                        <div class="option" data-value="B">Cloud computing</div>
-                        <div class="option" data-value="C">Old systems</div>
-                        <div class="option" data-value="D">Desktop apps</div>
+                    
+                    <div class="setup-actions">
+                        <button class="btn btn-secondary" onclick="goBackToModules()">Back to Modules</button>
+                        <button class="btn btn-primary" onclick="startQuizWithSettings()">Start Quiz</button>
                     </div>
                 </div>
             </div>
-            <div class="module" data-module="1">
-                <div class="question" data-correct="A">
-                    <p>1. Why is tech super important for companies?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">It runs everything</div>
-                        <div class="option" data-value="B">Saves space</div>
-                        <div class="option" data-value="C">No workers needed</div>
-                        <div class="option" data-value="D">Makes math easy</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>2. What does IT help businesses do?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Lose customers</div>
-                        <div class="option" data-value="B">Grow bigger</div>
-                        <div class="option" data-value="C">Store less data</div>
-                        <div class="option" data-value="D">Stay offline</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>3. What does a data centre keep safe, per Gartner?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Worker files</div>
-                        <div class="option" data-value="B">Big tech systems</div>
-                        <div class="option" data-value="C">Ads</div>
-                        <div class="option" data-value="D">Money books</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>4. What happens if a data centre stops working?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">More money</div>
-                        <div class="option" data-value="B">Lost work time</div>
-                        <div class="option" data-value="C">Better fame</div>
-                        <div class="option" data-value="D">Faster work</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>5. How much did data centre downtime cost in 2015?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">$505,502</div>
-                        <div class="option" data-value="B">$740,357</div>
-                        <div class="option" data-value="C">$1,000,000</div>
-                        <div class="option" data-value="D">$250,000</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>6. What often makes data centres stop?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">New software</div>
-                        <div class="option" data-value="B">Power backup failure</div>
-                        <div class="option" data-value="C">Worker classes</div>
-                        <div class="option" data-value="D">Data saving</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>7. What helps understand downtime’s damage?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Market quiz</div>
-                        <div class="option" data-value="B">Risk check</div>
-                        <div class="option" data-value="C">Worker feedback</div>
-                        <div class="option" data-value="D">App scan</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>8. What shapes how a data centre is made?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Worker numbers</div>
-                        <div class="option" data-value="B">Downtime cost</div>
-                        <div class="option" data-value="C">Office spot</div>
-                        <div class="option" data-value="D">Ad budget</div>
-                    </div>
-                </div class="question" data-correct="B">
-                    <p>9. What do workers sometimes mess up in data centres?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Faster work</div>
-                        <div class="option" data-value="B">System crashes</div>
-                        <div class="option" data-value="C">Cheaper costs</div>
-                        <div class="option" data-value="D">Quick tasks</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>10. What powers tech in a data centre?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Office chairs</div>
-                        <div class="option" data-value="B">Cooling and electricity</div>
-                        <div class="option" data-value="C">Worker lessons</div>
-                        <div class="option" data-value="D">Sales gear</div>
-                    </div>
-                </div>
-            </div>
-            <div class="module" data-module="2">
-                <div class="question" data-correct="C">
-                    <p>1. What paper is used for data centre badges?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Story page</div>
-                        <div class="option" data-value="B">Rulebook</div>
-                        <div class="option" data-value="C">Standard</div>
-                        <div class="option" data-value="D">Guide</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>2. Who writes data centre rules clearly?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Solo writers</div>
-                        <div class="option" data-value="B">Standards team</div>
-                        <div class="option" data-value="C">Big shops</div>
-                        <div class="option" data-value="D">Everyone</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>3. What beats global data centre rules?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Company plans</div>
-                        <div class="option" data-value="B">Country rules</div>
-                        <div class="option" data-value="C">Tech fads</div>
-                        <div class="option" data-value="D">Customer wishes</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="C">
-                    <p>4. What’s the latest ANSI/TIA-942 version?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">A</div>
-                        <div class="option" data-value="B">B</div>
-                        <div class="option" data-value="C">C</div>
-                        <div class="option" data-value="D">D</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>5. Which rule is a data centre star?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">ISO-11801</div>
-                        <div class="option" data-value="B">ANSI/TIA-942</div>
-                        <div data-value="option" data-value="C">NFPA-75</div>
-                        <div data-value="option" data-value="D">EN-50600</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>6. What makes ANSI/TIA-942 different from Uptime rules?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">No profit</div>
-                        <div class="option" data-value="B">Official badge</div>
-                        <div class="option" data-value="C">Business focus</div>
-                        <div class="option" data-value="D">Short book</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="C">
-                    <p>7. How big is the ANSI/TIA-942 rulebook?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">12 pages</div>
-                        <div class="option" data-value="B">50 pages</div>
-                        <div class="option" data-value="C">134 pages</div>
-                        <div class="option" data-value="D">200 pages</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>8. Which rule explains data centres best?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Uptime Tier</div>
-                        <div class="option" data-value="B">ANSI/TIA-942</div>
-                        <div class="option" data-value="C">ISO/IEC TS 22237</div>
-                        <div class="option" data-value="D">Switch Tier-5</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>9. What’s cool about ANSI/TIA-942 checks?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Make your own way</div>
-                        <div class="option" data-value="B">ISO-style check</div>
-                        <div class="option" data-value="C">No badge</div>
-                        <div class="option" data-value="D">Forever badge</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="C">
-                    <p>10. Who says ANSI/TIA-942 is a real deal?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">ISO</div>
-                        <div class="option" data-value="B">CENELEC</div>
-                        <div class="option" data-value="C">ANSI</div>
-                        <div class="option" data-value="D">Uptime</div>
-                    </div>
-                </div>
-            </div>
-            <div class="module" data-module="3">
-                <div class="question" data-correct="B">
-                    <p>1. What’s a Rated-1 data centre like?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Lots of paths</div>
-                        <div class="option" data-value="B">One path, no backup</div>
-                        <div class="option" data-value="C">Fix it anytime</div>
-                        <div class="option" data-value="D">Never breaks</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>2. What makes a Rated-2 data centre special?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">No backup</div>
-                        <div class="option" data-value="B">Extra parts</div>
-                        <div class="option" data-value="C">Many paths</div>
-                        <div class="option" data-value="D">Super strong</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>3. What’s awesome about a Rated-3 data centre?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">One path</div>
-                        <div class="option" data-value="B">Fix without stopping</div>
-                        <div class="option" data-value="C">No backup</div>
-                        <div class="option" data-value="D">Simple setup</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>4. Why is a Rated-4 data centre super tough?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">One path</div>
-                        <div class="option" data-value="B">Many active paths</div>
-                        <div class="option" data-value="C">No backup</div>
-                        <div class="option" data-value="D">Less cooling</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>5. What helps pick a backup level?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Worker count</div>
-                        <div class="option" data-value="B">Cost of stopping</div>
-                        <div class="option" data-value="C">Office size</div>
-                        <div class="option" data-value="D">Sales goals</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>6. What sets a data centre’s Rated level?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Best score</div>
-                        <div class="option" data-value="B">Worst score</div>
-                        <div class="option" data-value="C">Average score</div>
-                        <div class="option" data-value="D">Newest score</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>7. What can a Rated-3 data centre do during fixes?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Shut down</div>
-                        <div class="option" data-value="B">Keep running</div>
-                        <div class="option" data-value="C">Break easily</div>
-                        <div class="option" data-value="D">Less cooling</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="A">
-                    <p>8. What’s not needed in a Rated-4 power path?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Extra parts</div>
-                        <div class="option" data-value="B">Many paths</div>
-                        <div class="option" data-value="C">Cool air</div>
-                        <div class="option" data-value="D">Super strength</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>9. How do generators work in a Rated-2 data centre?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">N+2</div>
-                        <div class="option" data-value="B">N+1</div>
-                        <div class="option" data-value="C">N</div>
-                        <div class="option" data-value="D">No generators</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>10. What’s the only global data centre badge?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Uptime Tier</div>
-                        <div class="option" data-value="B">ANSI/TIA-942</div>
-                        <div class="option" data-value="C">ISO/IEC TS 22237</div>
-                        <div class="option" data-value="D">EN-50600</div>
-                    </div>
-                </div>
-            </div>
-            <div class="module" data-module="4">
-                <div class="question" data-correct="B">
-                    <p>1. What’s cool about water mist fire systems?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Lots of water</div>
-                        <div class="option" data-value="B">Tiny water drops</div>
-                        <div class="option" data-value="C">Chemical gas</div>
-                        <div class="option" data-value="D">More oxygen</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>2. What’s the safe oxygen level for Inergen?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">5-8%</div>
-                        <div class="option" data-value="B">12-15%</div>
-                        <div class="option" data-value="C">20-25%</div>
-                        <div class="option" data-value="D">30-35%</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>3. How long do halocarbon gases last?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">5-10 years</div>
-                        <div class="option" data-value="B">20-25 years</div>
-                        <div class="option" data-value="C">50 years</div>
-                        <div class="option" data-value="D">Forever</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>4. When do sprinklers turn on in data centres?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">30-40°C</div>
-                        <div class="option" data-value="B">57-77°C</div>
-                        <div class="option" data-value="C">100-120°C</div>
-                        <div class="option" data-value="D">150-200°C</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="A">
-                    <p>5. What does PASS mean for fire extinguishers?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Pull-Aim-Squeeze-Sweep</div>
-                        <div class="option" data-value="B">Push-Activate-Stop-Spray</div>
-                        <div class="option" data-value="C">Pull-Adjust-Start-Swing</div>
-                        <div class="option" data-value="D">Press-Aim-Shoot-Swipe</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>6. What fire does a Class C extinguisher fight?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Metal fires</div>
-                        <div class="option" data-value="B">Electric fires</div>
-                        <div class="option" data-value="C">Paper fires</div>
-                        <div class="option" data-value="D">Oil fires</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>7. Why avoid water on a Class C fire?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Chemical mix</div>
-                        <div class="option" data-value="B">Electric shock</div>
-                        <div class="option" data-value="C">Bigger flames</div>
-                        <div class="option" data-value="D">Rust</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="A">
-                    <p>8. How long does a fire extinguisher spray?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">10 seconds</div>
-                        <div class="option" data-value="B">30 seconds</div>
-                        <div class="option" data-value="C">60 seconds</div>
-                        <div class="option" data-value="D">120 seconds</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>9. What do you do after using a fire extinguisher?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Put it away</div>
-                        <div class="option" data-value="B">Fill it up</div>
-                        <div class="option" data-value="C">Throw it out</div>
-                        <div class="option" data-value="D">Clean it</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>10. What’s a water mist system downside?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Costs a lot</div>
-                        <div class="option" data-value="B">Makes things wet</div>
-                        <div class="option" data-value="C">Leaves chemicals</div>
-                        <div class="option" data-value="D">Less oxygen</div>
-                    </div>
-                </div>
-            </div>
-            <div class="module" data-module="5">
-                <div class="question" data-correct="B">
-                    <p>1. What’s a fire safety rule for data centres?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Overload wires</div>
-                        <div class="option" data-value="B">Check wires often</div>
-                        <div class="option" data-value="C">Use bad cables</div>
-                        <div class="option" data-value="D">Ignore fuses</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="A">
-                    <p>2. What spots electrical issues early?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Heat scans</div>
-                        <div class="option" data-value="B">New software</div>
-                        <div class="option" data-value="C">Worker polls</div>
-                        <div class="option" data-value="D">Sales checks</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>3. What’s the oxygen level in a hypoxic system?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">5%</div>
-                        <div class="option" data-value="B">15%</div>
-                        <div class="option" data-value="C">25%</div>
-                        <div class="option" data-value="D">35%</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>4. What does a hypoxic system do?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Puts out fires</div>
-                        <div class="option" data-value="B">Stops fires starting</div>
-                        <div class="option" data-value="C">Cools machines</div>
-                        <div class="option" data-value="D">Adds oxygen</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>5. What avoids electrical fires?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Extension cords</div>
-                        <div class="option" data-value="B">Not overloading plugs</div>
-                        <div class="option" data-value="C">Regular fixes</div>
-                        <div class="option" data-value="D">New cords</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>6. What’s a sign of an electrical fire risk?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Steady power</div>
-                        <div class="option" data-value="B">Burning smell</div>
-                        <div class="option" data-value="C">New gear</div>
-                        <div class="option" data-value="D">App updates</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>7. Why are hypoxic systems safe for people?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Lots of oxygen</div>
-                        <div class="option" data-value="B">No harm to humans</div>
-                        <div class="option" data-value="C">Chemical spray</div>
-                        <div class="option" data-value="D">More water</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>8. What should you replace to stop fires?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">New machines</div>
-                        <div class="option" data-value="B">Broken cords</div>
-                        <div class="option" data-value="C">Software</div>
-                        <div class="option" data-value="D">Chairs</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>9. What shows electrical trouble in a data centre?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Better work</div>
-                        <div class="option" data-value="B">Tripping breakers</div>
-                        <div class="option" data-value="C">Fast tasks</div>
-                        <div class="option" data-value="D">Lower costs</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>10. What system stops fires with less oxygen?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Water mist</div>
-                        <div class="option" data-value="B">Hypoxic system</div>
-                        <div class="option" data-value="C">Chemical gas</div>
-                        <div class="option" data-value="D">Sprinklers</div>
-                    </div>
-                </div>
-            </div>
-            <div class="module" data-module="6">
-                <div class="question" data-correct="B">
-                    <p>1. What’s a key part of data centre fire safety?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Manual power</div>
-                        <div class="option" data-value="B">Emergency shut-off</div>
-                        <div class="option" data-value="C">More cooling</div>
-                        <div class="option" data-value="D">Locked doors</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>2. How should escape doors work?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Swing in</div>
-                        <div class="option" data-value="B">Swing out</div>
-                        <div class="option" data-value="C">Slide</div>
-                        <div class="option" data-value="D">Stay locked</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>3. What rule keeps data centres safe for people?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">ISO-11801</div>
-                        <div class="option" data-value="B">NFPA 101</div>
-                        <div class="option" data-value="C">EN-50600</div>
-                        <div class="option" data-value="D">TIA-568A</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>4. What keeps fire safety sharp?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">New apps</div>
-                        <div class="option" data-value="B">Escape drills</div>
-                        <div class="option" data-value="C">Ads</div>
-                        <div class="option" data-value="D">Gear sales</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>5. What must be clear in a data centre?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Parking spots</div>
-                        <div class="option" data-value="B">Escape paths</div>
-                        <div class="option" data-value="C">Desks</div>
-                        <div class="option" data-value="D">Storage</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>6. What connects to the fire panel?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Servers</div>
-                        <div class="option" data-value="B">Fire systems</div>
-                        <div class="option" data-value="C">Worker files</div>
-                        <div class="option" data-value="D">Sales tools</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>7. What blocks fire trucks?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Open doors</div>
-                        <div class="option" data-value="B">Parked cars</div>
-                        <div class="option" data-value="C">Clear paths</div>
-                        <div class="option" data-value="D">Signs</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>8. What’s key in evacuation plans?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Data backups</div>
-                        <div class="option" data-value="B">Meeting spot</div>
-                        <div class="option" data-value="C">More cooling</div>
-                        <div class="option" data-value="D">Data locks</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="A">
-                    <p>9. What plan do evacuation rules follow?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Plan-do-check-act</div>
-                        <div class="option" data-value="B">Watch-analyze-report</div>
-                        <div class="option" data-value="C">Build-test-fix</div>
-                        <div class="option" data-value="D">Set-up-keep-remove</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>10. What’s handy in evacuation plans?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Sales plans</div>
-                        <div class="option" data-value="B">Emergency numbers</div>
-                        <div class="option" data-value="C">App licenses</div>
-                        <div class="option" data-value="D">Worker shifts</div>
-                    </div>
-                </div>
-            </div>
-            <div class="module" data-module="7">
-                <div class="question" data-correct="B">
-                    <p>1. Why watch and report in data centres?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Fewer workers</div>
-                        <div class="option" data-value="B">Better work</div>
-                        <div class="option" data-value="C">More breaks</div>
-                        <div class="option" data-value="D">Less access</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>2. What does monitoring keep right?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Worker files</div>
-                        <div class="option" data-value="B">Power needs</div>
-                        <div class="option" data-value="C">Ads</div>
-                        <div class="option" data-value="D">Office space</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="A">
-                    <p>3. What’s needed to control devices?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">One control screen</div>
-                        <div class="option" data-value="B">Hand controls</div>
-                        <div class="option" data-value="C">Outside apps</div>
-                        <div class="option" data-value="D">Few sensors</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>4. What does monitoring stop?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Worker hours</div>
-                        <div class="option" data-value="B">Big alarms</div>
-                        <div class="option" data-value="C">Sales plans</div>
-                        <div class="option" data-value="D">App updates</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>5. What’s in energy reports?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Worker count</div>
-                        <div class="option" data-value="B">PUE numbers</div>
-                        <div class="option" data-value="C">Data size</div>
-                        <div class="option" data-value="D">Office size</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="A">
-                    <p>6. How do alerts work in monitoring?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Text and email</div>
-                        <div class="option" data-value="B">Paper logs</div>
-                        <div class="option" data-value="C">Written notes</div>
-                        <div class="option" data-value="D">Talking</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>7. What do reports show about a data centre?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Sales wins</div>
-                        <div class="option" data-value="B">Working status</div>
-                        <div class="option" data-value="C">Worker skills</div>
-                        <div class="option" data-value="D">App versions</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>8. What’s an example of data centre reporting?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Worker shifts</div>
-                        <div class="option" data-value="B">Power use</div>
-                        <div class="option" data-value="C">Office map</div>
-                        <div class="option" data-value="D">Customer likes</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>9. Why report early in data centres?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">More breaks</div>
-                        <div class="option" data-value="B">Find problems</div>
-                        <div class="option" data-value="C">Less power</div>
-                        <div class="option" data-value="D">Fewer doors</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>10. What do report makers give users?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Same reports</div>
-                        <div class="option" data-value="B">Custom reports</div>
-                        <div class="option" data-value="C">Spoken news</div>
-                        <div class="option" data-value="D">Sales data</div>
-                    </div>
-                </div>
-            </div>
-            <div class="module" data-module="8">
-                <div class="question" data-correct="B">
-                    <p>1. What’s DCIM in data centres?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Data Info Model</div>
-                        <div class="option" data-value="B">Infrastructure Management</div>
-                        <div class="option" data-value="C">Device Control</div>
-                        <div class="option" data-value="D">Capacity Method</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>2. What does a BMS do?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Just watches</div>
-                        <div class="option" data-value="B">Watches and controls</div>
-                        <div class="option" data-value="C">Saves data</div>
-                        <div class="option" data-value="D">Runs apps</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>3. What’s a big job for an NMS?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Worker plans</div>
-                        <div class="option" data-value="B">Device watching</div>
-                        <div class="option" data-value="C">Data locking</div>
-                        <div class="option" data-value="D">Sales checks</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>4. What does DCIM watch?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Chairs</div>
-                        <div class="option" data-value="B">Servers and power</div>
-                        <div class="option" data-value="C">Worker phones</div>
-                        <div class="option" data-value="D">Sales tools</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="A">
-                    <p>5. What’s a DCIM feature?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Gear tracking</div>
-                        <div class="option" data-value="B">Worker lessons</div>
-                        <div class="option" data-value="C">Data locking</div>
-                        <div class="option" data-value="D">Office design</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>6. What does an EMS mainly do?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Controls gear</div>
-                        <div class="option" data-value="B">Just watches</div>
-                        <div class="option" data-value="C">Runs networks</div>
-                        <div class="option" data-value="D">Saves data</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>7. What matters when adding DCIM?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Sales plans</div>
-                        <div class="option" data-value="B">Money saved</div>
-                        <div class="option" data-value="C">Worker count</div>
-                        <div class="option" data-value="D">Office spot</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>8. What does a BMS control?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">App updates</div>
-                        <div class="option" data-value="B">Power and cooling</div>
-                        <div class="option" data-value="C">Worker files</div>
-                        <div class="option" data-value="D">Customer data</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="A">
-                    <p>9. What does an NMS help with?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Network speed</div>
-                        <div class="option" data-value="B">Worker shifts</div>
-                        <div class="option" data-value="C">Data size</div>
-                        <div class="option" data-value="D">Sales ads</div>
-                    </div>
-                </div>
-                <div class="question" data-correct="B">
-                    <p>10. Why use DCIM?</p>
-                    <div class="options">
-                        <div class="option" data-value="A">Fewer workers</div>
-                        <div class="option" data-value="B">Better work</div>
-                        <div class="option" data-value="C">More breaks</div>
-                        <div class="option" data-value="D">Less connection</div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="summary">
-            <h2>Your Adventure Score!</h2>
-            <p>Stars Earned: <span id="score"></span>/10</p>
-            <div id="summary-details"></div>
-            <div class="module-btn" onclick="location.reload()">Try Another Quest!</div>
-        </div>
+            <!-- Quiz Screen -->
+            <div class="quiz-section" id="quizSection">
+                <div class="quiz-header">
+                    <h2 class="quiz-title" id="quizTitle">Module Quiz</h2>
+                    <div class="quiz-progress">
+                        <span class="progress-text" id="progressText">Question 1 of 10</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                    </div>
+                </div>
 
-        <footer>
-            <p>Data Centre Quest © 2025 | A Super Fun Learning Adventure</p>
-        </footer>
-    </div>
+                <div class="question-card">
+                    <div class="question-text" id="questionText">
+                        <!-- Question will be loaded here -->
+                    </div>
+                    <div class="options-container" id="optionsContainer">
+                        <!-- Options will be loaded here -->
+                    </div>
+                </div>
 
-    <script>
-        const moduleSelector = document.querySelector('.module-selector');
-        const quiz = document.querySelector('.quiz');
-        const summary = document.querySelector('.summary');
-        const timerDisplay = document.querySelector('#time');
-        const modules = document.querySelectorAll('.module');
-        const moduleButtons = document.querySelectorAll('.module-btn');
-        let currentModule, currentQuestionIndex, score, timer, answers, shuffledQuestions;
+                <div class="quiz-controls">
+                    <button class="btn btn-secondary" id="backBtn" onclick="goBackToModules()">Back to Modules</button>
+                    <div>
+                        <button class="btn btn-secondary" id="prevBtn" onclick="previousQuestion()" disabled>Previous</button>
+                        <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>Next</button>
+                    </div>
+                </div>
+            </div>            <!-- Results Screen -->
+            <div class="results-section" id="resultsSection">
+                <div class="results-header">
+                    <div class="performance-indicator" id="performanceEmoji">🎯</div>
+                    <div class="score-display" id="scoreDisplay">0%</div>
+                    <div class="performance-comment" id="performanceComment">Great job!</div>
+                    <div class="performance-description" id="performanceDescription">You have completed the quiz.</div>
+                </div>
+                
+                <div class="results-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="correctCount">0</div>
+                        <div class="stat-label">Correct</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="incorrectCount">0</div>
+                        <div class="stat-label">Incorrect</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalQuestions">0</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="timeTaken">--</div>
+                        <div class="stat-label">Time</div>
+                    </div>
+                </div>
+                
+                <div class="question-review">
+                    <div class="review-header">
+                        <h3>Question Review</h3>
+                        <button class="review-toggle" onclick="toggleReview()">Show Details</button>
+                    </div>
+                    <div class="review-content" id="reviewContent">
+                        <!-- Detailed review will be generated here -->
+                    </div>
+                </div>
+                
+                <div style="margin-top: 32px;">
+                    <button class="btn btn-primary" onclick="goBackToModules()">Take Another Quiz</button>
+                </div>
+            </div>
+        </main>
+    </div>    <script>
+        // Quiz data embedded directly in the HTML
+        const quizData = [
+          {
+            "name": "Module 1: History of Data Centres",
+            "questions": [
+              {
+                "q": "What was the first general-purpose electronic computer developed during World War II?",
+                "opts": ["A. Colossus", "B. ENIAC", "C. UNIVAC", "D. IBM 701"],
+                "a": "B"
+              },
+              {
+                "q": "How many operations per second could the ENIAC perform?",
+                "opts": ["A. 1000", "B. 3000", "C. 5000", "D. 7000"],
+                "a": "C"
+              },
+              {
+                "q": "What was a primary reason for placing early computers in a separated area?",
+                "opts": ["A. Aesthetic appeal", "B. Complexity of operation", "C. Public access", "D. Marketing purposes"],
+                "a": "B"
+              },
+              {
+                "q": "What era saw the introduction of client-server networks in data centres?",
+                "opts": ["A. Mainframe era", "B. Microcomputer era", "C. Client-server era", "D. Cloud computing era"],
+                "a": "C"
+              },
+              {
+                "q": "What term gained popularity with the design of dedicated rooms for computer infrastructure?",
+                "opts": ["A. Server farm", "B. Data centre", "C. Cloud hub", "D. IT warehouse"],
+                "a": "B"
+              },
+              {
+                "q": "What drove the rise of Internet Data Centres (IDCs)?",
+                "opts": ["A. Government regulations", "B. Dot com era", "C. Microcomputer boom", "D. Mobile technology"],
+                "a": "B"
+              },
+              {
+                "q": "What is a key feature of an enterprise data centre?",
+                "opts": ["A. Rented space", "B. Owned by the business", "C. Shared with multiple clients", "D. Temporary setup"],
+                "a": "B"
+              },
+              {
+                "q": "What does a colocation data centre provide to its customers?",
+                "opts": ["A. Servers and storage", "B. Cooling and power", "C. Software licenses", "D. IT staff"],
+                "a": "B"
+              },
+              {
+                "q": "What distinguishes a wholesale data centre from a colocation data centre?",
+                "opts": ["A. Multiple customers per space", "B. Single customer per space", "C. No cooling provided", "D. Free access"],
+                "a": "B"
+              },
+              {
+                "q": "What technology demand has driven the fast growth of modern data centres?",
+                "opts": ["A. Virtual reality", "B. Cloud computing", "C. Analog systems", "D. Desktop applications"],
+                "a": "B"
+              }
+            ]
+          },
+          {
+            "name": "Module 2: The Data Centre and its Relation to the Business",
+            "questions": [
+              {
+                "q": "Why is Information Technology considered vital to modern organizations?",
+                "opts": ["A. Reduces physical space", "B. Integral to operations", "C. Eliminates manual labor", "D. Simplifies accounting"],
+                "a": "B"
+              },
+              {
+                "q": "What is one key objective of IT for businesses?",
+                "opts": ["A. Reduce customer base", "B. Support business growth", "C. Limit data storage", "D. Decrease connectivity"],
+                "a": "B"
+              },
+              {
+                "q": "According to Gartner, what does a data centre primarily maintain?",
+                "opts": ["A. Employee records", "B. Back-end IT systems", "C. Marketing strategies", "D. Financial ledgers"],
+                "a": "B"
+              },
+              {
+                "q": "What is a potential consequence of data centre unavailability?",
+                "opts": ["A. Increased revenue", "B. Loss of production hours", "C. Improved reputation", "D. Faster operations"],
+                "a": "B"
+              },
+              {
+                "q": "What was the approximate average cost of data centre downtime in 2015?",
+                "opts": ["A. $505,502", "B. $740,357", "C. $1,000,000", "D. $250,000"],
+                "a": "B"
+              },
+              {
+                "q": "What is a common cause of data centre unavailability according to surveys?",
+                "opts": ["A. Software updates", "B. UPS system failure", "C. Employee training", "D. Data backups"],
+                "a": "B"
+              },
+              {
+                "q": "What should be performed to understand the true impact of downtime?",
+                "opts": ["A. Market survey", "B. Risk assessment", "C. Employee review", "D. Software audit"],
+                "a": "B"
+              },
+              {
+                "q": "What is a key factor in determining data centre design requirements?",
+                "opts": ["A. Employee count", "B. Cost of downtime", "C. Office location", "D. Marketing budget"],
+                "a": "B"
+              },
+              {
+                "q": "What is a common issue caused by human error in data centres?",
+                "opts": ["A. Increased efficiency", "B. System unavailability", "C. Reduced costs", "D. Faster processing"],
+                "a": "B"
+              },
+              {
+                "q": "What infrastructure supports IT in a data centre?",
+                "opts": ["A. Office furniture", "B. Power and cooling", "C. Employee training", "D. Marketing tools"],
+                "a": "B"
+              }
+            ]
+          },
+          {
+            "name": "Module 3: Data Centre Standards",
+            "questions": [
+              {
+                "q": "What type of document is intended for certification?",
+                "opts": ["A. White paper", "B. Guideline", "C. Standard", "D. Manual"],
+                "a": "C"
+              },
+              {
+                "q": "Who develops standards with a transparent process?",
+                "opts": ["A. Individual authors", "B. Standards Development Organization", "C. Commercial firms", "D. General public"],
+                "a": "B"
+              },
+              {
+                "q": "What overrules international standards in data centre design?",
+                "opts": ["A. Corporate policies", "B. National standards", "C. Industry trends", "D. Customer preferences"],
+                "a": "B"
+              },
+              {
+                "q": "What is the current version of the ANSI/TIA-942 standard?",
+                "opts": ["A. A", "B. B", "C. C", "D. D"],
+                "a": "C"
+              },
+              {
+                "q": "Which standard is widely followed for data centre certification?",
+                "opts": ["A. ISO-11801", "B. ANSI/TIA-942", "C. NFPA-75", "D. EN-50600"],
+                "a": "B"
+              },
+              {
+                "q": "What distinguishes ANSI/TIA-942 from Uptime Institute guidelines?",
+                "opts": ["A. Non-profit status", "B. Accredited certification", "C. Commercial focus", "D. Shorter document"],
+                "a": "B"
+              },
+              {
+                "q": "What is the document size of ANSI/TIA-942 compared to Uptime Tier?",
+                "opts": ["A. 12 pages", "B. 50 pages", "C. 134 pages", "D. 200 pages"],
+                "a": "C"
+              },
+              {
+                "q": "Which standard provides detailed textual descriptions for data centres?",
+                "opts": ["A. Uptime Tier", "B. ANSI/TIA-942", "C. ISO/IEC TS 22237", "D. Switch Tier-5"],
+                "a": "B"
+              },
+              {
+                "q": "What is a key feature of ANSI/TIA-942 audits?",
+                "opts": ["A. Self-defined process", "B. ISO-based process", "C. No certification", "D. Lifetime certification"],
+                "a": "B"
+              },
+              {
+                "q": "Which organization accredits ANSI/TIA-942 as an SDO?",
+                "opts": ["A. ISO", "B. CENELEC", "C. ANSI", "D. Uptime"],
+                "a": "C"
+              }
+            ]
+          },
+          {
+            "name": "Module 3-1: Properties of ANSI/TIA-942",
+            "questions": [
+              {
+                "q": "What characterizes a Rated-1 data centre?",
+                "opts": ["A. Multiple active paths", "B. Single path with no redundancy", "C. Concurrently maintainable", "D. Fault tolerant"],
+                "a": "B"
+              },
+              {
+                "q": "What feature defines a Rated-2 data centre?",
+                "opts": ["A. No redundancy", "B. Component redundancy", "C. Multiple active paths", "D. Fault tolerance"],
+                "a": "B"
+              },
+              {
+                "q": "What is a key attribute of a Rated-3 data centre?",
+                "opts": ["A. Single path", "B. Concurrently maintainable", "C. No redundancy", "D. Basic setup"],
+                "a": "B"
+              },
+              {
+                "q": "What makes a Rated-4 data centre fault tolerant?",
+                "opts": ["A. Single path", "B. Multiple active paths", "C. No redundancy", "D. Limited cooling"],
+                "a": "B"
+              },
+              {
+                "q": "What is a primary factor in choosing a redundancy rating?",
+                "opts": ["A. Employee count", "B. Cost of downtime", "C. Office size", "D. Marketing goals"],
+                "a": "B"
+              },
+              {
+                "q": "What determines the overall Rated level of a data centre?",
+                "opts": ["A. Highest rating achieved", "B. Lowest rating achieved", "C. Average rating", "D. Most recent rating"],
+                "a": "B"
+              },
+              {
+                "q": "What does a Rated-3 data centre allow during maintenance?",
+                "opts": ["A. System shutdown", "B. No interruption", "C. Single point of failure", "D. Limited cooling"],
+                "a": "B"
+              },
+              {
+                "q": "What is not required in a Rated-4 data centre's power path?",
+                "opts": ["A. Redundant components", "B. Multiple paths", "C. Active cooling", "D. Fault tolerance"],
+                "a": "A"
+              },
+              {
+                "q": "What is a typical configuration for generators in a Rated-2 data centre?",
+                "opts": ["A. N+2", "B. N+1", "C. N", "D. No generators"],
+                "a": "B"
+              },
+              {
+                "q": "What is the only accredited certification scheme for data centres globally?",
+                "opts": ["A. Uptime Tier", "B. ANSI/TIA-942", "C. ISO/IEC TS 22237", "D. EN-50600"],
+                "a": "B"
+              }
+            ]
+          },
+          {
+            "name": "Module 11-2: Fire Safety",
+            "questions": [
+              {
+                "q": "What is a key feature of a water mist fire suppression system?",
+                "opts": ["A. High water usage", "B. Small water droplets", "C. Chemical gas release", "D. Oxygen enrichment"],
+                "a": "B"
+              },
+              {
+                "q": "What is the NOAEL for Inergen in fire suppression systems?",
+                "opts": ["A. 5-8% oxygen", "B. 12-15% oxygen", "C. 20-25% oxygen", "D. 30-35% oxygen"],
+                "a": "B"
+              },
+              {
+                "q": "What is the typical lifespan of halocarbon gases in fire suppression systems?",
+                "opts": ["A. 5-10 years", "B. 20-25 years", "C. 50 years", "D. Indefinite"],
+                "a": "B"
+              },
+              {
+                "q": "At what temperature do sprinklers typically activate in a data centre?",
+                "opts": ["A. 30-40°C", "B. 57-77°C", "C. 100-120°C", "D. 150-200°C"],
+                "a": "B"
+              },
+              {
+                "q": "What does the PASS acronym stand for in fire extinguisher use?",
+                "opts": ["A. Pull-Aim-Squeeze-Sweep", "B. Push-Activate-Stop-Spray", "C. Pull-Adjust-Start-Swing", "D. Press-Aim-Shoot-Swipe"],
+                "a": "A"
+              },
+              {
+                "q": "What type of fire does a Class C extinguisher address?",
+                "opts": ["A. Combustible metals", "B. Electrical equipment", "C. Ordinary combustibles", "D. Flammable liquids"],
+                "a": "B"
+              },
+              {
+                "q": "What is a risk of using water on a Class C fire?",
+                "opts": ["A. Chemical reaction", "B. Electrical shock", "C. Increased flames", "D. Equipment corrosion"],
+                "a": "B"
+              },
+              {
+                "q": "How long does a typical fire extinguisher discharge last?",
+                "opts": ["A. 10 seconds", "B. 30 seconds", "C. 60 seconds", "D. 120 seconds"],
+                "a": "A"
+              },
+              {
+                "q": "What should be done immediately after using a fire extinguisher?",
+                "opts": ["A. Store it", "B. Recharge it", "C. Dispose of it", "D. Clean it"],
+                "a": "B"
+              },
+              {
+                "q": "What is a drawback of water mist systems in data centres?",
+                "opts": ["A. High cost", "B. Increased humidity", "C. Chemical residue", "D. Oxygen depletion"],
+                "a": "B"
+              }
+            ]
+          },
+          {
+            "name": "Module 11-3: Fire Prevention",
+            "questions": [
+              {
+                "q": "What is a key electrical fire safety rule for data centres?",
+                "opts": ["A. Overload circuits", "B. Check wiring regularly", "C. Use unrated cables", "D. Ignore fuses"],
+                "a": "B"
+              },
+              {
+                "q": "What can detect electrical problems before they cause a fire?",
+                "opts": ["A. Annual thermographic scanning", "B. Software updates", "C. Employee surveys", "D. Marketing analysis"],
+                "a": "A"
+              },
+              {
+                "q": "What is the oxygen level in a hypoxic fire prevention system?",
+                "opts": ["A. 5%", "B. 15%", "C. 25%", "D. 35%"],
+                "a": "B"
+              },
+              {
+                "q": "What is the primary function of a hypoxic fire system?",
+                "opts": ["A. Extinguish fires", "B. Prevent ignition", "C. Cool equipment", "D. Increase oxygen"],
+                "a": "B"
+              },
+              {
+                "q": "What should be avoided to prevent electrical fires?",
+                "opts": ["A. Using extension cords", "B. Overloading sockets", "C. Regular maintenance", "D. Replacing worn cords"],
+                "a": "B"
+              },
+              {
+                "q": "What indicates a potential electrical fire hazard?",
+                "opts": ["A. Stable power usage", "B. Burning smell", "C. New equipment", "D. Software upgrades"],
+                "a": "B"
+              },
+              {
+                "q": "What is a benefit of hypoxic systems for human safety?",
+                "opts": ["A. High oxygen levels", "B. No threat to humans", "C. Chemical suppression", "D. Increased humidity"],
+                "a": "B"
+              },
+              {
+                "q": "What should be replaced to prevent electrical fires?",
+                "opts": ["A. New appliances", "B. Damaged cords", "C. Software systems", "D. Office furniture"],
+                "a": "B"
+              },
+              {
+                "q": "What is a sign of electrical issues in a data centre?",
+                "opts": ["A. Increased efficiency", "B. Tripping circuit breakers", "C. Faster processing", "D. Reduced costs"],
+                "a": "B"
+              },
+              {
+                "q": "What type of system prevents fires by reducing oxygen levels?",
+                "opts": ["A. Water mist", "B. Hypoxic system", "C. Chemical gas", "D. Sprinkler system"],
+                "a": "B"
+              }
+            ]
+          },
+          {
+            "name": "Module 11-4: Fire Protection and Safety",
+            "questions": [
+              {
+                "q": "What is a key feature of fire protection systems in data centres?",
+                "opts": ["A. Manual power on", "B. Emergency Power Off", "C. Increased cooling", "D. Limited access"],
+                "a": "B"
+              },
+              {
+                "q": "What should escape doors in a data centre follow?",
+                "opts": ["A. Swing-in principle", "B. Swing-out principle", "C. Sliding mechanism", "D. Locked state"],
+                "a": "B"
+              },
+              {
+                "q": "What standard outlines detailed life-safety requirements for data centres?",
+                "opts": ["A. ISO-11801", "B. NFPA 101", "C. EN-50600", "D. TIA-568A"],
+                "a": "B"
+              },
+              {
+                "q": "What should be conducted regularly to ensure fire safety?",
+                "opts": ["A. Software updates", "B. Evacuation drills", "C. Marketing campaigns", "D. Equipment sales"],
+                "a": "B"
+              },
+              {
+                "q": "What should be clear and within legal distance in a data centre?",
+                "opts": ["A. Parking spaces", "B. Escape routes", "C. Office desks", "D. Storage areas"],
+                "a": "B"
+              },
+              {
+                "q": "What should be integrated with the building fire panel?",
+                "opts": ["A. IT servers", "B. Fire protection systems", "C. Employee records", "D. Marketing tools"],
+                "a": "B"
+              },
+              {
+                "q": "What should be avoided to ensure fire truck access during a fire?",
+                "opts": ["A. Open doors", "B. Parked vehicles", "C. Clear pathways", "D. Signage"],
+                "a": "B"
+              },
+              {
+                "q": "What is a key component of evacuation procedures?",
+                "opts": ["A. Software backups", "B. Meeting point", "C. Increased cooling", "D. Data encryption"],
+                "a": "B"
+              },
+              {
+                "q": "What principle should evacuation plans follow?",
+                "opts": ["A. Plan-do-check-act", "B. Monitor-analyze-report", "C. Design-build-test", "D. Install-maintain-remove"],
+                "a": "A"
+              },
+              {
+                "q": "What should be readily available in evacuation procedures?",
+                "opts": ["A. Marketing plans", "B. Emergency numbers", "C. Software licenses", "D. Employee schedules"],
+                "a": "B"
+              }
+            ]
+          },
+          {
+            "name": "Module 12-1: Monitoring and Reporting",
+            "questions": [
+              {
+                "q": "What is the primary goal of data centre monitoring and reporting?",
+                "opts": ["A. Reduce staff", "B. Improve operations", "C. Increase downtime", "D. Limit access"],
+                "a": "B"
+              },
+              {
+                "q": "What does a monitoring system help maintain in a data centre?",
+                "opts": ["A. Employee records", "B. Required capacity", "C. Marketing strategies", "D. Office space"],
+                "a": "B"
+              },
+              {
+                "q": "What should a monitoring system include to manage devices?",
+                "opts": ["A. Single centralized interface", "B. Manual controls", "C. External software", "D. Limited sensors"],
+                "a": "A"
+              },
+              {
+                "q": "What does a monitoring system track to prevent downtime?",
+                "opts": ["A. Employee attendance", "B. Critical alarms", "C. Marketing campaigns", "D. Software updates"],
+                "a": "B"
+              },
+              {
+                "q": "What metric is included in energy efficiency reporting?",
+                "opts": ["A. Employee count", "B. PUE metrics", "C. Data storage", "D. Office size"],
+                "a": "B"
+              },
+              {
+                "q": "What technology is used for alerts in a monitoring system?",
+                "opts": ["A. SMS and email", "B. Manual logs", "C. Paper reports", "D. Verbal communication"],
+                "a": "A"
+              },
+              {
+                "q": "What does reporting provide about a data centre's health?",
+                "opts": ["A. Marketing success", "B. Availability status", "C. Employee performance", "D. Software versions"],
+                "a": "B"
+              },
+              {
+                "q": "What is an example of data centre reporting?",
+                "opts": ["A. Staff schedules", "B. Energy consumption", "C. Office layout", "D. Customer feedback"],
+                "a": "B"
+              },
+              {
+                "q": "What is a benefit of proactive reporting in a data centre?",
+                "opts": ["A. Increased downtime", "B. Detect potential issues", "C. Reduced capacity", "D. Limited access"],
+                "a": "B"
+              },
+              {
+                "q": "What should a report generator provide for recipients?",
+                "opts": ["A. Fixed reports only", "B. Customized reports", "C. Verbal updates", "D. Marketing data"],
+                "a": "B"
+              }
+            ]
+          },
+          {
+            "name": "Module 12-2: DCIM, BMS, and NMS",
+            "questions": [
+              {
+                "q": "What does DCIM stand for in data centre management?",
+                "opts": ["A. Data Centre Information Model", "B. Data Centre Infrastructure Management", "C. Device Control Interface Module", "D. Data Capacity Integration Method"],
+                "a": "B"
+              },
+              {
+                "q": "What does a Building Management System (BMS) do in a data centre?",
+                "opts": ["A. Monitors only", "B. Monitors and controls", "C. Stores data", "D. Manages software"],
+                "a": "B"
+              },
+              {
+                "q": "What is a key function of a Network Management System (NMS)?",
+                "opts": ["A. Employee scheduling", "B. Device monitoring", "C. Data encryption", "D. Marketing analysis"],
+                "a": "B"
+              },
+              {
+                "q": "What equipment does DCIM monitor in a data centre?",
+                "opts": ["A. Office furniture", "B. Servers and PDUs", "C. Employee devices", "D. Marketing tools"],
+                "a": "B"
+              },
+              {
+                "q": "What is a common functionality of DCIM solutions?",
+                "opts": ["A. Asset management", "B. Employee training", "C. Data encryption", "D. Office design"],
+                "a": "A"
+              },
+              {
+                "q": "What does an Environmental Monitoring System (EMS) primarily do?",
+                "opts": ["A. Controls devices", "B. Monitors only", "C. Manages networks", "D. Stores data"],
+                "a": "B"
+              },
+              {
+                "q": "What is a key consideration when implementing a DCIM solution?",
+                "opts": ["A. Marketing strategy", "B. Return on Investment", "C. Employee count", "D. Office location"],
+                "a": "B"
+              },
+              {
+                "q": "What does a BMS manage in a data centre?",
+                "opts": ["A. Software updates", "B. Power and cooling", "C. Employee records", "D. Customer data"],
+                "a": "B"
+              },
+              {
+                "q": "What does an NMS assist with in network management?",
+                "opts": ["A. Bandwidth utilization", "B. Employee scheduling", "C. Data storage", "D. Marketing campaigns"],
+                "a": "A"
+              },
+              {
+                "q": "What is a benefit of DCIM in data centre operations?",
+                "opts": ["A. Reduced staff", "B. Improved efficiency", "C. Increased downtime", "D. Limited connectivity"],
+                "a": "B"
+              }
+            ]
+          }
+        ];        let currentModule = null;
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let shuffledQuestions = [];
+        let selectedQuestionCount = 10;
+        let quizStartTime = null;
+        let selectedModuleIndex = null;
 
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
+        // Load quiz data and display modules
+        function loadQuizData() {
+            displayModules();
         }
 
-        function shuffleOptions(question) {
-            const options = Array.from(question.querySelectorAll('.option'));
-            const correctAnswer = question.dataset.correct;
-            const answerMap = { A: 0, B: 1, C: 2, D: 3 };
-            const correctIndex = answerMap[correctAnswer];
-            const correctText = options[correctIndex].textContent;
+        // Display available modules
+        function displayModules() {
+            const moduleGrid = document.getElementById('moduleGrid');
+            moduleGrid.innerHTML = '';
 
-            const shuffledOptions = shuffle(options.map(opt => ({
-                value: opt.dataset.value,
-                text: opt.textContent
-            })));
-
-            options.forEach((opt, i) => {
-                opt.dataset.value = shuffledOptions[i].value;
-                opt.textContent = shuffledOptions[i].text;
-            });
-
-            const newCorrectIndex = shuffledOptions.findIndex(opt => opt.text === correctText);
-            question.dataset.correct = ['A', 'B', 'C', 'D'][newCorrectIndex];
-        }
-
-        function startQuiz(moduleIndex) {
-            moduleSelector.classList.remove('active');
-            quiz.classList.add('active');
-            currentModule = modules[moduleIndex];
-            currentQuestionIndex = 0;
-            score = 0;
-            answers = [];
-
-            shuffledQuestions = shuffle(Array.from(currentModule.querySelectorAll('.question')));
-            shuffledQuestions.forEach((q, i) => {
-                currentModule.appendChild(q);
-                q.querySelector('p').textContent = `${i + 1}. ${q.querySelector('p').textContent.split('. ')[1]}`;
-                shuffleOptions(q);
-            });
-
-            currentModule.classList.add('active');
-            showQuestion();
-        }
-
-        function showQuestion() {
-            shuffledQuestions.forEach((q, i) => q.classList.toggle('active', i === currentQuestionIndex));
-            startTimer(shuffledQuestions[currentQuestionIndex]);
-        }
-
-        function startTimer(question) {
-            let timeLeft = 15;
-            timerDisplay.textContent = timeLeft;
-            clearInterval(timer);
-            timer = setInterval(() => {
-                timeLeft--;
-                timerDisplay.textContent = timeLeft;
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    recordAnswer(question, null);
-                }
-            }, 1000);
-
-            const options = question.querySelectorAll('.option');
-            let selectedOption = null;
-            options.forEach(option => {
-                option.onclick = () => {
-                    options.forEach(opt => opt.classList.remove('selected'));
-                    option.classList.add('selected');
-                    selectedOption = option;
-                    clearInterval(timer);
-                    recordAnswer(question, selectedOption);
-                };
-            });
-        }
-
-        function recordAnswer(question, selectedOption) {
-            const correctAnswer = question.dataset.correct;
-            const options = question.querySelectorAll('.option');
-            const isCorrect = selectedOption && selectedOption.dataset.value === correctAnswer;
-            if (isCorrect) score++;
-
-            answers.push({
-                question: question.querySelector('p').textContent,
-                selected: selectedOption ? selectedOption.textContent : 'None',
-                correct: options[Array.from(options).findIndex(opt => opt.dataset.value === correctAnswer)].textContent,
-                isCorrect
-            });
-
-            nextQuestion();
-        }
-
-        function nextQuestion() {
-            currentQuestionIndex++;
-            if (currentQuestionIndex < shuffledQuestions.length) {
-                showQuestion();
-            } else {
-                showSummary();
-            }
-        }
-
-        function showSummary() {
-            quiz.classList.remove('active');
-            summary.classList.add('active');
-            document.querySelector('#score').textContent = score;
-            const summaryDetails = document.querySelector('#summary-details');
-            answers.forEach((answer, index) => {
-                const div = document.createElement('div');
-                div.className = `summary-item ${answer.isCorrect ? 'correct' : 'wrong'}`;
-                div.innerHTML = `
-                    <p><strong>Quest ${index + 1}:</strong> ${answer.question}</p>
-                    <p><strong>Your Pick:</strong> ${answer.selected}</p>
-                    <p><strong>Right Answer:</strong> ${answer.correct}</p>
+            quizData.forEach((module, index) => {
+                const moduleCard = document.createElement('div');
+                moduleCard.className = 'module-card';
+                moduleCard.onclick = () => showQuestionCountSelector(index);
+                
+                moduleCard.innerHTML = `
+                    <div class="module-title">${module.name}</div>
+                    <div class="module-description">${module.questions.length} questions available</div>
                 `;
-                summaryDetails.appendChild(div);
+                
+                moduleGrid.appendChild(moduleCard);
             });
         }
 
-        moduleButtons.forEach(btn => {
-            btn.addEventListener('click', () => startQuiz(parseInt(btn.dataset.module)));
+        // Show question count selector
+        function showQuestionCountSelector(moduleIndex) {
+            selectedModuleIndex = moduleIndex;
+            currentModule = quizData[moduleIndex];
+            
+            document.getElementById('moduleSelector').style.display = 'none';
+            document.getElementById('questionCountSelector').style.display = 'block';
+            document.getElementById('selectedModuleTitle').textContent = currentModule.name;
+            
+            const maxQuestions = Math.min(currentModule.questions.length, 25);
+            selectedQuestionCount = Math.min(10, maxQuestions);
+            
+            document.getElementById('questionCount').value = selectedQuestionCount;
+            document.getElementById('questionCount').max = maxQuestions;
+            document.getElementById('availableQuestions').textContent = `Available: ${currentModule.questions.length} questions`;
+            
+            updateQuestionCountButtons();
+        }
+
+        // Change question count
+        function changeQuestionCount(delta) {
+            const input = document.getElementById('questionCount');
+            const newValue = parseInt(input.value) + delta;
+            const minValue = parseInt(input.min);
+            const maxValue = parseInt(input.max);
+            
+            if (newValue >= minValue && newValue <= maxValue) {
+                selectedQuestionCount = newValue;
+                input.value = newValue;
+                updateQuestionCountButtons();
+            }
+        }
+
+        // Update question count buttons
+        function updateQuestionCountButtons() {
+            const input = document.getElementById('questionCount');
+            const decreaseBtn = document.querySelector('.count-btn:first-child');
+            const increaseBtn = document.querySelector('.count-btn:last-child');
+            
+            decreaseBtn.disabled = parseInt(input.value) <= parseInt(input.min);
+            increaseBtn.disabled = parseInt(input.value) >= parseInt(input.max);
+        }
+
+        // Go back to modules from question count selector
+        function goBackToModules() {
+            document.getElementById('quizSection').classList.remove('active');
+            document.getElementById('resultsSection').classList.remove('active');
+            document.getElementById('questionCountSelector').style.display = 'none';
+            document.getElementById('moduleSelector').style.display = 'block';
+        }
+
+        // Start quiz with selected settings
+        function startQuizWithSettings() {
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            quizStartTime = Date.now();
+            
+            // Shuffle questions and select the specified count
+            const allQuestions = [...currentModule.questions].sort(() => Math.random() - 0.5);
+            shuffledQuestions = allQuestions.slice(0, selectedQuestionCount);
+            
+            document.getElementById('questionCountSelector').style.display = 'none';
+            document.getElementById('quizSection').classList.add('active');
+            document.getElementById('quizTitle').textContent = currentModule.name;
+            
+            displayQuestion();
+        }
+
+        // Display current question
+        function displayQuestion() {
+            const question = shuffledQuestions[currentQuestionIndex];
+            const questionText = document.getElementById('questionText');
+            const optionsContainer = document.getElementById('optionsContainer');
+            const progressText = document.getElementById('progressText');
+            const progressFill = document.getElementById('progressFill');
+
+            questionText.textContent = question.q;
+            progressText.textContent = `Question ${currentQuestionIndex + 1} of ${shuffledQuestions.length}`;
+            progressFill.style.width = `${((currentQuestionIndex + 1) / shuffledQuestions.length) * 100}%`;
+
+            optionsContainer.innerHTML = '';
+            question.opts.forEach((option, index) => {
+                const optionButton = document.createElement('button');
+                optionButton.className = 'option-button';
+                optionButton.textContent = option;
+                optionButton.onclick = () => selectOption(optionButton, option.charAt(0));
+                optionsContainer.appendChild(optionButton);
+            });
+
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
+            document.getElementById('nextBtn').disabled = true;
+            document.getElementById('nextBtn').textContent = 
+                currentQuestionIndex === shuffledQuestions.length - 1 ? 'Finish Quiz' : 'Next';
+        }
+
+        // Handle option selection
+        function selectOption(button, answer) {
+            // Clear previous selections
+            document.querySelectorAll('.option-button').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            button.classList.add('selected');
+            userAnswers[currentQuestionIndex] = answer;
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        // Navigate to next question
+        function nextQuestion() {
+            if (currentQuestionIndex < shuffledQuestions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // Navigate to previous question
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion();
+                
+                // Restore previous answer if exists
+                if (userAnswers[currentQuestionIndex]) {
+                    const buttons = document.querySelectorAll('.option-button');
+                    buttons.forEach(btn => {
+                        if (btn.textContent.charAt(0) === userAnswers[currentQuestionIndex]) {
+                            btn.classList.add('selected');
+                        }
+                    });
+                    document.getElementById('nextBtn').disabled = false;
+                }
+            }
+        }        // Calculate and show results
+        function showResults() {
+            let correctAnswers = 0;
+            const quizEndTime = Date.now();
+            const timeTaken = Math.round((quizEndTime - quizStartTime) / 1000); // in seconds
+            
+            shuffledQuestions.forEach((question, index) => {
+                if (userAnswers[index] === question.a) {
+                    correctAnswers++;
+                }
+            });
+
+            const percentage = Math.round((correctAnswers / shuffledQuestions.length) * 100);
+            const incorrectAnswers = shuffledQuestions.length - correctAnswers;
+            
+            // Show results screen
+            document.getElementById('quizSection').classList.remove('active');
+            document.getElementById('resultsSection').classList.add('active');
+            
+            // Update performance indicator and comments
+            updatePerformanceIndicator(percentage);
+            
+            // Update stats
+            document.getElementById('scoreDisplay').textContent = `${percentage}%`;
+            document.getElementById('correctCount').textContent = correctAnswers;
+            document.getElementById('incorrectCount').textContent = incorrectAnswers;
+            document.getElementById('totalQuestions').textContent = shuffledQuestions.length;
+            document.getElementById('timeTaken').textContent = formatTime(timeTaken);
+            
+            // Generate detailed review
+            generateQuestionReview();
+        }
+
+        // Update performance indicator based on score
+        function updatePerformanceIndicator(percentage) {
+            const emoji = document.getElementById('performanceEmoji');
+            const comment = document.getElementById('performanceComment');
+            const description = document.getElementById('performanceDescription');
+            
+            if (percentage >= 90) {
+                emoji.textContent = '🏆';
+                comment.textContent = 'Outstanding Performance!';
+                comment.style.color = '#34a853';
+                description.textContent = 'Excellent work! You have mastered this module.';
+            } else if (percentage >= 80) {
+                emoji.textContent = '🎯';
+                comment.textContent = 'Great Job!';
+                comment.style.color = '#34a853';
+                description.textContent = 'Very good performance. You have a strong understanding.';
+            } else if (percentage >= 70) {
+                emoji.textContent = '👍';
+                comment.textContent = 'Good Work!';
+                comment.style.color = '#fbbc04';
+                description.textContent = 'Good job! Consider reviewing some topics to improve further.';
+            } else if (percentage >= 60) {
+                emoji.textContent = '📚';
+                comment.textContent = 'Room for Improvement';
+                comment.style.color = '#ff9800';
+                description.textContent = 'You\'re on the right track. Some additional study would be beneficial.';
+            } else {
+                emoji.textContent = '💪';
+                comment.textContent = 'Keep Learning!';
+                comment.style.color = '#ea4335';
+                description.textContent = 'Don\'t worry! This is a learning opportunity. Review the material and try again.';
+            }
+        }
+
+        // Format time in minutes and seconds
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            
+            if (minutes > 0) {
+                return `${minutes}m ${remainingSeconds}s`;
+            } else {
+                return `${remainingSeconds}s`;
+            }
+        }
+
+        // Generate detailed question review
+        function generateQuestionReview() {
+            const reviewContent = document.getElementById('reviewContent');
+            reviewContent.innerHTML = '';
+            
+            shuffledQuestions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'review-question';
+                
+                const userAnswer = userAnswers[index];
+                const correctAnswer = question.a;
+                const isCorrect = userAnswer === correctAnswer;
+                
+                const questionText = document.createElement('div');
+                questionText.className = 'review-question-text';
+                questionText.textContent = `${index + 1}. ${question.q}`;
+                questionDiv.appendChild(questionText);
+                
+                // Find the correct and user answer texts
+                const correctAnswerText = question.opts.find(opt => opt.startsWith(correctAnswer))?.substring(3) || 'Unknown';
+                const userAnswerText = userAnswer ? question.opts.find(opt => opt.startsWith(userAnswer))?.substring(3) || 'Not answered' : 'Not answered';
+                
+                // User's answer
+                const userAnswerDiv = document.createElement('div');
+                userAnswerDiv.className = `review-answer user-choice ${isCorrect ? 'correct' : 'incorrect'}`;
+                userAnswerDiv.innerHTML = `
+                    <span class="answer-indicator">Your Answer:</span> ${userAnswerText}
+                    ${isCorrect ? ' ✓' : ' ✗'}
+                `;
+                questionDiv.appendChild(userAnswerDiv);
+                
+                // Correct answer (if user was wrong)
+                if (!isCorrect) {
+                    const correctAnswerDiv = document.createElement('div');
+                    correctAnswerDiv.className = 'review-answer correct';
+                    correctAnswerDiv.innerHTML = `
+                        <span class="answer-indicator">Correct Answer:</span> ${correctAnswerText} ✓
+                    `;
+                    questionDiv.appendChild(correctAnswerDiv);
+                }
+                
+                reviewContent.appendChild(questionDiv);
+            });
+        }
+
+        // Toggle question review visibility
+        function toggleReview() {
+            const reviewContent = document.getElementById('reviewContent');
+            const toggleButton = document.querySelector('.review-toggle');
+            
+            if (reviewContent.style.display === 'none' || reviewContent.style.display === '') {
+                reviewContent.style.display = 'block';
+                toggleButton.textContent = 'Hide Details';
+            } else {
+                reviewContent.style.display = 'none';
+                toggleButton.textContent = 'Show Details';
+            }
+        }
+
+        // Go back to module selection
+        function goBackToModules() {
+            document.getElementById('quizSection').classList.remove('active');
+            document.getElementById('resultsSection').classList.remove('active');
+            document.getElementById('moduleSelector').style.display = 'block';
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            loadQuizData();
         });
     </script>
 </body>
