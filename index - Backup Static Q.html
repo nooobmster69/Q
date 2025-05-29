@@ -627,34 +627,517 @@
             </div>
         </main>
     </div>    <script>
-        // Global variable to hold quiz data
-        let quizData = [];
-        
-        // Function to load quiz data from external JSON file
-        async function loadQuizData() {
-            try {
-                const response = await fetch('quizData.json');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                quizData = await response.json();
-                console.log('Quiz data loaded successfully:', quizData.length + ' modules');
-                displayModules();
-                return quizData;
-            } catch (error) {
-                console.error('Error loading quiz data:', error);
-                // Fallback to empty array if loading fails
-                quizData = [];
-                alert('Error loading quiz data. Please check if quizData.json file exists and is accessible.');
-                return quizData;
-            }
-        }let currentModule = null;
+        // Quiz data embedded directly in the HTML
+        const quizData = [
+          {
+            "name": "Module 1: History of Data Centres",
+            "questions": [
+              {
+                "q": "What was the first general-purpose electronic computer developed during World War II?",
+                "opts": ["A. Colossus", "B. ENIAC", "C. UNIVAC", "D. IBM 701"],
+                "a": "B"
+              },
+              {
+                "q": "How many operations per second could the ENIAC perform?",
+                "opts": ["A. 1000", "B. 3000", "C. 5000", "D. 7000"],
+                "a": "C"
+              },
+              {
+                "q": "What was a primary reason for placing early computers in a separated area?",
+                "opts": ["A. Aesthetic appeal", "B. Complexity of operation", "C. Public access", "D. Marketing purposes"],
+                "a": "B"
+              },
+              {
+                "q": "What era saw the introduction of client-server networks in data centres?",
+                "opts": ["A. Mainframe era", "B. Microcomputer era", "C. Client-server era", "D. Cloud computing era"],
+                "a": "C"
+              },
+              {
+                "q": "What term gained popularity with the design of dedicated rooms for computer infrastructure?",
+                "opts": ["A. Server farm", "B. Data centre", "C. Cloud hub", "D. IT warehouse"],
+                "a": "B"
+              },
+              {
+                "q": "What drove the rise of Internet Data Centres (IDCs)?",
+                "opts": ["A. Government regulations", "B. Dot com era", "C. Microcomputer boom", "D. Mobile technology"],
+                "a": "B"
+              },
+              {
+                "q": "What is a key feature of an enterprise data centre?",
+                "opts": ["A. Rented space", "B. Owned by the business", "C. Shared with multiple clients", "D. Temporary setup"],
+                "a": "B"
+              },
+              {
+                "q": "What does a colocation data centre provide to its customers?",
+                "opts": ["A. Servers and storage", "B. Cooling and power", "C. Software licenses", "D. IT staff"],
+                "a": "B"
+              },
+              {
+                "q": "What distinguishes a wholesale data centre from a colocation data centre?",
+                "opts": ["A. Multiple customers per space", "B. Single customer per space", "C. No cooling provided", "D. Free access"],
+                "a": "B"
+              },
+              {
+                "q": "What technology demand has driven the fast growth of modern data centres?",
+                "opts": ["A. Virtual reality", "B. Cloud computing", "C. Analog systems", "D. Desktop applications"],
+                "a": "B"
+              }
+            ]
+          },
+          {
+            "name": "Module 2: The Data Centre and its Relation to the Business",
+            "questions": [
+              {
+                "q": "Why is Information Technology considered vital to modern organizations?",
+                "opts": ["A. Reduces physical space", "B. Integral to operations", "C. Eliminates manual labor", "D. Simplifies accounting"],
+                "a": "B"
+              },
+              {
+                "q": "What is one key objective of IT for businesses?",
+                "opts": ["A. Reduce customer base", "B. Support business growth", "C. Limit data storage", "D. Decrease connectivity"],
+                "a": "B"
+              },
+              {
+                "q": "According to Gartner, what does a data centre primarily maintain?",
+                "opts": ["A. Employee records", "B. Back-end IT systems", "C. Marketing strategies", "D. Financial ledgers"],
+                "a": "B"
+              },
+              {
+                "q": "What is a potential consequence of data centre unavailability?",
+                "opts": ["A. Increased revenue", "B. Loss of production hours", "C. Improved reputation", "D. Faster operations"],
+                "a": "B"
+              },
+              {
+                "q": "What was the approximate average cost of data centre downtime in 2015?",
+                "opts": ["A. $505,502", "B. $740,357", "C. $1,000,000", "D. $250,000"],
+                "a": "B"
+              },
+              {
+                "q": "What is a common cause of data centre unavailability according to surveys?",
+                "opts": ["A. Software updates", "B. UPS system failure", "C. Employee training", "D. Data backups"],
+                "a": "B"
+              },
+              {
+                "q": "What should be performed to understand the true impact of downtime?",
+                "opts": ["A. Market survey", "B. Risk assessment", "C. Employee review", "D. Software audit"],
+                "a": "B"
+              },
+              {
+                "q": "What is a key factor in determining data centre design requirements?",
+                "opts": ["A. Employee count", "B. Cost of downtime", "C. Office location", "D. Marketing budget"],
+                "a": "B"
+              },
+              {
+                "q": "What is a common issue caused by human error in data centres?",
+                "opts": ["A. Increased efficiency", "B. System unavailability", "C. Reduced costs", "D. Faster processing"],
+                "a": "B"
+              },
+              {
+                "q": "What infrastructure supports IT in a data centre?",
+                "opts": ["A. Office furniture", "B. Power and cooling", "C. Employee training", "D. Marketing tools"],
+                "a": "B"
+              }
+            ]
+          },
+          {
+            "name": "Module 3: Data Centre Standards",
+            "questions": [
+              {
+                "q": "What type of document is intended for certification?",
+                "opts": ["A. White paper", "B. Guideline", "C. Standard", "D. Manual"],
+                "a": "C"
+              },
+              {
+                "q": "Who develops standards with a transparent process?",
+                "opts": ["A. Individual authors", "B. Standards Development Organization", "C. Commercial firms", "D. General public"],
+                "a": "B"
+              },
+              {
+                "q": "What overrules international standards in data centre design?",
+                "opts": ["A. Corporate policies", "B. National standards", "C. Industry trends", "D. Customer preferences"],
+                "a": "B"
+              },
+              {
+                "q": "What is the current version of the ANSI/TIA-942 standard?",
+                "opts": ["A. A", "B. B", "C. C", "D. D"],
+                "a": "C"
+              },
+              {
+                "q": "Which standard is widely followed for data centre certification?",
+                "opts": ["A. ISO-11801", "B. ANSI/TIA-942", "C. NFPA-75", "D. EN-50600"],
+                "a": "B"
+              },
+              {
+                "q": "What distinguishes ANSI/TIA-942 from Uptime Institute guidelines?",
+                "opts": ["A. Non-profit status", "B. Accredited certification", "C. Commercial focus", "D. Shorter document"],
+                "a": "B"
+              },
+              {
+                "q": "What is the document size of ANSI/TIA-942 compared to Uptime Tier?",
+                "opts": ["A. 12 pages", "B. 50 pages", "C. 134 pages", "D. 200 pages"],
+                "a": "C"
+              },
+              {
+                "q": "Which standard provides detailed textual descriptions for data centres?",
+                "opts": ["A. Uptime Tier", "B. ANSI/TIA-942", "C. ISO/IEC TS 22237", "D. Switch Tier-5"],
+                "a": "B"
+              },
+              {
+                "q": "What is a key feature of ANSI/TIA-942 audits?",
+                "opts": ["A. Self-defined process", "B. ISO-based process", "C. No certification", "D. Lifetime certification"],
+                "a": "B"
+              },
+              {
+                "q": "Which organization accredits ANSI/TIA-942 as an SDO?",
+                "opts": ["A. ISO", "B. CENELEC", "C. ANSI", "D. Uptime"],
+                "a": "C"
+              }
+            ]
+          },
+          {
+            "name": "Module 3-1: Properties of ANSI/TIA-942",
+            "questions": [
+              {
+                "q": "What characterizes a Rated-1 data centre?",
+                "opts": ["A. Multiple active paths", "B. Single path with no redundancy", "C. Concurrently maintainable", "D. Fault tolerant"],
+                "a": "B"
+              },
+              {
+                "q": "What feature defines a Rated-2 data centre?",
+                "opts": ["A. No redundancy", "B. Component redundancy", "C. Multiple active paths", "D. Fault tolerance"],
+                "a": "B"
+              },
+              {
+                "q": "What is a key attribute of a Rated-3 data centre?",
+                "opts": ["A. Single path", "B. Concurrently maintainable", "C. No redundancy", "D. Basic setup"],
+                "a": "B"
+              },
+              {
+                "q": "What makes a Rated-4 data centre fault tolerant?",
+                "opts": ["A. Single path", "B. Multiple active paths", "C. No redundancy", "D. Limited cooling"],
+                "a": "B"
+              },
+              {
+                "q": "What is a primary factor in choosing a redundancy rating?",
+                "opts": ["A. Employee count", "B. Cost of downtime", "C. Office size", "D. Marketing goals"],
+                "a": "B"
+              },
+              {
+                "q": "What determines the overall Rated level of a data centre?",
+                "opts": ["A. Highest rating achieved", "B. Lowest rating achieved", "C. Average rating", "D. Most recent rating"],
+                "a": "B"
+              },
+              {
+                "q": "What does a Rated-3 data centre allow during maintenance?",
+                "opts": ["A. System shutdown", "B. No interruption", "C. Single point of failure", "D. Limited cooling"],
+                "a": "B"
+              },
+              {
+                "q": "What is not required in a Rated-4 data centre's power path?",
+                "opts": ["A. Redundant components", "B. Multiple paths", "C. Active cooling", "D. Fault tolerance"],
+                "a": "A"
+              },
+              {
+                "q": "What is a typical configuration for generators in a Rated-2 data centre?",
+                "opts": ["A. N+2", "B. N+1", "C. N", "D. No generators"],
+                "a": "B"
+              },
+              {
+                "q": "What is the only accredited certification scheme for data centres globally?",
+                "opts": ["A. Uptime Tier", "B. ANSI/TIA-942", "C. ISO/IEC TS 22237", "D. EN-50600"],
+                "a": "B"
+              }
+            ]
+          },
+          {
+            "name": "Module 11-2: Fire Safety",
+            "questions": [
+              {
+                "q": "What is a key feature of a water mist fire suppression system?",
+                "opts": ["A. High water usage", "B. Small water droplets", "C. Chemical gas release", "D. Oxygen enrichment"],
+                "a": "B"
+              },
+              {
+                "q": "What is the NOAEL for Inergen in fire suppression systems?",
+                "opts": ["A. 5-8% oxygen", "B. 12-15% oxygen", "C. 20-25% oxygen", "D. 30-35% oxygen"],
+                "a": "B"
+              },
+              {
+                "q": "What is the typical lifespan of halocarbon gases in fire suppression systems?",
+                "opts": ["A. 5-10 years", "B. 20-25 years", "C. 50 years", "D. Indefinite"],
+                "a": "B"
+              },
+              {
+                "q": "At what temperature do sprinklers typically activate in a data centre?",
+                "opts": ["A. 30-40°C", "B. 57-77°C", "C. 100-120°C", "D. 150-200°C"],
+                "a": "B"
+              },
+              {
+                "q": "What does the PASS acronym stand for in fire extinguisher use?",
+                "opts": ["A. Pull-Aim-Squeeze-Sweep", "B. Push-Activate-Stop-Spray", "C. Pull-Adjust-Start-Swing", "D. Press-Aim-Shoot-Swipe"],
+                "a": "A"
+              },
+              {
+                "q": "What type of fire does a Class C extinguisher address?",
+                "opts": ["A. Combustible metals", "B. Electrical equipment", "C. Ordinary combustibles", "D. Flammable liquids"],
+                "a": "B"
+              },
+              {
+                "q": "What is a risk of using water on a Class C fire?",
+                "opts": ["A. Chemical reaction", "B. Electrical shock", "C. Increased flames", "D. Equipment corrosion"],
+                "a": "B"
+              },
+              {
+                "q": "How long does a typical fire extinguisher discharge last?",
+                "opts": ["A. 10 seconds", "B. 30 seconds", "C. 60 seconds", "D. 120 seconds"],
+                "a": "A"
+              },
+              {
+                "q": "What should be done immediately after using a fire extinguisher?",
+                "opts": ["A. Store it", "B. Recharge it", "C. Dispose of it", "D. Clean it"],
+                "a": "B"
+              },
+              {
+                "q": "What is a drawback of water mist systems in data centres?",
+                "opts": ["A. High cost", "B. Increased humidity", "C. Chemical residue", "D. Oxygen depletion"],
+                "a": "B"
+              }
+            ]
+          },
+          {
+            "name": "Module 11-3: Fire Prevention",
+            "questions": [
+              {
+                "q": "What is a key electrical fire safety rule for data centres?",
+                "opts": ["A. Overload circuits", "B. Check wiring regularly", "C. Use unrated cables", "D. Ignore fuses"],
+                "a": "B"
+              },
+              {
+                "q": "What can detect electrical problems before they cause a fire?",
+                "opts": ["A. Annual thermographic scanning", "B. Software updates", "C. Employee surveys", "D. Marketing analysis"],
+                "a": "A"
+              },
+              {
+                "q": "What is the oxygen level in a hypoxic fire prevention system?",
+                "opts": ["A. 5%", "B. 15%", "C. 25%", "D. 35%"],
+                "a": "B"
+              },
+              {
+                "q": "What is the primary function of a hypoxic fire system?",
+                "opts": ["A. Extinguish fires", "B. Prevent ignition", "C. Cool equipment", "D. Increase oxygen"],
+                "a": "B"
+              },
+              {
+                "q": "What should be avoided to prevent electrical fires?",
+                "opts": ["A. Using extension cords", "B. Overloading sockets", "C. Regular maintenance", "D. Replacing worn cords"],
+                "a": "B"
+              },
+              {
+                "q": "What indicates a potential electrical fire hazard?",
+                "opts": ["A. Stable power usage", "B. Burning smell", "C. New equipment", "D. Software upgrades"],
+                "a": "B"
+              },
+              {
+                "q": "What is a benefit of hypoxic systems for human safety?",
+                "opts": ["A. High oxygen levels", "B. No threat to humans", "C. Chemical suppression", "D. Increased humidity"],
+                "a": "B"
+              },
+              {
+                "q": "What should be replaced to prevent electrical fires?",
+                "opts": ["A. New appliances", "B. Damaged cords", "C. Software systems", "D. Office furniture"],
+                "a": "B"
+              },
+              {
+                "q": "What is a sign of electrical issues in a data centre?",
+                "opts": ["A. Increased efficiency", "B. Tripping circuit breakers", "C. Faster processing", "D. Reduced costs"],
+                "a": "B"
+              },
+              {
+                "q": "What type of system prevents fires by reducing oxygen levels?",
+                "opts": ["A. Water mist", "B. Hypoxic system", "C. Chemical gas", "D. Sprinkler system"],
+                "a": "B"
+              }
+            ]
+          },
+          {
+            "name": "Module 11-4: Fire Protection and Safety",
+            "questions": [
+              {
+                "q": "What is a key feature of fire protection systems in data centres?",
+                "opts": ["A. Manual power on", "B. Emergency Power Off", "C. Increased cooling", "D. Limited access"],
+                "a": "B"
+              },
+              {
+                "q": "What should escape doors in a data centre follow?",
+                "opts": ["A. Swing-in principle", "B. Swing-out principle", "C. Sliding mechanism", "D. Locked state"],
+                "a": "B"
+              },
+              {
+                "q": "What standard outlines detailed life-safety requirements for data centres?",
+                "opts": ["A. ISO-11801", "B. NFPA 101", "C. EN-50600", "D. TIA-568A"],
+                "a": "B"
+              },
+              {
+                "q": "What should be conducted regularly to ensure fire safety?",
+                "opts": ["A. Software updates", "B. Evacuation drills", "C. Marketing campaigns", "D. Equipment sales"],
+                "a": "B"
+              },
+              {
+                "q": "What should be clear and within legal distance in a data centre?",
+                "opts": ["A. Parking spaces", "B. Escape routes", "C. Office desks", "D. Storage areas"],
+                "a": "B"
+              },
+              {
+                "q": "What should be integrated with the building fire panel?",
+                "opts": ["A. IT servers", "B. Fire protection systems", "C. Employee records", "D. Marketing tools"],
+                "a": "B"
+              },
+              {
+                "q": "What should be avoided to ensure fire truck access during a fire?",
+                "opts": ["A. Open doors", "B. Parked vehicles", "C. Clear pathways", "D. Signage"],
+                "a": "B"
+              },
+              {
+                "q": "What is a key component of evacuation procedures?",
+                "opts": ["A. Software backups", "B. Meeting point", "C. Increased cooling", "D. Data encryption"],
+                "a": "B"
+              },
+              {
+                "q": "What principle should evacuation plans follow?",
+                "opts": ["A. Plan-do-check-act", "B. Monitor-analyze-report", "C. Design-build-test", "D. Install-maintain-remove"],
+                "a": "A"
+              },
+              {
+                "q": "What should be readily available in evacuation procedures?",
+                "opts": ["A. Marketing plans", "B. Emergency numbers", "C. Software licenses", "D. Employee schedules"],
+                "a": "B"
+              }
+            ]
+          },
+          {
+            "name": "Module 12-1: Monitoring and Reporting",
+            "questions": [
+              {
+                "q": "What is the primary goal of data centre monitoring and reporting?",
+                "opts": ["A. Reduce staff", "B. Improve operations", "C. Increase downtime", "D. Limit access"],
+                "a": "B"
+              },
+              {
+                "q": "What does a monitoring system help maintain in a data centre?",
+                "opts": ["A. Employee records", "B. Required capacity", "C. Marketing strategies", "D. Office space"],
+                "a": "B"
+              },
+              {
+                "q": "What should a monitoring system include to manage devices?",
+                "opts": ["A. Single centralized interface", "B. Manual controls", "C. External software", "D. Limited sensors"],
+                "a": "A"
+              },
+              {
+                "q": "What does a monitoring system track to prevent downtime?",
+                "opts": ["A. Employee attendance", "B. Critical alarms", "C. Marketing campaigns", "D. Software updates"],
+                "a": "B"
+              },
+              {
+                "q": "What metric is included in energy efficiency reporting?",
+                "opts": ["A. Employee count", "B. PUE metrics", "C. Data storage", "D. Office size"],
+                "a": "B"
+              },
+              {
+                "q": "What technology is used for alerts in a monitoring system?",
+                "opts": ["A. SMS and email", "B. Manual logs", "C. Paper reports", "D. Verbal communication"],
+                "a": "A"
+              },
+              {
+                "q": "What does reporting provide about a data centre's health?",
+                "opts": ["A. Marketing success", "B. Availability status", "C. Employee performance", "D. Software versions"],
+                "a": "B"
+              },
+              {
+                "q": "What is an example of data centre reporting?",
+                "opts": ["A. Staff schedules", "B. Energy consumption", "C. Office layout", "D. Customer feedback"],
+                "a": "B"
+              },
+              {
+                "q": "What is a benefit of proactive reporting in a data centre?",
+                "opts": ["A. Increased downtime", "B. Detect potential issues", "C. Reduced capacity", "D. Limited access"],
+                "a": "B"
+              },
+              {
+                "q": "What should a report generator provide for recipients?",
+                "opts": ["A. Fixed reports only", "B. Customized reports", "C. Verbal updates", "D. Marketing data"],
+                "a": "B"
+              }
+            ]
+          },
+          {
+            "name": "Module 12-2: DCIM, BMS, and NMS",
+            "questions": [
+              {
+                "q": "What does DCIM stand for in data centre management?",
+                "opts": ["A. Data Centre Information Model", "B. Data Centre Infrastructure Management", "C. Device Control Interface Module", "D. Data Capacity Integration Method"],
+                "a": "B"
+              },
+              {
+                "q": "What does a Building Management System (BMS) do in a data centre?",
+                "opts": ["A. Monitors only", "B. Monitors and controls", "C. Stores data", "D. Manages software"],
+                "a": "B"
+              },
+              {
+                "q": "What is a key function of a Network Management System (NMS)?",
+                "opts": ["A. Employee scheduling", "B. Device monitoring", "C. Data encryption", "D. Marketing analysis"],
+                "a": "B"
+              },
+              {
+                "q": "What equipment does DCIM monitor in a data centre?",
+                "opts": ["A. Office furniture", "B. Servers and PDUs", "C. Employee devices", "D. Marketing tools"],
+                "a": "B"
+              },
+              {
+                "q": "What is a common functionality of DCIM solutions?",
+                "opts": ["A. Asset management", "B. Employee training", "C. Data encryption", "D. Office design"],
+                "a": "A"
+              },
+              {
+                "q": "What does an Environmental Monitoring System (EMS) primarily do?",
+                "opts": ["A. Controls devices", "B. Monitors only", "C. Manages networks", "D. Stores data"],
+                "a": "B"
+              },
+              {
+                "q": "What is a key consideration when implementing a DCIM solution?",
+                "opts": ["A. Marketing strategy", "B. Return on Investment", "C. Employee count", "D. Office location"],
+                "a": "B"
+              },
+              {
+                "q": "What does a BMS manage in a data centre?",
+                "opts": ["A. Software updates", "B. Power and cooling", "C. Employee records", "D. Customer data"],
+                "a": "B"
+              },
+              {
+                "q": "What does an NMS assist with in network management?",
+                "opts": ["A. Bandwidth utilization", "B. Employee scheduling", "C. Data storage", "D. Marketing campaigns"],
+                "a": "A"
+              },
+              {
+                "q": "What is a benefit of DCIM in data centre operations?",
+                "opts": ["A. Reduced staff", "B. Improved efficiency", "C. Increased downtime", "D. Limited connectivity"],
+                "a": "B"
+              }
+            ]
+          }
+        ];        let currentModule = null;
         let currentQuestionIndex = 0;
         let userAnswers = [];
         let shuffledQuestions = [];
         let selectedQuestionCount = 10;
         let quizStartTime = null;
-        let selectedModuleIndex = null;        // Display available modules
+        let selectedModuleIndex = null;
+
+        // Load quiz data and display modules
+        function loadQuizData() {
+            displayModules();
+        }
+
+        // Display available modules
         function displayModules() {
             const moduleGrid = document.getElementById('moduleGrid');
             moduleGrid.innerHTML = '';
