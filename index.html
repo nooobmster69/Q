@@ -1,1034 +1,1159 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ultimate QCM Quiz - Final Version</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Fredoka+One&display=swap" rel="stylesheet">
-  <style>
-    /* Floating shapes animation */
-    @keyframes floatShape {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-20px) rotate(180deg); }
-    }
-    @keyframes shimmer {
-      0% { background-position: -200px 0; }
-      100% { background-position: calc(200px + 100%) 0; }
-    }
-    @keyframes bounce {
-      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-      40% { transform: translateY(-10px); }
-      60% { transform: translateY(-5px); }
-    }
-    
-    body {
-      font-family: 'Montserrat', Arial, sans-serif;
-      background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff9ff3);
-      background-size: 400% 400%;
-      animation: gradientShift 8s ease infinite;
-      margin: 0;
-      padding: 0;
-      color: #222;
-      min-height: 100vh;
-      overflow-x: hidden;
-      position: relative;
-    }
-    
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    
-    /* Floating shapes */
-    .floating-shapes {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 1;
-    }
-    
-    .shape {
-      position: absolute;
-      border-radius: 50%;
-      opacity: 0.1;
-      animation: floatShape 6s ease-in-out infinite;
-    }
-    
-    .shape:nth-child(1) {
-      width: 80px;
-      height: 80px;
-      background: #ff6b6b;
-      top: 10%;
-      left: 10%;
-      animation-delay: -0.5s;
-    }
-    
-    .shape:nth-child(2) {
-      width: 60px;
-      height: 60px;
-      background: #4ecdc4;
-      top: 20%;
-      right: 15%;
-      animation-delay: -2s;
-    }
-    
-    .shape:nth-child(3) {
-      width: 100px;
-      height: 100px;
-      background: #45b7d1;
-      bottom: 20%;
-      left: 20%;
-      animation-delay: -3.5s;
-    }
-    
-    .shape:nth-child(4) {
-      width: 70px;
-      height: 70px;
-      background: #feca57;
-      bottom: 30%;
-      right: 10%;
-      animation-delay: -1s;
-    }
-    
-    .main {
-      max-width: 480px;
-      margin: 0 auto;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      position: relative;
-      z-index: 2;
-    }
-    
-    .header {
-      width: 100%;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(15px);
-      border-radius: 0 0 32px 32px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-      padding: 36px 0 20px 0;
-      text-align: center;
-      margin-bottom: 18px;
-      position: relative;
-      z-index: 2;
-      animation: fadeInDown 0.7s cubic-bezier(.68,-0.55,.27,1.55);
-      border: 3px solid rgba(255, 255, 255, 0.3);
-    }
-    
-    @keyframes fadeInDown {
-      0% { opacity: 0; transform: translateY(-40px) scale(0.9); }
-      100% { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    
-    .title {
-      font-family: 'Fredoka One', cursive;
-      font-size: 2.5em;
-      font-weight: 700;
-      background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
-      background-size: 200% 200%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 8px;
-      letter-spacing: 2px;
-      animation: gradientShift 3s ease infinite, bounce 2s ease-in-out infinite;
-      text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-    
-    .progress {
-      font-size: 1.2em;
-      background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 0;
-      font-weight: 700;
-      animation: shimmer 2s ease-in-out infinite alternate;
-    }
-    
-    .timer {
-      font-size: 1.4em;
-      font-weight: 700;
-      color: #fff;
-      background: linear-gradient(45deg, #ff6b6b, #ff9ff3);
-      border-radius: 50%;
-      width: 56px;
-      height: 56px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 18px auto;
-      box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
-      animation: pop 0.5s, timerPulse 1s ease-in-out infinite;
-      transition: all 0.3s ease;
-      border: 3px solid rgba(255, 255, 255, 0.3);
-    }
-    
-    @keyframes timerPulse {
-      0%, 100% { transform: scale(1); box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3); }
-      50% { transform: scale(1.05); box-shadow: 0 12px 30px rgba(255, 107, 107, 0.5); }
-    }
-    
-    @keyframes pop {
-      0% { transform: scale(0.7); }
-      80% { transform: scale(1.1); }
-      100% { transform: scale(1); }
-    }
-    
-    .card {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(20px);
-      border-radius: 32px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-      padding: 32px 24px 24px 24px;
-      width: 100%;
-      margin-bottom: 18px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      animation: fadeInUp 0.7s cubic-bezier(.68,-0.55,.27,1.55);
-      min-height: 280px;
-      position: relative;
-      border: 3px solid rgba(255, 255, 255, 0.3);
-      overflow: hidden;
-    }
-    
-    .card::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-      animation: cardShine 3s ease-in-out infinite;
-      pointer-events: none;
-    }
-    
-    @keyframes cardShine {
-      0% { transform: translateX(-100%) translateY(-100%) rotate(30deg); }
-      100% { transform: translateX(100%) translateY(100%) rotate(30deg); }
-    }
-    
-    @keyframes fadeInUp {
-      0% { opacity: 0; transform: translateY(40px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-    
-    #question {
-      font-size: 1.3em;
-      font-weight: 700;
-      background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      background-size: 200% 200%;
-      animation: gradientShift 4s ease infinite;
-      margin-bottom: 24px;
-      text-align: center;
-      min-height: 60px;
-      transition: all 0.3s ease;
-      position: relative;
-      z-index: 2;
-    }
-    
-    #options label {
-      display: block;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(240, 248, 255, 0.9));
-      margin-bottom: 16px;
-      padding: 18px 16px;
-      border-radius: 20px;
-      cursor: pointer;
-      border: 3px solid transparent;
-      font-size: 1.1em;
-      color: #333;
-      font-weight: 600;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-      position: relative;
-      text-align: left;
-      animation: fadeInOption 0.6s ease backwards;
-      backdrop-filter: blur(10px);
-      overflow: hidden;
-    }
-    
-    #options label::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-      transition: left 0.5s ease;
-    }
-    
-    #options label:hover::before {
-      left: 100%;
-    }
-    
-    #options label:hover {
-      transform: translateY(-3px) scale(1.02);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-      border-color: rgba(255, 107, 107, 0.3);
-    }
-    
-    @keyframes fadeInOption {
-      0% { opacity: 0; transform: translateX(-30px) scale(0.9); }
-      100% { opacity: 1; transform: translateX(0) scale(1); }
-    }
-    
-    #options input[type="radio"] {
-      margin-right: 16px;
-      accent-color: #ff6b6b;
-      transform: scale(1.3);
-    }
-    
-    #options label.selected {
-      background: linear-gradient(135deg, #ff6b6b, #ff9ff3);
-      border: 3px solid #fff;
-      color: #fff;
-      box-shadow: 0 8px 30px rgba(255, 107, 107, 0.4);
-      animation: selectedPulse 0.6s ease;
-      transform: scale(1.03);
-    }
-    
-    @keyframes selectedPulse {
-      0% { transform: scale(1); box-shadow: 0 8px 30px rgba(255, 107, 107, 0.4); }
-      50% { transform: scale(1.05); box-shadow: 0 12px 40px rgba(255, 107, 107, 0.6); }
-      100% { transform: scale(1.03); box-shadow: 0 8px 30px rgba(255, 107, 107, 0.4); }
-    }
-    
-    .controls {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: 20px;
-      gap: 20px;
-    }
-    
-    .btn {
-      background: linear-gradient(135deg, #4ecdc4, #45b7d1);
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      width: 56px;
-      height: 56px;
-      font-size: 1.8em;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 8px 20px rgba(69, 183, 209, 0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .btn::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      transition: all 0.3s ease;
-      transform: translate(-50%, -50%);
-    }
-    
-    .btn:hover::before {
-      width: 100%;
-      height: 100%;
-    }
-    
-    .btn:hover {
-      transform: translateY(-3px) scale(1.1);
-      box-shadow: 0 12px 30px rgba(69, 183, 209, 0.5);
-    }
-    
-    .btn:active {
-      transform: translateY(-1px) scale(1.05);
-    }
-    
-    .btn:disabled {
-      background: linear-gradient(135deg, #e0e0e0, #c0c0c0);
-      color: #999;
-      cursor: not-allowed;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      transform: none;
-    }
-    
-    .btn:disabled:hover {
-      transform: none;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
-    
-    #submit-btn {
-      border-radius: 20px;
-      width: auto;
-      height: auto;
-      padding: 16px 40px;
-      font-size: 1.2em;
-      margin-top: 20px;
-      background: linear-gradient(135deg, #ff6b6b, #ff9ff3);
-      color: #fff;
-      font-weight: 700;
-      border: none;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
-      animation: fadeInUp 0.5s;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    #submit-btn::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-      transition: left 0.5s ease;
-    }
-    
-    #submit-btn:hover::before {
-      left: 100%;
-    }
-    
-    #submit-btn:hover {
-      transform: translateY(-3px) scale(1.05);
-      box-shadow: 0 12px 35px rgba(255, 107, 107, 0.5);
-    }
-    
-    #submit-btn:active {
-      transform: translateY(-1px) scale(1.02);
-    }
-    
-    .result {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(20px);
-      border-radius: 32px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-      padding: 36px 24px 24px 24px;
-      width: 100%;
-      margin: 24px 0 0 0;
-      text-align: center;
-      animation: fadeInUp 0.7s cubic-bezier(.68,-0.55,.27,1.55);
-      min-height: 220px;
-      position: relative;
-      border: 3px solid rgba(255, 255, 255, 0.3);
-    }
-    
-    .result-title {
-      font-size: 2.2em;
-      background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      font-weight: 700;
-      margin-bottom: 12px;
-      animation: pop 0.5s;
-      font-family: 'Fredoka One', cursive;
-    }
-    
-    .result-score {
-      font-size: 1.8em;
-      background: linear-gradient(45deg, #feca57, #ff9ff3);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      font-weight: 700;
-      margin-bottom: 18px;
-      animation: pop 0.5s 0.2s backwards;
-    }
-    
-    .result-message {
-      font-size: 1.2em;
-      color: #333;
-      margin-bottom: 24px;
-      animation: fadeInUp 0.5s 0.3s backwards;
-      font-weight: 600;
-    }
-    
-    .confetti {
-      pointer-events: none;
-      position: fixed;
-      top: 0; left: 0; width: 100vw; height: 100vh;
-      z-index: 9999;
-      overflow: hidden;
-    }
-    
-    .module-select {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      width: 100vw;
-      background: linear-gradient(45deg, rgba(255, 107, 107, 0.9), rgba(78, 205, 196, 0.9), rgba(69, 183, 209, 0.9));
-      background-size: 400% 400%;
-      animation: gradientShift 6s ease infinite;
-      position: fixed;
-      top: 0; left: 0;
-      z-index: 1000;
-      backdrop-filter: blur(20px);
-    }
-    
-    .module-select-title {
-      font-size: 2em;
-      background: linear-gradient(45deg, #fff, #f0f8ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      font-weight: 700;
-      margin-bottom: 30px;
-      font-family: 'Fredoka One', cursive;
-      text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      animation: bounce 2s ease-in-out infinite;
-    }
-    
-    .module-btn {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 248, 255, 0.8));
-      backdrop-filter: blur(10px);
-      color: #333;
-      font-size: 1.1em;
-      font-weight: 700;
-      border: 3px solid rgba(255, 255, 255, 0.3);
-      border-radius: 20px;
-      padding: 18px 40px;
-      margin: 10px 0;
-      cursor: pointer;
-      width: 90vw;
-      max-width: 400px;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-      animation: fadeInUp 0.6s ease backwards;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .module-btn::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-      transition: left 0.5s ease;
-    }
-    
-    .module-btn:hover::before {
-      left: 100%;
-    }
-    
-    .module-btn:hover {
-      transform: translateY(-5px) scale(1.02);
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-      border-color: rgba(255, 107, 107, 0.5);
-    }
-    
-    .module-btn:active {
-      transform: translateY(-2px) scale(1.01);
-    }
-    
-    .cancel-btn {
-      background: linear-gradient(135deg, #ff6b6b, #ff9ff3);
-      color: #fff;
-      font-size: 1.1em;
-      font-weight: 700;
-      border: none;
-      border-radius: 20px;
-      padding: 16px 40px;
-      margin: 30px 0 0 0;
-      cursor: pointer;
-      width: 90vw;
-      max-width: 400px;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      animation: fadeInUp 0.6s ease backwards;
-      box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .cancel-btn::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-      transition: left 0.5s ease;
-    }
-    
-    .cancel-btn:hover::before {
-      left: 100%;
-    }
-    
-    .cancel-btn:hover {
-      transform: translateY(-3px) scale(1.02);
-      box-shadow: 0 12px 35px rgba(255, 107, 107, 0.5);
-    }
-    
-    .cancel-btn:active {
-      transform: translateY(-1px) scale(1.01);
-    }
-    
-    @media (max-width: 600px) {
-      .main, .card, .result { max-width: 100vw; border-radius: 0; }
-      .header { border-radius: 0 0 24px 24px; }
-      .card { padding: 18px 4vw 12px 4vw; }
-      .result { padding: 24px 4vw 18px 4vw; }
-      .module-btn, .cancel-btn { font-size: 1em; }
-      .title { font-size: 2em; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Centre Quest</title>
+    <style>
+        body {
+            font-family: 'Baloo 2', 'Comic Sans MS', sans-serif;
+            background: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            overflow-x: hidden;
+        }
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        h1 {
+            text-align: center;
+            color: #ff4d4d;
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px #ffd700;
+        }
+        h2 {
+            color: #4d79ff;
+            font-size: 2em;
+            text-align: center;
+        }
+        .module-selector, .summary {
+            display: none;
+            text-align: center;
+        }
+        .module-selector.active, .quiz.active, .summary.active {
+            display: block;
+            animation: zoomIn 0.6s ease;
+        }
+        .module-btn {
+            display: inline-block;
+            margin: 15px;
+            padding: 15px 35px;
+            background: #ffca28;
+            color: #333;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 1.3em;
+            transition: transform 0.3s, background 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .module-btn:hover {
+            background: #ffab00;
+            transform: scale(1.15);
+        }
+        .question {
+            margin-bottom: 25px;
+            display: none;
+        }
+        .question.active {
+            display: block;
+            animation: bounceIn 0.7s ease;
+        }
+        .question p {
+            font-size: 1.6em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #4a4a4a;
+            text-align: center;
+            background: #e6f3ff;
+            padding: 15px;
+            border-radius: 12px;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .option {
+            background: #b2f5ea;
+            padding: 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: background 0.3s, transform 0.3s;
+            text-align: center;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+        .option:hover {
+            background: #81ecec;
+            transform: scale(1.1);
+        }
+        .option.selected {
+            background: #ff7675;
+            color: #fff;
+        }
+        .timer {
+            text-align: center;
+            font-size: 1.8em;
+            color: #ff4d4d;
+            margin-bottom: 15px;
+            font-weight: bold;
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .summary h2 {
+            color: #ff4d4d;
+            font-size: 2.5em;
+        }
+        .summary-item {
+            background: #f0f0f0;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 12px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+        .summary-item.correct {
+            background: #b2f5b2;
+        }
+        .summary-item.wrong {
+            background: #f5b2b2;
+        }
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #fff;
+            font-size: 1em;
+            text-shadow: 2px 2px #333;
+        }
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0.7); opacity: 0; }
+            60% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+        @media (max-width: 600px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+            .quiz-container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2.2em;
+            }
+            .question p {
+                font-size: 1.3em;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- Floating background shapes -->
-  <div class="floating-shapes">
-    <div class="shape"></div>
-    <div class="shape"></div>
-    <div class="shape"></div>
-    <div class="shape"></div>
-  </div>
-  
-  <div class="main">
-    <div class="header">
-      <div class="title" id="quiz-title">🎯 Ultimate QCM Quiz</div>
-      <div class="progress" id="quiz-progress">Question 1/10</div>
-      <div class="timer" id="timer">15</div>
+    <div class="quiz-container">
+        <h1>Data Centre Quest</h1>
+
+        <div class="module-selector active">
+            <h2>Pick Your Adventure!</h2>
+            <div class="module-btn" data-module="0">Data Centre Time Travel</div>
+            <div class="module-btn" data-module="1">Business Superhero</div>
+            <div class="module-btn" data-module="2">Standards Star</div>
+            <div class="module-btn" data-module="3">TIA-942 Explorer</div>
+            <div class="module-btn" data-module="4">Fire Safety Wizard</div>
+            <div class="module-btn" data-module="5">Fire Prevention Pal</div>
+            <div class="module-btn" data-module="6">Safety Squad</div>
+            <div class="module-btn" data-module="7">Monitoring Mission</div>
+            <div class="module-btn" data-module="8">Tech Tools Trek</div>
+        </div>
+
+        <div class="quiz">
+            <div class="timer">Time Left: <span id="time">15</span>s</div>
+            <div class="module" data-module="0">
+                <div class="question" data-correct="B">
+                    <p>1. What was the first super cool computer built during World War II?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Colossus</div>
+                        <div class="option" data-value="B">ENIAC</div>
+                        <div class="option" data-value="C">UNIVAC</div>
+                        <div class="option" data-value="D">IBM 701</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="C">
+                    <p>2. How many zaps per second could ENIAC do?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">1000</div>
+                        <div class="option" data-value="B">3000</div>
+                        <div class="option" data-value="C">5000</div>
+                        <div class="option" data-value="D">7000</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>3. Why did old computers get their own special room?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">To look pretty</div>
+                        <div class="option" data-value="B">They were super tricky to use</div>
+                        <div class="option" data-value="C">For everyone to see</div>
+                        <div class="option" data-value="D">To sell them</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="C">
+                    <p>4. When did computers start talking to each other in data centres?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Mainframe era</div>
+                        <div class="option" data-value="B">Microcomputer era</div>
+                        <div class="option" data-value="C">Client-server era</div>
+                        <div class="option" data-value="D">Cloud computing era</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>5. What’s the name for a computer’s special home?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Server farm</div>
+                        <div class="option" data-value="B">Data centre</div>
+                        <div class="option" data-value="C">Cloud hub</div>
+                        <div class="option" data-value="D">IT warehouse</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>6. What made Internet Data Centres super popular?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">New laws</div>
+                        <div class="option" data-value="B">Dot com boom</div>
+                        <div class="option" data-value="C">Tiny computers</div>
+                        <div class="option" data-value="D">Mobile phones</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>7. What’s special about an enterprise data centre?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">It’s rented</div>
+                        <div class="option" data-value="B">The company owns it</div>
+                        <div class="option" data-value="C">Shared with others</div>
+                        <div class="option" data-value="D">It’s temporary</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>8. What does a colocation data centre give its users?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Computers</div>
+                        <div class="option" data-value="B">Cool air and power</div>
+                        <div class="option" data-value="C">Apps</div>
+                        <div class="option" data-value="D">Workers</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>9. How is a wholesale data centre different from a colocation one?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Many users per space</div>
+                        <div class="option" data-value="B">One user per space</div>
+                        <div class="option" data-value="C">No cooling</div>
+                        <div class="option" data-value="D">Free to use</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>10. What tech made data centres grow super fast?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Virtual reality</div>
+                        <div class="option" data-value="B">Cloud computing</div>
+                        <div class="option" data-value="C">Old systems</div>
+                        <div class="option" data-value="D">Desktop apps</div>
+                    </div>
+                </div>
+            </div>
+            <div class="module" data-module="1">
+                <div class="question" data-correct="A">
+                    <p>1. Why is tech super important for companies?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">It runs everything</div>
+                        <div class="option" data-value="B">Saves space</div>
+                        <div class="option" data-value="C">No workers needed</div>
+                        <div class="option" data-value="D">Makes math easy</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>2. What does IT help businesses do?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Lose customers</div>
+                        <div class="option" data-value="B">Grow bigger</div>
+                        <div class="option" data-value="C">Store less data</div>
+                        <div class="option" data-value="D">Stay offline</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>3. What does a data centre keep safe, per Gartner?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Worker files</div>
+                        <div class="option" data-value="B">Big tech systems</div>
+                        <div class="option" data-value="C">Ads</div>
+                        <div class="option" data-value="D">Money books</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>4. What happens if a data centre stops working?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">More money</div>
+                        <div class="option" data-value="B">Lost work time</div>
+                        <div class="option" data-value="C">Better fame</div>
+                        <div class="option" data-value="D">Faster work</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>5. How much did data centre downtime cost in 2015?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">$505,502</div>
+                        <div class="option" data-value="B">$740,357</div>
+                        <div class="option" data-value="C">$1,000,000</div>
+                        <div class="option" data-value="D">$250,000</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>6. What often makes data centres stop?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">New software</div>
+                        <div class="option" data-value="B">Power backup failure</div>
+                        <div class="option" data-value="C">Worker classes</div>
+                        <div class="option" data-value="D">Data saving</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>7. What helps understand downtime’s damage?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Market quiz</div>
+                        <div class="option" data-value="B">Risk check</div>
+                        <div class="option" data-value="C">Worker feedback</div>
+                        <div class="option" data-value="D">App scan</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>8. What shapes how a data centre is made?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Worker numbers</div>
+                        <div class="option" data-value="B">Downtime cost</div>
+                        <div class="option" data-value="C">Office spot</div>
+                        <div class="option" data-value="D">Ad budget</div>
+                    </div>
+                </div class="question" data-correct="B">
+                    <p>9. What do workers sometimes mess up in data centres?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Faster work</div>
+                        <div class="option" data-value="B">System crashes</div>
+                        <div class="option" data-value="C">Cheaper costs</div>
+                        <div class="option" data-value="D">Quick tasks</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>10. What powers tech in a data centre?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Office chairs</div>
+                        <div class="option" data-value="B">Cooling and electricity</div>
+                        <div class="option" data-value="C">Worker lessons</div>
+                        <div class="option" data-value="D">Sales gear</div>
+                    </div>
+                </div>
+            </div>
+            <div class="module" data-module="2">
+                <div class="question" data-correct="C">
+                    <p>1. What paper is used for data centre badges?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Story page</div>
+                        <div class="option" data-value="B">Rulebook</div>
+                        <div class="option" data-value="C">Standard</div>
+                        <div class="option" data-value="D">Guide</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>2. Who writes data centre rules clearly?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Solo writers</div>
+                        <div class="option" data-value="B">Standards team</div>
+                        <div class="option" data-value="C">Big shops</div>
+                        <div class="option" data-value="D">Everyone</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>3. What beats global data centre rules?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Company plans</div>
+                        <div class="option" data-value="B">Country rules</div>
+                        <div class="option" data-value="C">Tech fads</div>
+                        <div class="option" data-value="D">Customer wishes</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="C">
+                    <p>4. What’s the latest ANSI/TIA-942 version?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">A</div>
+                        <div class="option" data-value="B">B</div>
+                        <div class="option" data-value="C">C</div>
+                        <div class="option" data-value="D">D</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>5. Which rule is a data centre star?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">ISO-11801</div>
+                        <div class="option" data-value="B">ANSI/TIA-942</div>
+                        <div data-value="option" data-value="C">NFPA-75</div>
+                        <div data-value="option" data-value="D">EN-50600</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>6. What makes ANSI/TIA-942 different from Uptime rules?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">No profit</div>
+                        <div class="option" data-value="B">Official badge</div>
+                        <div class="option" data-value="C">Business focus</div>
+                        <div class="option" data-value="D">Short book</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="C">
+                    <p>7. How big is the ANSI/TIA-942 rulebook?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">12 pages</div>
+                        <div class="option" data-value="B">50 pages</div>
+                        <div class="option" data-value="C">134 pages</div>
+                        <div class="option" data-value="D">200 pages</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>8. Which rule explains data centres best?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Uptime Tier</div>
+                        <div class="option" data-value="B">ANSI/TIA-942</div>
+                        <div class="option" data-value="C">ISO/IEC TS 22237</div>
+                        <div class="option" data-value="D">Switch Tier-5</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>9. What’s cool about ANSI/TIA-942 checks?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Make your own way</div>
+                        <div class="option" data-value="B">ISO-style check</div>
+                        <div class="option" data-value="C">No badge</div>
+                        <div class="option" data-value="D">Forever badge</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="C">
+                    <p>10. Who says ANSI/TIA-942 is a real deal?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">ISO</div>
+                        <div class="option" data-value="B">CENELEC</div>
+                        <div class="option" data-value="C">ANSI</div>
+                        <div class="option" data-value="D">Uptime</div>
+                    </div>
+                </div>
+            </div>
+            <div class="module" data-module="3">
+                <div class="question" data-correct="B">
+                    <p>1. What’s a Rated-1 data centre like?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Lots of paths</div>
+                        <div class="option" data-value="B">One path, no backup</div>
+                        <div class="option" data-value="C">Fix it anytime</div>
+                        <div class="option" data-value="D">Never breaks</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>2. What makes a Rated-2 data centre special?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">No backup</div>
+                        <div class="option" data-value="B">Extra parts</div>
+                        <div class="option" data-value="C">Many paths</div>
+                        <div class="option" data-value="D">Super strong</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>3. What’s awesome about a Rated-3 data centre?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">One path</div>
+                        <div class="option" data-value="B">Fix without stopping</div>
+                        <div class="option" data-value="C">No backup</div>
+                        <div class="option" data-value="D">Simple setup</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>4. Why is a Rated-4 data centre super tough?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">One path</div>
+                        <div class="option" data-value="B">Many active paths</div>
+                        <div class="option" data-value="C">No backup</div>
+                        <div class="option" data-value="D">Less cooling</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>5. What helps pick a backup level?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Worker count</div>
+                        <div class="option" data-value="B">Cost of stopping</div>
+                        <div class="option" data-value="C">Office size</div>
+                        <div class="option" data-value="D">Sales goals</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>6. What sets a data centre’s Rated level?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Best score</div>
+                        <div class="option" data-value="B">Worst score</div>
+                        <div class="option" data-value="C">Average score</div>
+                        <div class="option" data-value="D">Newest score</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>7. What can a Rated-3 data centre do during fixes?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Shut down</div>
+                        <div class="option" data-value="B">Keep running</div>
+                        <div class="option" data-value="C">Break easily</div>
+                        <div class="option" data-value="D">Less cooling</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="A">
+                    <p>8. What’s not needed in a Rated-4 power path?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Extra parts</div>
+                        <div class="option" data-value="B">Many paths</div>
+                        <div class="option" data-value="C">Cool air</div>
+                        <div class="option" data-value="D">Super strength</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>9. How do generators work in a Rated-2 data centre?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">N+2</div>
+                        <div class="option" data-value="B">N+1</div>
+                        <div class="option" data-value="C">N</div>
+                        <div class="option" data-value="D">No generators</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>10. What’s the only global data centre badge?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Uptime Tier</div>
+                        <div class="option" data-value="B">ANSI/TIA-942</div>
+                        <div class="option" data-value="C">ISO/IEC TS 22237</div>
+                        <div class="option" data-value="D">EN-50600</div>
+                    </div>
+                </div>
+            </div>
+            <div class="module" data-module="4">
+                <div class="question" data-correct="B">
+                    <p>1. What’s cool about water mist fire systems?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Lots of water</div>
+                        <div class="option" data-value="B">Tiny water drops</div>
+                        <div class="option" data-value="C">Chemical gas</div>
+                        <div class="option" data-value="D">More oxygen</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>2. What’s the safe oxygen level for Inergen?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">5-8%</div>
+                        <div class="option" data-value="B">12-15%</div>
+                        <div class="option" data-value="C">20-25%</div>
+                        <div class="option" data-value="D">30-35%</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>3. How long do halocarbon gases last?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">5-10 years</div>
+                        <div class="option" data-value="B">20-25 years</div>
+                        <div class="option" data-value="C">50 years</div>
+                        <div class="option" data-value="D">Forever</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>4. When do sprinklers turn on in data centres?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">30-40°C</div>
+                        <div class="option" data-value="B">57-77°C</div>
+                        <div class="option" data-value="C">100-120°C</div>
+                        <div class="option" data-value="D">150-200°C</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="A">
+                    <p>5. What does PASS mean for fire extinguishers?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Pull-Aim-Squeeze-Sweep</div>
+                        <div class="option" data-value="B">Push-Activate-Stop-Spray</div>
+                        <div class="option" data-value="C">Pull-Adjust-Start-Swing</div>
+                        <div class="option" data-value="D">Press-Aim-Shoot-Swipe</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>6. What fire does a Class C extinguisher fight?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Metal fires</div>
+                        <div class="option" data-value="B">Electric fires</div>
+                        <div class="option" data-value="C">Paper fires</div>
+                        <div class="option" data-value="D">Oil fires</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>7. Why avoid water on a Class C fire?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Chemical mix</div>
+                        <div class="option" data-value="B">Electric shock</div>
+                        <div class="option" data-value="C">Bigger flames</div>
+                        <div class="option" data-value="D">Rust</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="A">
+                    <p>8. How long does a fire extinguisher spray?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">10 seconds</div>
+                        <div class="option" data-value="B">30 seconds</div>
+                        <div class="option" data-value="C">60 seconds</div>
+                        <div class="option" data-value="D">120 seconds</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>9. What do you do after using a fire extinguisher?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Put it away</div>
+                        <div class="option" data-value="B">Fill it up</div>
+                        <div class="option" data-value="C">Throw it out</div>
+                        <div class="option" data-value="D">Clean it</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>10. What’s a water mist system downside?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Costs a lot</div>
+                        <div class="option" data-value="B">Makes things wet</div>
+                        <div class="option" data-value="C">Leaves chemicals</div>
+                        <div class="option" data-value="D">Less oxygen</div>
+                    </div>
+                </div>
+            </div>
+            <div class="module" data-module="5">
+                <div class="question" data-correct="B">
+                    <p>1. What’s a fire safety rule for data centres?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Overload wires</div>
+                        <div class="option" data-value="B">Check wires often</div>
+                        <div class="option" data-value="C">Use bad cables</div>
+                        <div class="option" data-value="D">Ignore fuses</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="A">
+                    <p>2. What spots electrical issues early?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Heat scans</div>
+                        <div class="option" data-value="B">New software</div>
+                        <div class="option" data-value="C">Worker polls</div>
+                        <div class="option" data-value="D">Sales checks</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>3. What’s the oxygen level in a hypoxic system?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">5%</div>
+                        <div class="option" data-value="B">15%</div>
+                        <div class="option" data-value="C">25%</div>
+                        <div class="option" data-value="D">35%</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>4. What does a hypoxic system do?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Puts out fires</div>
+                        <div class="option" data-value="B">Stops fires starting</div>
+                        <div class="option" data-value="C">Cools machines</div>
+                        <div class="option" data-value="D">Adds oxygen</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>5. What avoids electrical fires?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Extension cords</div>
+                        <div class="option" data-value="B">Not overloading plugs</div>
+                        <div class="option" data-value="C">Regular fixes</div>
+                        <div class="option" data-value="D">New cords</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>6. What’s a sign of an electrical fire risk?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Steady power</div>
+                        <div class="option" data-value="B">Burning smell</div>
+                        <div class="option" data-value="C">New gear</div>
+                        <div class="option" data-value="D">App updates</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>7. Why are hypoxic systems safe for people?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Lots of oxygen</div>
+                        <div class="option" data-value="B">No harm to humans</div>
+                        <div class="option" data-value="C">Chemical spray</div>
+                        <div class="option" data-value="D">More water</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>8. What should you replace to stop fires?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">New machines</div>
+                        <div class="option" data-value="B">Broken cords</div>
+                        <div class="option" data-value="C">Software</div>
+                        <div class="option" data-value="D">Chairs</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>9. What shows electrical trouble in a data centre?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Better work</div>
+                        <div class="option" data-value="B">Tripping breakers</div>
+                        <div class="option" data-value="C">Fast tasks</div>
+                        <div class="option" data-value="D">Lower costs</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>10. What system stops fires with less oxygen?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Water mist</div>
+                        <div class="option" data-value="B">Hypoxic system</div>
+                        <div class="option" data-value="C">Chemical gas</div>
+                        <div class="option" data-value="D">Sprinklers</div>
+                    </div>
+                </div>
+            </div>
+            <div class="module" data-module="6">
+                <div class="question" data-correct="B">
+                    <p>1. What’s a key part of data centre fire safety?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Manual power</div>
+                        <div class="option" data-value="B">Emergency shut-off</div>
+                        <div class="option" data-value="C">More cooling</div>
+                        <div class="option" data-value="D">Locked doors</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>2. How should escape doors work?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Swing in</div>
+                        <div class="option" data-value="B">Swing out</div>
+                        <div class="option" data-value="C">Slide</div>
+                        <div class="option" data-value="D">Stay locked</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>3. What rule keeps data centres safe for people?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">ISO-11801</div>
+                        <div class="option" data-value="B">NFPA 101</div>
+                        <div class="option" data-value="C">EN-50600</div>
+                        <div class="option" data-value="D">TIA-568A</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>4. What keeps fire safety sharp?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">New apps</div>
+                        <div class="option" data-value="B">Escape drills</div>
+                        <div class="option" data-value="C">Ads</div>
+                        <div class="option" data-value="D">Gear sales</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>5. What must be clear in a data centre?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Parking spots</div>
+                        <div class="option" data-value="B">Escape paths</div>
+                        <div class="option" data-value="C">Desks</div>
+                        <div class="option" data-value="D">Storage</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>6. What connects to the fire panel?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Servers</div>
+                        <div class="option" data-value="B">Fire systems</div>
+                        <div class="option" data-value="C">Worker files</div>
+                        <div class="option" data-value="D">Sales tools</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>7. What blocks fire trucks?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Open doors</div>
+                        <div class="option" data-value="B">Parked cars</div>
+                        <div class="option" data-value="C">Clear paths</div>
+                        <div class="option" data-value="D">Signs</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>8. What’s key in evacuation plans?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Data backups</div>
+                        <div class="option" data-value="B">Meeting spot</div>
+                        <div class="option" data-value="C">More cooling</div>
+                        <div class="option" data-value="D">Data locks</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="A">
+                    <p>9. What plan do evacuation rules follow?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Plan-do-check-act</div>
+                        <div class="option" data-value="B">Watch-analyze-report</div>
+                        <div class="option" data-value="C">Build-test-fix</div>
+                        <div class="option" data-value="D">Set-up-keep-remove</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>10. What’s handy in evacuation plans?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Sales plans</div>
+                        <div class="option" data-value="B">Emergency numbers</div>
+                        <div class="option" data-value="C">App licenses</div>
+                        <div class="option" data-value="D">Worker shifts</div>
+                    </div>
+                </div>
+            </div>
+            <div class="module" data-module="7">
+                <div class="question" data-correct="B">
+                    <p>1. Why watch and report in data centres?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Fewer workers</div>
+                        <div class="option" data-value="B">Better work</div>
+                        <div class="option" data-value="C">More breaks</div>
+                        <div class="option" data-value="D">Less access</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>2. What does monitoring keep right?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Worker files</div>
+                        <div class="option" data-value="B">Power needs</div>
+                        <div class="option" data-value="C">Ads</div>
+                        <div class="option" data-value="D">Office space</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="A">
+                    <p>3. What’s needed to control devices?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">One control screen</div>
+                        <div class="option" data-value="B">Hand controls</div>
+                        <div class="option" data-value="C">Outside apps</div>
+                        <div class="option" data-value="D">Few sensors</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>4. What does monitoring stop?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Worker hours</div>
+                        <div class="option" data-value="B">Big alarms</div>
+                        <div class="option" data-value="C">Sales plans</div>
+                        <div class="option" data-value="D">App updates</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>5. What’s in energy reports?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Worker count</div>
+                        <div class="option" data-value="B">PUE numbers</div>
+                        <div class="option" data-value="C">Data size</div>
+                        <div class="option" data-value="D">Office size</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="A">
+                    <p>6. How do alerts work in monitoring?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Text and email</div>
+                        <div class="option" data-value="B">Paper logs</div>
+                        <div class="option" data-value="C">Written notes</div>
+                        <div class="option" data-value="D">Talking</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>7. What do reports show about a data centre?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Sales wins</div>
+                        <div class="option" data-value="B">Working status</div>
+                        <div class="option" data-value="C">Worker skills</div>
+                        <div class="option" data-value="D">App versions</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>8. What’s an example of data centre reporting?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Worker shifts</div>
+                        <div class="option" data-value="B">Power use</div>
+                        <div class="option" data-value="C">Office map</div>
+                        <div class="option" data-value="D">Customer likes</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>9. Why report early in data centres?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">More breaks</div>
+                        <div class="option" data-value="B">Find problems</div>
+                        <div class="option" data-value="C">Less power</div>
+                        <div class="option" data-value="D">Fewer doors</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>10. What do report makers give users?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Same reports</div>
+                        <div class="option" data-value="B">Custom reports</div>
+                        <div class="option" data-value="C">Spoken news</div>
+                        <div class="option" data-value="D">Sales data</div>
+                    </div>
+                </div>
+            </div>
+            <div class="module" data-module="8">
+                <div class="question" data-correct="B">
+                    <p>1. What’s DCIM in data centres?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Data Info Model</div>
+                        <div class="option" data-value="B">Infrastructure Management</div>
+                        <div class="option" data-value="C">Device Control</div>
+                        <div class="option" data-value="D">Capacity Method</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>2. What does a BMS do?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Just watches</div>
+                        <div class="option" data-value="B">Watches and controls</div>
+                        <div class="option" data-value="C">Saves data</div>
+                        <div class="option" data-value="D">Runs apps</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>3. What’s a big job for an NMS?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Worker plans</div>
+                        <div class="option" data-value="B">Device watching</div>
+                        <div class="option" data-value="C">Data locking</div>
+                        <div class="option" data-value="D">Sales checks</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>4. What does DCIM watch?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Chairs</div>
+                        <div class="option" data-value="B">Servers and power</div>
+                        <div class="option" data-value="C">Worker phones</div>
+                        <div class="option" data-value="D">Sales tools</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="A">
+                    <p>5. What’s a DCIM feature?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Gear tracking</div>
+                        <div class="option" data-value="B">Worker lessons</div>
+                        <div class="option" data-value="C">Data locking</div>
+                        <div class="option" data-value="D">Office design</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>6. What does an EMS mainly do?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Controls gear</div>
+                        <div class="option" data-value="B">Just watches</div>
+                        <div class="option" data-value="C">Runs networks</div>
+                        <div class="option" data-value="D">Saves data</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>7. What matters when adding DCIM?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Sales plans</div>
+                        <div class="option" data-value="B">Money saved</div>
+                        <div class="option" data-value="C">Worker count</div>
+                        <div class="option" data-value="D">Office spot</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>8. What does a BMS control?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">App updates</div>
+                        <div class="option" data-value="B">Power and cooling</div>
+                        <div class="option" data-value="C">Worker files</div>
+                        <div class="option" data-value="D">Customer data</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="A">
+                    <p>9. What does an NMS help with?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Network speed</div>
+                        <div class="option" data-value="B">Worker shifts</div>
+                        <div class="option" data-value="C">Data size</div>
+                        <div class="option" data-value="D">Sales ads</div>
+                    </div>
+                </div>
+                <div class="question" data-correct="B">
+                    <p>10. Why use DCIM?</p>
+                    <div class="options">
+                        <div class="option" data-value="A">Fewer workers</div>
+                        <div class="option" data-value="B">Better work</div>
+                        <div class="option" data-value="C">More breaks</div>
+                        <div class="option" data-value="D">Less connection</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="summary">
+            <h2>Your Adventure Score!</h2>
+            <p>Stars Earned: <span id="score"></span>/10</p>
+            <div id="summary-details"></div>
+            <div class="module-btn" onclick="location.reload()">Try Another Quest!</div>
+        </div>
+
+        <footer>
+            <p>Data Centre Quest © 2025 | A Super Fun Learning Adventure</p>
+        </footer>
     </div>
-    <div class="card" id="quiz-card">
-      <div id="question">Loading...</div>
-      <div id="options"></div>
-      <div class="controls">
-        <button id="prev-question" class="btn" aria-label="Previous">&#8592;</button>
-        <button id="next-question" class="btn" aria-label="Next">&#8594;</button>
-      </div>
-      <button id="submit-btn" style="display:none;">🚀 Submit Quiz</button>
-    </div>
-    <div class="result" id="result-screen" style="display:none;">
-      <div class="result-title">🎉 Quiz Complete!</div>
-      <div class="result-score" id="final-score"></div>
-      <div class="result-message" id="result-message"></div>
-      <button class="btn" id="restart-btn" style="border-radius:16px;width:auto;height:auto;padding:12px 32px;font-size:1.1em;">🔄 Try Again</button>
-    </div>
-  </div>
-  <div class="module-select" id="module-select">
-    <div class="module-select-title">🎓 Select a Module</div>
-    <!-- Module buttons will be injected here -->
-    <button class="cancel-btn" id="cancel-module">❌ Cancel</button>
-  </div>
-  <canvas class="confetti" id="confetti-canvas"></canvas>
+
     <script>
-    // Enhanced QCM Quiz Application with proper shuffling using external data
-    let currentModule = null;
-    let shuffledQuestions = [];
-    let shuffledAnswers = [];
-    let userAnswers = [];
-    let currentQuestion = 0;
-    let timer;
-    let timeLeft = 15;
-    let startTime;
-    let modules = [];
+        const moduleSelector = document.querySelector('.module-selector');
+        const quiz = document.querySelector('.quiz');
+        const summary = document.querySelector('.summary');
+        const timerDisplay = document.querySelector('#time');
+        const modules = document.querySelectorAll('.module');
+        const moduleButtons = document.querySelectorAll('.module-btn');
+        let currentModule, currentQuestionIndex, score, timer, answers, shuffledQuestions;
 
-    // DOM Elements
-    let quizTitle, quizProgress, timerEl, questionText, optionsContainer;
-    let prevBtn, nextBtn, quizCard, resultScreen, finalScore, resultMessage;
-    let restartBtn, submitBtn, moduleSelect, cancelModuleBtn, confettiCanvas;
-
-    // Initialize DOM elements after page loads
-    function initDOMElements() {
-      quizTitle = document.getElementById('quiz-title');
-      quizProgress = document.getElementById('quiz-progress');
-      timerEl = document.getElementById('timer');
-      questionText = document.getElementById('question');
-      optionsContainer = document.getElementById('options');
-      prevBtn = document.getElementById('prev-question');
-      nextBtn = document.getElementById('next-question');
-      quizCard = document.getElementById('quiz-card');
-      resultScreen = document.getElementById('result-screen');
-      finalScore = document.getElementById('final-score');
-      resultMessage = document.getElementById('result-message');
-      restartBtn = document.getElementById('restart-btn');
-      submitBtn = document.getElementById('submit-btn');
-      moduleSelect = document.getElementById('module-select');
-      cancelModuleBtn = document.getElementById('cancel-module');
-      confettiCanvas = document.getElementById('confetti-canvas');
-    }
-
-    // Shuffle function
-    function shuffleArray(array) {
-      const shuffled = [...array];
-      for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-      }
-      return shuffled;
-    }
-
-    // Load quiz data and initialize app
-    async function loadQuizData() {
-      try {
-        const response = await fetch('quizData.json');
-        const quizData = await response.json();
-        
-        modules = quizData.map(mod => ({
-          name: `📚 ${mod.name}`,
-          questions: mod.questions.map(q => ({
-            q: q.q || q.question,
-            opts: q.opts || q.options,
-            correct: q.a || q.correctAnswer
-          }))
-        }));
-        
-        init();
-      } catch (error) {
-        console.error('Failed to load quiz data:', error);
-        if (questionText) {
-          questionText.textContent = 'Failed to load quiz data. Please refresh the page.';
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
         }
-        if (quizCard) quizCard.style.display = '';
-        if (moduleSelect) moduleSelect.style.display = 'none';
-      }
-    }
-      // Module selection
-    function showModuleSelect() {
-      moduleSelect.style.display = '';
-      quizCard.style.display = 'none';
-      resultScreen.style.display = 'none';
-      
-      // Remove old module buttons
-      Array.from(moduleSelect.querySelectorAll('.module-btn')).forEach(btn => btn.remove());
-      
-      // Add module buttons with staggered animation
-      modules.forEach((mod, idx) => {
-        const btn = document.createElement('button');
-        btn.className = 'module-btn';
-        btn.textContent = mod.name;
-        btn.style.animationDelay = `${idx * 0.1}s`;
-        btn.onclick = () => {
-          currentModule = idx;
-          
-          // Shuffle questions for this module
-          const originalQuestions = modules[currentModule].questions;
-          shuffledQuestions = shuffleArray([...originalQuestions]);
-          
-          // Shuffle answers for each question while maintaining correct answer
-          shuffledAnswers = shuffledQuestions.map(q => {
-            const shuffledOpts = shuffleArray([...q.opts]);
-            return {
-              options: shuffledOpts,
-              correctAnswer: q.correct
-            };
-          });
-          
-          userAnswers = Array(shuffledQuestions.length).fill(null);
-          currentQuestion = 0;
-          moduleSelect.style.display = 'none';
-          renderQuiz();
-        };
-        moduleSelect.insertBefore(btn, cancelModuleBtn);
-      });
-    }
 
-    // Setup cancel button event listener
-    function setupEventListeners() {
-      if (cancelModuleBtn) {
-        cancelModuleBtn.onclick = () => {
-          // If no module is selected, just stay on module selection
-          if (currentModule === null) {
-            return;
-          }
-          // If a quiz is in progress, return to quiz
-          moduleSelect.style.display = 'none';
-          quizCard.style.display = '';
-          resultScreen.style.display = 'none';
-        };
-      }
+        function shuffleOptions(question) {
+            const options = Array.from(question.querySelectorAll('.option'));
+            const correctAnswer = question.dataset.correct;
+            const answerMap = { A: 0, B: 1, C: 2, D: 3 };
+            const correctIndex = answerMap[correctAnswer];
+            const correctText = options[correctIndex].textContent;
 
-      if (restartBtn) {
-        restartBtn.onclick = () => {
-          init();
-        };
-      }
+            const shuffledOptions = shuffle(options.map(opt => ({
+                value: opt.dataset.value,
+                text: opt.textContent
+            })));
 
-      if (submitBtn) {
-        submitBtn.onclick = () => {
-          showResults();
-        };
-      }
+            options.forEach((opt, i) => {
+                opt.dataset.value = shuffledOptions[i].value;
+                opt.textContent = shuffledOptions[i].text;
+            });
 
-      if (prevBtn) {
-        prevBtn.onclick = () => {
-          if (currentQuestion > 0) {
-            currentQuestion--;
-            renderQuestion();
-          }
-        };
-      }
-
-      if (nextBtn) {
-        nextBtn.onclick = () => {
-          if (currentQuestion < shuffledQuestions.length - 1) {
-            currentQuestion++;
-            renderQuestion();
-          }
-        };
-      }
-    }
-    
-    // Timer functions
-    function startTimer() {
-      clearInterval(timer);
-      timeLeft = 15;
-      timerEl.textContent = timeLeft;
-      timerEl.style.background = 'linear-gradient(45deg, #ff6b6b, #ff9ff3)';
-      
-      timer = setInterval(() => {
-        timeLeft--;
-        timerEl.textContent = timeLeft;
-        if (timeLeft <= 5) timerEl.style.background = 'linear-gradient(45deg, #feca57, #ff9ff3)';
-        if (timeLeft <= 2) timerEl.style.background = 'linear-gradient(45deg, #ff6b6b, #ff4757)';
-        if (timeLeft <= 0) {
-          clearInterval(timer);
-          autoNext();
+            const newCorrectIndex = shuffledOptions.findIndex(opt => opt.text === correctText);
+            question.dataset.correct = ['A', 'B', 'C', 'D'][newCorrectIndex];
         }
-      }, 1000);
-    }
-    
-    function autoNext() {
-      if (userAnswers[currentQuestion] == null) userAnswers[currentQuestion] = null;
-      if (currentQuestion < shuffledQuestions.length - 1) {
-        currentQuestion++;
-        renderQuiz();
-      } else {
-        showResult();
-      }
-    }
-    
-    // Quiz rendering
-    function renderQuiz() {
-      if (currentModule === null) {
-        showModuleSelect();
-        return;
-      }
-      
-      const mod = modules[currentModule];
-      const q = shuffledQuestions[currentQuestion];
-      const shuffledAnswerData = shuffledAnswers[currentQuestion];
-      
-      quizTitle.textContent = mod.name;
-      quizProgress.textContent = `Question ${currentQuestion+1} / ${shuffledQuestions.length}`;
-      questionText.textContent = q.q;
-      optionsContainer.innerHTML = '';
-      
-      shuffledAnswerData.options.forEach((opt, idx) => {
-        const label = document.createElement('label');
-        label.textContent = opt;
-        const input = document.createElement('input');
-        input.type = 'radio';
-        input.name = 'option';
-        input.value = opt;
-        input.checked = userAnswers[currentQuestion] === opt;
-        input.onclick = () => {
-          userAnswers[currentQuestion] = opt;
-          Array.from(optionsContainer.children).forEach(lab => lab.classList.remove('selected'));
-          label.classList.add('selected');
-        };
-        label.prepend(input);
-        if (userAnswers[currentQuestion] === opt) {
-          label.classList.add('selected');
+
+        function startQuiz(moduleIndex) {
+            moduleSelector.classList.remove('active');
+            quiz.classList.add('active');
+            currentModule = modules[moduleIndex];
+            currentQuestionIndex = 0;
+            score = 0;
+            answers = [];
+
+            shuffledQuestions = shuffle(Array.from(currentModule.querySelectorAll('.question')));
+            shuffledQuestions.forEach((q, i) => {
+                currentModule.appendChild(q);
+                q.querySelector('p').textContent = `${i + 1}. ${q.querySelector('p').textContent.split('. ')[1]}`;
+                shuffleOptions(q);
+            });
+
+            currentModule.classList.add('active');
+            showQuestion();
         }
-        // Add staggered animation delay
-        label.style.animationDelay = `${idx * 0.1}s`;
-        optionsContainer.appendChild(label);
-      });
-      
-      prevBtn.disabled = currentQuestion === 0;
-      nextBtn.disabled = currentQuestion === shuffledQuestions.length - 1;
-      
-      prevBtn.onclick = () => {
-        if (currentQuestion > 0) {
-          currentQuestion--;
-          renderQuiz();
+
+        function showQuestion() {
+            shuffledQuestions.forEach((q, i) => q.classList.toggle('active', i === currentQuestionIndex));
+            startTimer(shuffledQuestions[currentQuestionIndex]);
         }
-      };
-      
-      nextBtn.onclick = () => {
-        if (currentQuestion < shuffledQuestions.length - 1) {
-          currentQuestion++;
-          renderQuiz();
+
+        function startTimer(question) {
+            let timeLeft = 15;
+            timerDisplay.textContent = timeLeft;
+            clearInterval(timer);
+            timer = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    recordAnswer(question, null);
+                }
+            }, 1000);
+
+            const options = question.querySelectorAll('.option');
+            let selectedOption = null;
+            options.forEach(option => {
+                option.onclick = () => {
+                    options.forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+                    selectedOption = option;
+                    clearInterval(timer);
+                    recordAnswer(question, selectedOption);
+                };
+            });
         }
-      };
-      
-      startTimer();
-      quizCard.style.display = '';
-      resultScreen.style.display = 'none';
-      
-      // Show submit button only on last question
-      submitBtn.style.display = (currentQuestion === shuffledQuestions.length - 1) ? '' : 'none';
-      submitBtn.onclick = () => {
-        showResult();
-      };
-    }
-    
-    // Enhanced confetti animation
-    function showConfetti() {
-      const ctx = confettiCanvas.getContext('2d');
-      confettiCanvas.width = window.innerWidth;
-      confettiCanvas.height = window.innerHeight;
-      const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#a8e6cf', '#ffaaa5'];
-      let pieces = [];
-      
-      for (let i = 0; i < 150; i++) {
-        pieces.push({
-          x: Math.random() * confettiCanvas.width,
-          y: Math.random() * -confettiCanvas.height,
-          r: 4 + Math.random() * 12,
-          c: colors[Math.floor(Math.random() * colors.length)],
-          s: 1 + Math.random() * 4,
-          a: Math.random() * Math.PI * 2,
-          spin: (Math.random() - 0.5) * 0.3
+
+        function recordAnswer(question, selectedOption) {
+            const correctAnswer = question.dataset.correct;
+            const options = question.querySelectorAll('.option');
+            const isCorrect = selectedOption && selectedOption.dataset.value === correctAnswer;
+            if (isCorrect) score++;
+
+            answers.push({
+                question: question.querySelector('p').textContent,
+                selected: selectedOption ? selectedOption.textContent : 'None',
+                correct: options[Array.from(options).findIndex(opt => opt.dataset.value === correctAnswer)].textContent,
+                isCorrect
+            });
+
+            nextQuestion();
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < shuffledQuestions.length) {
+                showQuestion();
+            } else {
+                showSummary();
+            }
+        }
+
+        function showSummary() {
+            quiz.classList.remove('active');
+            summary.classList.add('active');
+            document.querySelector('#score').textContent = score;
+            const summaryDetails = document.querySelector('#summary-details');
+            answers.forEach((answer, index) => {
+                const div = document.createElement('div');
+                div.className = `summary-item ${answer.isCorrect ? 'correct' : 'wrong'}`;
+                div.innerHTML = `
+                    <p><strong>Quest ${index + 1}:</strong> ${answer.question}</p>
+                    <p><strong>Your Pick:</strong> ${answer.selected}</p>
+                    <p><strong>Right Answer:</strong> ${answer.correct}</p>
+                `;
+                summaryDetails.appendChild(div);
+            });
+        }
+
+        moduleButtons.forEach(btn => {
+            btn.addEventListener('click', () => startQuiz(parseInt(btn.dataset.module)));
         });
-      }
-      
-      let frame = 0;
-      function draw() {
-        ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
-        pieces.forEach(p => {
-          ctx.save();
-          ctx.globalAlpha = 0.9;
-          ctx.translate(p.x, p.y);
-          ctx.rotate(p.a);
-          ctx.beginPath();
-          ctx.arc(0, 0, p.r, 0, 2 * Math.PI);
-          ctx.fillStyle = p.c;
-          ctx.fill();
-          ctx.restore();
-          p.y += p.s;
-          p.x += Math.sin(frame/15 + p.a) * 2;
-          p.a += p.spin;
-        });
-        frame++;
-        if (frame < 200) requestAnimationFrame(draw);
-        else ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
-      }
-      draw();
-    }
-    
-    // Result calculation with shuffled answers
-    function showResult() {
-      clearInterval(timer);
-      let score = 0;
-      
-      // Calculate score using correct answer text matching
-      userAnswers.forEach((userAnswer, i) => {
-        if (userAnswer && userAnswer === shuffledAnswers[i].correctAnswer) {
-          score++;
-        }
-      });
-      
-      finalScore.textContent = `Score: ${score} / ${shuffledQuestions.length}`;
-      let msg = '';
-      const percentage = score / shuffledQuestions.length;
-      
-      if (percentage === 1) {
-        msg = '🎉 PERFECT! You\'re absolutely amazing! 🌟✨';
-        showConfetti();
-      }
-      else if (percentage >= 0.8) msg = '🔥 Excellent! You\'re on fire! 🚀';
-      else if (percentage >= 0.6) msg = '👍 Great job! Keep up the good work! 💪';
-      else if (percentage >= 0.4) msg = '💡 Good effort! Practice makes perfect! 📚';
-      else msg = '🌱 Don\'t give up! Every expert was once a beginner! ✨';
-      
-      resultMessage.textContent = msg;
-      quizCard.style.display = 'none';
-      resultScreen.style.display = '';
-    }
-    
-    restartBtn.onclick = () => {
-      // Re-shuffle questions and answers for a new experience
-      const originalQuestions = modules[currentModule].questions;
-      shuffledQuestions = shuffleArray([...originalQuestions]);
-      
-      shuffledAnswers = shuffledQuestions.map(q => {
-        const shuffledOpts = shuffleArray([...q.opts]);
-        return {
-          options: shuffledOpts,
-          correctAnswer: q.correct
-        };
-      });
-      
-      userAnswers = Array(shuffledQuestions.length).fill(null);
-      currentQuestion = 0;
-      renderQuiz();
-    };
-    
-    // Home button (module select)
-    const homeBtn = document.createElement('button');
-    homeBtn.textContent = '🏠 Modules';
-    homeBtn.style.position = 'absolute';
-    homeBtn.style.left = '16px';
-    homeBtn.style.top = '16px';
-    homeBtn.style.background = 'rgba(255, 255, 255, 0.9)';
-    homeBtn.style.color = '#ff6b6b';
-    homeBtn.style.fontWeight = '700';
-    homeBtn.style.fontSize = '1em';
-    homeBtn.style.border = '2px solid #ff6b6b';
-    homeBtn.style.borderRadius = '12px';
-    homeBtn.style.padding = '8px 16px';
-    homeBtn.style.cursor = 'pointer';
-    homeBtn.style.backdropFilter = 'blur(10px)';
-    homeBtn.style.transition = 'all 0.3s ease';
-    homeBtn.onclick = showModuleSelect;
-    
-    homeBtn.onmouseover = () => {
-      homeBtn.style.background = '#ff6b6b';
-      homeBtn.style.color = '#fff';
-      homeBtn.style.transform = 'translateY(-2px)';
-    };
-    homeBtn.onmouseout = () => {
-      homeBtn.style.background = 'rgba(255, 255, 255, 0.9)';
-      homeBtn.style.color = '#ff6b6b';
-      homeBtn.style.transform = 'translateY(0)';
-    };
-    
-    document.querySelector('.header').appendChild(homeBtn);
-      // Initialize the quiz
-    function init() {
-      currentModule = null;
-      currentQuestion = 0;
-      userAnswers = [];
-      setupEventListeners();
-      showModuleSelect();
-    }
-      // Responsive confetti canvas
-    window.addEventListener('resize', () => {
-      if (confettiCanvas) {
-        confettiCanvas.width = window.innerWidth;
-        confettiCanvas.height = window.innerHeight;
-      }
-    });
-
-    // Initialize app when page loads
-    document.addEventListener('DOMContentLoaded', () => {
-      initDOMElements();
-      loadQuizData();
-    });
-  </script>
+    </script>
 </body>
 </html>
