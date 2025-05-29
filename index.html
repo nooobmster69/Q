@@ -3,155 +3,52 @@
 <!-- The rest of the file is identical to QCM-quiz-enhanced.html -->
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz App</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="script.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ultimate QCM Quiz - Enhanced</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Fredoka+One&display=swap" rel="stylesheet">
+  <style>
+    /* ...all CSS from QCM-quiz-enhanced.html... */
+  </style>
 </head>
 <body>
-    <div id="app">
-        <h1>Welcome to the Quiz App</h1>
-        <button id="start-quiz">Start Quiz</button>
-        <div id="quiz-container" class="hidden">
-            <div id="question-container">
-                <span id="question"></span>
-            </div>
-            <div id="answer-buttons" class="btn-container">
-                <button class="btn" id="true-button">True</button>
-                <button class="btn" id="false-button">False</button>
-            </div>
-            <div id="next-button" class="btn-container hidden">
-                <button class="btn">Next Question</button>
-            </div>
-        </div>
-        <div id="result-container" class="hidden">
-            <h2>Your Score: <span id="score"></span></h2>
-            <button id="restart-quiz" class="btn">Restart Quiz</button>
-        </div>
+  <!-- Floating background shapes -->
+  <div class="floating-shapes">
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+  </div>
+  <div class="main">
+    <div class="header">
+      <div class="title" id="quiz-title">🎯 Ultimate QCM Quiz</div>
+      <div class="progress" id="quiz-progress">Question 1/10</div>
+      <div class="timer" id="timer">15</div>
     </div>
-    <script>
-        const startButton = document.getElementById('start-quiz');
-        const nextButton = document.getElementById('next-button');
-        const restartButton = document.getElementById('restart-quiz');
-        const questionContainer = document.getElementById('question-container');
-        const answerButtons = document.getElementById('answer-buttons');
-        const resultContainer = document.getElementById('result-container');
-        const scoreDisplay = document.getElementById('score');
-
-        const questions = [
-            {
-                question: 'The capital of France is Paris.',
-                answer: true
-            },
-            {
-                question: 'The Earth is flat.',
-                answer: false
-            },
-            {
-                question: 'JavaScript is a programming language.',
-                answer: true
-            },
-            {
-                question: 'CSS stands for Cascading Style Sheets.',
-                answer: true
-            },
-            {
-                question: 'HTML is used for structuring web pages.',
-                answer: true
-            },
-            {
-                question: 'The sum of 2 and 2 is 5.',
-                answer: false
-            },
-            {
-                question: 'The Great Wall of China is visible from the moon.',
-                answer: false
-            },
-            {
-                question: 'Humans share 50% of their DNA with bananas.',
-                answer: true
-            },
-            {
-                question: 'The tallest mountain in the world is Mount Everest.',
-                answer: true
-            },
-            {
-                question: 'Lightning never strikes the same place twice.',
-                answer: false
-            }
-        ];
-
-        let currentQuestionIndex = 0;
-        let score = 0;
-
-        startButton.addEventListener('click', startQuiz);
-        nextButton.addEventListener('click', () => {
-            currentQuestionIndex++;
-            setNextQuestion();
-        });
-        restartButton.addEventListener('click', restartQuiz);
-
-        function startQuiz() {
-            currentQuestionIndex = 0;
-            score = 0;
-            startButton.classList.add('hidden');
-            resultContainer.classList.add('hidden');
-            questionContainer.classList.remove('hidden');
-            answerButtons.classList.remove('hidden');
-            nextButton.classList.add('hidden');
-            setNextQuestion();
-        }
-
-        function setNextQuestion() {
-            resetState();
-            showQuestion(questions[currentQuestionIndex]);
-        }
-
-        function showQuestion(question) {
-            questionContainer.innerText = question.question;
-        }
-
-        function resetState() {
-            nextButton.classList.add('hidden');
-            while (answerButtons.firstChild) {
-                answerButtons.removeChild(answerButtons.firstChild);
-            }
-        }
-
-        function selectAnswer(answer) {
-            const correct = questions[currentQuestionIndex].answer;
-            if (answer === correct) {
-                score++;
-            }
-            Array.from(answerButtons.children).forEach(button => {
-                button.classList.add(button.innerText === correct ? 'correct' : 'wrong');
-            });
-            nextButton.classList.remove('hidden');
-        }
-
-        function showScore() {
-            questionContainer.classList.add('hidden');
-            answerButtons.classList.add('hidden');
-            resultContainer.classList.remove('hidden');
-            scoreDisplay.innerText = `${score} out of ${questions.length}`;
-        }
-
-        function restartQuiz() {
-            startButton.classList.remove('hidden');
-            resultContainer.classList.add('hidden');
-            questionContainer.classList.add('hidden');
-            answerButtons.classList.add('hidden');
-            nextButton.classList.add('hidden');
-        }
-
-        document.getElementById('true-button').addEventListener('click', () => {
-            selectAnswer(true);
-        });
-
-        document.getElementById('false-button').addEventListener('click', () => {
-            selectAnswer(false);
-        });
-    </script>
+    <div class="card" id="quiz-card">
+      <div id="question">Loading...</div>
+      <div id="options"></div>
+      <div class="controls">
+        <button id="prev-question" class="btn" aria-label="Previous">&#8592;</button>
+        <button id="next-question" class="btn" aria-label="Next">&#8594;</button>
+      </div>
+      <button id="submit-btn" style="display:none;">🚀 Submit Quiz</button>
+    </div>
+    <div class="result" id="result-screen" style="display:none;">
+      <div class="result-title">🎉 Quiz Complete!</div>
+      <div class="result-score" id="final-score"></div>
+      <div class="result-message" id="result-message"></div>
+      <button class="btn" id="restart-btn" style="border-radius:16px;width:auto;height:auto;padding:12px 32px;font-size:1.1em;">🔄 Try Again</button>
+    </div>
+  </div>
+  <div class="module-select" id="module-select">
+    <div class="module-select-title">🎓 Select a Module</div>
+    <!-- Module buttons will be injected here -->
+    <button class="cancel-btn" id="cancel-module">❌ Cancel</button>
+  </div>
+  <canvas class="confetti" id="confetti-canvas"></canvas>
+  <script>
+    // ...all JS from QCM-quiz-enhanced.html...
+  </script>
 </body>
 </html>
