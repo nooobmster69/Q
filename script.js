@@ -1166,13 +1166,12 @@ class QuizApp {
     }    // Add signature to certificate
     addSignatureToCertificate(ctx, canvas, signatureImage) {
         if (!signatureImage) return;
-          try {
-            // Position signature well inside the certificate content area (bottom right)
-            // Certificate content area: x=150 to x=canvas.width-150, y=150 to y=canvas.height-150
+          try {            // Position signature at user-customized location (using drag-and-drop customizer)
+            // User selected position: X: 948, Y: 641 for optimal placement
             const signatureWidth = 160;
             const signatureHeight = 80;
-            const signatureX = canvas.width - 200; // 200px from right edge (well inside)
-            const signatureY = canvas.height - 180; // 180px from bottom edge (above version text)
+            const signatureX = 948;  // Custom absolute X position
+            const signatureY = 641;  // Custom absolute Y position
             
             // Draw signature image directly (no background rectangle since PNG has transparency)
             ctx.drawImage(signatureImage, signatureX, signatureY, signatureWidth, signatureHeight);
