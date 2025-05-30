@@ -1165,8 +1165,7 @@ class QuizApp {
         }
     }    // Add signature to certificate
     addSignatureToCertificate(ctx, canvas, signatureImage) {
-        if (!signatureImage) return;
-          try {            // Position signature at user-customized location (using drag-and-drop customizer)
+        if (!signatureImage) return;        try {            // Position signature at user-customized location (using drag-and-drop customizer)
             // User selected position: X: 948, Y: 641 for optimal placement
             const signatureWidth = 160;
             const signatureHeight = 80;
