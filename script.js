@@ -3,8 +3,8 @@
 
 // Application Version Configuration
 const APP_VERSION = {
-    version: '2.1.3',
-    updateDate: 'May 30, 2025 - Score Display Enhancement',
+    version: '2.3.0',
+    updateDate: 'May 30, 2025 - Enhanced Certificate with Signature Integration',
     appName: 'Data Centre Certification Platform'
 };
 
@@ -15,9 +15,13 @@ class QuizApp {
         this.userPreferences = {
             showAnswers: true,
             showFeedback: true
-        };
-        this.quizData = null;
+        };        this.quizData = null;
         this.currentModule = null;
+        // Multi-module support
+        this.selectedModules = [];
+        this.isMultiModule = false;
+        this.isMultiModuleQuiz = false;
+        this.moduleQuestionSources = []; // Track which module each question came from
         this.currentQuestionIndex = 0;
         this.score = 0;
         this.userAnswers = [];
@@ -83,10 +87,10 @@ class QuizApp {
         document.getElementById('user-name').addEventListener('input', () => this.validateName());
         document.getElementById('user-name').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') this.handleStartApp();
-        });
-
-        // Module Screen Events
+        });        // Module Screen Events
         document.getElementById('back-to-welcome').addEventListener('click', () => this.showScreen('welcome'));
+        document.getElementById('toggle-multi-select').addEventListener('click', () => this.toggleMultiSelectMode());
+        document.getElementById('start-multi-quiz').addEventListener('click', () => this.startMultiModuleQuiz());
 
         // Quiz Screen Events
         document.getElementById('back-to-modules').addEventListener('click', () => this.showScreen('module'));
@@ -298,31 +302,87 @@ class QuizApp {
             console.log('User preferences:', this.userPreferences);
             this.showScreen('module');
         }
-    }
-
-    // Module Screen
+    }    // Module Screen
     initModuleScreen() {
+        console.log('🎯 Initializing module screen...');
+        console.log('📊 Quiz data status:', {
+            hasQuizData: !!this.quizData,
+            hasModules: !!(this.quizData && this.quizData.modules),
+            moduleCount: this.quizData && this.quizData.modules ? this.quizData.modules.length : 0
+        });
+        
         document.getElementById('display-name').textContent = this.userName;
         
-        // Show loading state if data isn't loaded yet
-        if (!this.quizData) {
-            const container = document.getElementById('modules-container');
-            container.innerHTML = `
-                <div style="text-align: center; padding: 40px;">
-                    <div class="loading-spinner" style="margin: 0 auto 16px;"></div>
-                    <p style="color: var(--text-secondary);">Loading modules...</p>
-                </div>
-            `;
-        } else {
-            this.renderModules();
-        }
+        // Reset multi-module state when returning to module screen
+        this.selectedModules = [];
+        this.isMultiModuleQuiz = false;
+        this.moduleQuestionSources = [];
+        this.updateMultiSelectUI();
+        
+        // Always attempt to render modules, with fallback loading state
+        this.renderModulesWithRetry();
     }
 
-    renderModules() {
+    async renderModulesWithRetry() {
         const container = document.getElementById('modules-container');
+        
+        // Show loading state initially
+        container.innerHTML = `
+            <div style="text-align: center; padding: 40px;">
+                <div class="loading-spinner" style="margin: 0 auto 16px;"></div>
+                <p style="color: var(--text-secondary);">Loading modules...</p>
+            </div>
+        `;
+        
+        // If data isn't loaded yet, wait for it
+        if (!this.quizData) {
+            console.log('⏳ Quiz data not loaded yet, waiting...');
+            let retries = 0;
+            const maxRetries = 10;
+            
+            while (!this.quizData && retries < maxRetries) {
+                await new Promise(resolve => setTimeout(resolve, 200));
+                retries++;
+                console.log(`⏳ Retry ${retries}/${maxRetries} - checking for quiz data...`);
+            }
+            
+            if (!this.quizData) {
+                console.error('❌ Quiz data failed to load after retries');
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                        <div class="error-icon" style="margin: 0 auto 16px;">
+                            <span class="material-icons">error_outline</span>
+                        </div>
+                        <p>Failed to load modules. Please refresh the page.</p>
+                        <button onclick="location.reload()" style="margin-top: 16px; padding: 8px 16px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer;">Refresh Page</button>
+                    </div>
+                `;
+                return;
+            }
+        }
+        
+        // Data is available, render modules
+        console.log('✅ Quiz data is available, rendering modules...');
+        this.renderModules();
+    }    renderModules() {
+        console.log('🎨 renderModules() called');
+        const container = document.getElementById('modules-container');
+        
+        if (!container) {
+            console.error('❌ modules-container element not found!');
+            return;
+        }
+        
+        console.log('✅ Container found, clearing content...');
         container.innerHTML = '';
 
         if (!this.quizData || !this.quizData.modules) {
+            console.error('❌ No quiz data or modules found:', {
+                hasQuizData: !!this.quizData,
+                hasModules: !!(this.quizData && this.quizData.modules),
+                quizDataType: typeof this.quizData
+            });
+            
             container.innerHTML = `
                 <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
                     <div class="error-icon" style="margin: 0 auto 16px;">
@@ -331,35 +391,72 @@ class QuizApp {
                     <p>No modules available. Please check the quiz data file.</p>
                 </div>
             `;
-            console.error('❌ No quiz data or modules found');
             return;
         }
 
         console.log('📚 Rendering modules...');
         console.log(`📊 Total modules available: ${this.quizData.modules.length}`);
+        console.log('📋 Module data structure:', this.quizData.modules.slice(0, 2));
         
         this.quizData.modules.forEach((module, index) => {
             console.log(`📋 Module ${index + 1}: "${module.name}" (${module.questions ? module.questions.length : 0} questions)`);
             
             const moduleCard = document.createElement('div');
             moduleCard.className = 'module-card';
-            moduleCard.innerHTML = `
+            
+            // Add checkbox for multi-select mode
+            const checkbox = this.isMultiModule ? 
+                `<div class="module-checkbox">
+                    <input type="checkbox" id="module-${index}" data-module-index="${index}">
+                    <label for="module-${index}"></label>
+                </div>` : '';
+              moduleCard.innerHTML = `
+                ${checkbox}
                 <h3>${module.name}</h3>
-                <div class="question-count">
-                    <span class="material-icons">quiz</span>
-                    <span>${module.questions ? module.questions.length : 0} questions</span>
+                <div class="module-info">
+                    <span><span class="material-icons">quiz</span>${module.questions ? module.questions.length : 0} Questions</span>
+                    <span><span class="material-icons">access_time</span>~${Math.ceil((module.questions ? module.questions.length : 0) * 1.5)} min</span>
                 </div>
             `;
             
-            moduleCard.addEventListener('click', () => this.startModule(index));
+            if (this.isMultiModule) {
+                // Add event listener for checkbox
+                const checkboxElement = moduleCard.querySelector('input[type="checkbox"]');
+                checkboxElement.addEventListener('change', () => this.toggleModuleSelection(index));
+                
+                // Add click handler for the card (excluding checkbox)
+                moduleCard.addEventListener('click', (e) => {
+                    if (e.target.type !== 'checkbox' && e.target.tagName !== 'LABEL') {
+                        checkboxElement.checked = !checkboxElement.checked;
+                        this.toggleModuleSelection(index);
+                    }
+                });
+            } else {
+                // Single module selection
+                moduleCard.addEventListener('click', () => this.startModule(index));
+            }
+            
             container.appendChild(moduleCard);
         });
         
         console.log(`✅ Successfully rendered ${this.quizData.modules.length} module cards`);
         console.log(`🎯 DOM container now has ${container.children.length} child elements`);
-    }
-
-    startModule(moduleIndex) {
+    }    startModule(moduleIndex) {
+        console.log(`🚀 Starting single module: ${moduleIndex}`);
+        
+        // Ensure we have valid module data
+        if (!this.quizData || !this.quizData.modules || !this.quizData.modules[moduleIndex]) {
+            console.error('❌ Invalid module data for index:', moduleIndex);
+            this.showError('Module data not available');
+            return;
+        }
+        
+        // Reset multi-module state
+        this.isMultiModuleQuiz = false;
+        this.selectedModules = [];
+        this.moduleQuestionSources = [];
+        
+        // Set current module
         this.currentModule = moduleIndex;
         this.currentQuestionIndex = 0;
         this.score = 0;
@@ -367,7 +464,16 @@ class QuizApp {
         this.isAnswerRevealed = false;
         
         // Prepare questions with optional shuffling
-        this.questions = [...this.quizData.modules[moduleIndex].questions];
+        const moduleQuestions = this.quizData.modules[moduleIndex].questions;
+        if (!moduleQuestions || moduleQuestions.length === 0) {
+            console.error('❌ No questions found in module:', moduleIndex);
+            this.showError('No questions available in this module');
+            return;
+        }
+        
+        this.questions = [...moduleQuestions];
+        
+        console.log(`✅ Loaded ${this.questions.length} questions from module: ${this.quizData.modules[moduleIndex].name}`);
         
         if (this.shuffleQuestions) {
             this.questions = this.shuffleArray(this.questions);
@@ -381,14 +487,152 @@ class QuizApp {
         this.showScreen('quiz');
     }
 
-    // Quiz Screen
+    // Multi-Module Support Functions
+    toggleMultiSelectMode() {
+        this.isMultiModule = !this.isMultiModule;
+        this.selectedModules = [];
+        this.updateMultiSelectUI();
+        this.renderModules();
+    }
+
+    updateMultiSelectUI() {
+        const toggleBtn = document.getElementById('toggle-multi-select');
+        const startBtn = document.getElementById('start-multi-quiz');
+        
+        if (this.isMultiModule) {
+            toggleBtn.classList.add('active');
+            toggleBtn.innerHTML = '<span class="material-icons">check_box</span><span>Single Select</span>';
+            startBtn.style.display = 'block';
+            this.updateStartMultiButton();
+        } else {
+            toggleBtn.classList.remove('active');
+            toggleBtn.innerHTML = '<span class="material-icons">library_add</span><span>Multi Select</span>';
+            startBtn.style.display = 'none';
+        }
+    }
+
+    toggleModuleSelection(moduleIndex) {
+        const index = this.selectedModules.indexOf(moduleIndex);
+        
+        if (index === -1) {
+            this.selectedModules.push(moduleIndex);
+        } else {
+            this.selectedModules.splice(index, 1);
+        }
+        
+        this.updateModuleCardSelection(moduleIndex);
+        this.updateStartMultiButton();
+    }
+
+    updateModuleCardSelection(moduleIndex) {
+        const checkbox = document.getElementById(`module-${moduleIndex}`);
+        const moduleCard = checkbox.closest('.module-card');
+        
+        if (this.selectedModules.includes(moduleIndex)) {
+            moduleCard.classList.add('selected');
+            checkbox.checked = true;
+        } else {
+            moduleCard.classList.remove('selected');
+            checkbox.checked = false;
+        }
+    }
+
+    updateStartMultiButton() {
+        const startBtn = document.getElementById('start-multi-quiz');
+        const count = this.selectedModules.length;
+        
+        if (count === 0) {
+            startBtn.disabled = true;
+            startBtn.innerHTML = '<span>Select modules to start</span>';
+        } else {
+            startBtn.disabled = false;
+            startBtn.innerHTML = `<span>Start Quiz (${count} module${count > 1 ? 's' : ''})</span><span class="material-icons">arrow_forward</span>`;
+        }
+    }
+
+    startMultiModuleQuiz() {
+        if (this.selectedModules.length === 0) return;
+        
+        // Reset quiz state
+        this.currentQuestionIndex = 0;
+        this.score = 0;
+        this.userAnswers = [];
+        this.isAnswerRevealed = false;
+        this.moduleQuestionSources = [];
+        this.questions = [];
+        
+        // Combine questions from selected modules
+        this.selectedModules.forEach(moduleIndex => {
+            const module = this.quizData.modules[moduleIndex];
+            module.questions.forEach(question => {
+                this.questions.push(question);
+                this.moduleQuestionSources.push({
+                    moduleIndex: moduleIndex,
+                    moduleName: module.name
+                });
+            });
+        });
+        
+        // Shuffle questions if enabled
+        if (this.shuffleQuestions) {
+            const combined = this.questions.map((question, index) => ({
+                question,
+                source: this.moduleQuestionSources[index]
+            }));
+            
+            const shuffled = this.shuffleArray(combined);
+            
+            this.questions = shuffled.map(item => item.question);
+            this.moduleQuestionSources = shuffled.map(item => item.source);
+        }
+        
+        // Shuffle answers if enabled
+        if (this.shuffleAnswers) {
+            this.questions = this.questions.map(question => this.shuffleQuestionOptions(question));
+        }
+        
+        // Set flags for multi-module mode
+        this.currentModule = null; // Will be handled differently for multi-module
+        this.isMultiModuleQuiz = true;
+        
+        this.showScreen('quiz');
+    }    // Quiz Screen
     initQuizScreen() {
-        if (this.currentModule === null || !this.questions.length) {
-            this.showError('Quiz data not available');
+        console.log('🎮 Initializing quiz screen...');
+        console.log('📊 Quiz state:', {
+            currentModule: this.currentModule,
+            isMultiModuleQuiz: this.isMultiModuleQuiz,
+            questionsLength: this.questions ? this.questions.length : 0,
+            selectedModulesLength: this.selectedModules ? this.selectedModules.length : 0
+        });
+        
+        // Check if we have valid quiz data
+        if (!this.questions || this.questions.length === 0) {
+            console.error('❌ No questions available');
+            this.showError('No questions available for this quiz');
+            return;
+        }
+        
+        // For single module quiz, ensure currentModule is set
+        if (!this.isMultiModuleQuiz && (this.currentModule === null || this.currentModule === undefined)) {
+            console.error('❌ No current module set for single module quiz');
+            this.showError('Module selection error. Please try again.');
             return;
         }
 
-        const moduleName = this.quizData.modules[this.currentModule].name;
+        // Set module name based on quiz type
+        let moduleName;
+        if (this.isMultiModuleQuiz) {
+            const moduleNames = this.selectedModules.map(index => 
+                this.quizData.modules[index].name.replace('Module ', 'M')
+            );
+            moduleName = `Multi-Module Quiz (${moduleNames.join(', ')})`;
+        } else {
+            moduleName = this.quizData.modules[this.currentModule].name;
+        }
+        
+        console.log(`✅ Starting quiz: ${moduleName} with ${this.questions.length} questions`);
+        
         document.getElementById('current-module-name').textContent = moduleName;
         document.getElementById('total-questions').textContent = this.questions.length;
         
@@ -504,17 +748,28 @@ class QuizApp {
     // Results Screen
     showResults() {
         this.showScreen('results');
-    }
-
-    initResultsScreen() {
+    }    initResultsScreen() {
         const totalQuestions = this.questions.length;
         const percentage = Math.round((this.score / totalQuestions) * 100);
-        const moduleName = this.quizData.modules[this.currentModule].name;
         const passingScore = this.quizData.config.passingScore || 70;
-        const passed = percentage >= passingScore;        // Update result elements
+        const passed = percentage >= passingScore;
+        
+        // Set module name based on quiz type
+        let moduleName;
+        let moduleInfo = '';
+        if (this.isMultiModuleQuiz) {
+            const moduleNames = this.selectedModules.map(index => this.quizData.modules[index].name);
+            moduleName = `Multi-Module Assessment`;
+            moduleInfo = `Completed modules: ${moduleNames.join(', ')}`;
+        } else {
+            moduleName = this.quizData.modules[this.currentModule].name;
+            moduleInfo = moduleName;
+        }
+        
+        // Update result elements
         document.getElementById('final-score').textContent = `${this.score}/${totalQuestions}`;
         document.getElementById('correct-count').textContent = `${this.score}/${totalQuestions}`;
-        document.getElementById('completed-module').textContent = moduleName;
+        document.getElementById('completed-module').textContent = moduleInfo;
         document.getElementById('pass-status').textContent = passed ? 'Passed' : 'Failed';
         document.getElementById('pass-status').style.color = passed ? 'var(--success-color)' : 'var(--error-color)';
 
@@ -598,9 +853,20 @@ class QuizApp {
             #e0e0e0 ${degrees}deg,
             #e0e0e0 360deg
         )`;
-    }    // Certificate Generation as Image
-    downloadCertificate() {
-        const moduleName = this.quizData.modules[this.currentModule].name;
+    }    // Certificate Generation as Image - Enhanced Design v2.3.0
+    async downloadCertificate() {
+        // Get module name based on quiz type
+        let moduleName;
+        let moduleDetails = '';
+        if (this.isMultiModuleQuiz) {
+            const moduleNames = this.selectedModules.map(index => this.quizData.modules[index].name);
+            moduleName = 'Multi-Module Data Centre Assessment';
+            moduleDetails = moduleNames;
+        } else {
+            moduleName = this.quizData.modules[this.currentModule].name;
+            moduleDetails = [moduleName];
+        }
+        
         const percentage = Math.round((this.score / this.questions.length) * 100);
         const date = new Date().toLocaleDateString();
 
@@ -608,31 +874,35 @@ class QuizApp {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         
-        // Set canvas size (A4 landscape ratio)
-        canvas.width = 1200;
-        canvas.height = 850;
+        // Set canvas size (A4 landscape ratio) - slightly larger for better quality
+        canvas.width = 1400;
+        canvas.height = 990;
         
-        // Create gradient background
+        // Load signature image
+        const signatureImage = await this.loadSignatureImage();
+        
+        // Create modern gradient background
         const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-        gradient.addColorStop(0, '#667eea');
-        gradient.addColorStop(1, '#764ba2');
+        gradient.addColorStop(0, '#1e3c72');
+        gradient.addColorStop(0.5, '#2a5298');
+        gradient.addColorStop(1, '#1e3c72');
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
-        // Create white certificate area
+        // Create white certificate area with modern shadow
         ctx.fillStyle = '#ffffff';
-        ctx.shadowColor = 'rgba(0,0,0,0.2)';
-        ctx.shadowBlur = 20;
+        ctx.shadowColor = 'rgba(0,0,0,0.3)';
+        ctx.shadowBlur = 30;
         ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 10;
+        ctx.shadowOffsetY = 15;
         
-        const certX = 80;
-        const certY = 80;
-        const certWidth = canvas.width - 160;
-        const certHeight = canvas.height - 160;
+        const certX = 100;
+        const certY = 100;
+        const certWidth = canvas.width - 200;
+        const certHeight = canvas.height - 200;
         
-        // Rounded rectangle function
-        this.roundedRect(ctx, certX, certY, certWidth, certHeight, 15);
+        // Modern rounded rectangle
+        this.roundedRect(ctx, certX, certY, certWidth, certHeight, 20);
         ctx.fill();
         
         // Reset shadow
@@ -641,73 +911,116 @@ class QuizApp {
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
         
-        // Add decorative border
-        ctx.strokeStyle = '#1976d2';
-        ctx.lineWidth = 4;
-        this.roundedRect(ctx, certX + 20, certY + 20, certWidth - 40, certHeight - 40, 10);
+        // Add elegant border with gradient
+        const borderGradient = ctx.createLinearGradient(certX, certY, certX + certWidth, certY + certHeight);
+        borderGradient.addColorStop(0, '#1976d2');
+        borderGradient.addColorStop(0.5, '#42a5f5');
+        borderGradient.addColorStop(1, '#1976d2');
+        ctx.strokeStyle = borderGradient;
+        ctx.lineWidth = 6;
+        this.roundedRect(ctx, certX + 30, certY + 30, certWidth - 60, certHeight - 60, 15);
         ctx.stroke();
         
-        // Certificate Title
-        ctx.fillStyle = '#1976d2';
-        ctx.font = 'bold 48px Arial, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('Certificate of Completion', canvas.width / 2, 200);
-        
-        // Subtitle
-        ctx.fillStyle = '#333333';
-        ctx.font = 'bold 28px Arial, sans-serif';
-        ctx.fillText('Data Centre Professional Assessment', canvas.width / 2, 250);
-        
-        // "This certifies that" text
-        ctx.fillStyle = '#666666';
-        ctx.font = '22px Arial, sans-serif';
-        ctx.fillText('This certifies that', canvas.width / 2, 320);
-        
-        // User name (larger and highlighted)
-        ctx.fillStyle = '#1976d2';
-        ctx.font = 'bold 36px Arial, sans-serif';
-        ctx.fillText(this.userName, canvas.width / 2, 380);
-        
-        // Draw underline for name
-        const nameMetrics = ctx.measureText(this.userName);
+        // Header decoration line
         ctx.strokeStyle = '#1976d2';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(certX + 100, certY + 120);
+        ctx.lineTo(certX + certWidth - 100, certY + 120);
+        ctx.stroke();
+        
+        // Certificate Title with enhanced typography
+        ctx.fillStyle = '#1976d2';
+        ctx.font = 'bold 52px Georgia, serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Certificate of Excellence', canvas.width / 2, 220);
+        
+        // Subtitle with elegant styling
+        ctx.fillStyle = '#2c5aa0';
+        ctx.font = 'italic 30px Georgia, serif';
+        ctx.fillText('Professional Data Centre Certification', canvas.width / 2, 270);
+        
+        // Decorative line under subtitle
+        ctx.strokeStyle = '#42a5f5';
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.moveTo((canvas.width - nameMetrics.width) / 2, 390);
-        ctx.lineTo((canvas.width + nameMetrics.width) / 2, 390);
+        ctx.moveTo(canvas.width / 2 - 200, 285);
+        ctx.lineTo(canvas.width / 2 + 200, 285);
+        ctx.stroke();
+        
+        // "This certifies that" text
+        ctx.fillStyle = '#555555';
+        ctx.font = '24px Arial, sans-serif';
+        ctx.fillText('This certifies that', canvas.width / 2, 340);
+        
+        // User name with elegant styling
+        ctx.fillStyle = '#1976d2';
+        ctx.font = 'bold 42px Georgia, serif';
+        ctx.fillText(this.userName, canvas.width / 2, 390);
+        
+        // Enhanced underline for name with gradient
+        const nameMetrics = ctx.measureText(this.userName);
+        const underlineGradient = ctx.createLinearGradient(
+            (canvas.width - nameMetrics.width) / 2, 400,
+            (canvas.width + nameMetrics.width) / 2, 400
+        );
+        underlineGradient.addColorStop(0, 'transparent');
+        underlineGradient.addColorStop(0.1, '#1976d2');
+        underlineGradient.addColorStop(0.9, '#1976d2');
+        underlineGradient.addColorStop(1, 'transparent');
+        ctx.strokeStyle = underlineGradient;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo((canvas.width - nameMetrics.width) / 2, 405);
+        ctx.lineTo((canvas.width + nameMetrics.width) / 2, 405);
         ctx.stroke();
         
         // "has successfully completed" text
-        ctx.fillStyle = '#666666';
-        ctx.font = '22px Arial, sans-serif';
-        ctx.fillText('has successfully completed', canvas.width / 2, 440);
+        ctx.fillStyle = '#555555';
+        ctx.font = '24px Arial, sans-serif';
+        ctx.fillText('has successfully completed', canvas.width / 2, 460);
         
-        // Module name
-        ctx.fillStyle = '#333333';
-        ctx.font = 'bold 26px Arial, sans-serif';
-        ctx.fillText(moduleName, canvas.width / 2, 490);
-          // Score
+        // Module information with improved layout
+        this.renderModuleInformation(ctx, canvas, moduleName, moduleDetails);
+        
+        // Score with enhanced design
+        const scoreY = this.isMultiModuleQuiz ? 650 : 600;
+        
+        // Score background
+        ctx.fillStyle = 'rgba(76, 175, 80, 0.1)';
+        this.roundedRect(ctx, canvas.width / 2 - 150, scoreY - 35, 300, 60, 10);
+        ctx.fill();
+        
         ctx.fillStyle = '#4caf50';
-        ctx.font = 'bold 32px Arial, sans-serif';
-        ctx.fillText(`Score: ${this.score}/${this.questions.length}`, canvas.width / 2, 550);
-          // Date
+        ctx.font = 'bold 36px Arial, sans-serif';
+        ctx.fillText(`Score: ${this.score}/${this.questions.length} (${percentage}%)`, canvas.width / 2, scoreY);
+        
+        // Date with elegant styling
+        ctx.fillStyle = '#666666';
+        ctx.font = '22px Georgia, serif';
+        ctx.fillText(`Completed on ${date}`, canvas.width / 2, scoreY + 80);
+          // Add signature if available
+        if (signatureImage) {
+            this.addSignatureToCertificate(ctx, canvas, signatureImage);
+        }
+        
+        // Version and Platform Information with better styling
         ctx.fillStyle = '#999999';
-        ctx.font = '20px Arial, sans-serif';
-        ctx.fillText(`Completed on ${date}`, canvas.width / 2, 620);
-          // Version and Platform Information
-        ctx.fillStyle = '#bbbbbb';
+        ctx.font = '16px Arial, sans-serif';
+        ctx.fillText(`${APP_VERSION.appName} v${APP_VERSION.version}`, canvas.width / 2, canvas.height - 80);
         ctx.font = '14px Arial, sans-serif';
-        ctx.fillText(`${APP_VERSION.appName} v${APP_VERSION.version}`, canvas.width / 2, 660);
-        ctx.fillText(`Updated: ${APP_VERSION.updateDate}`, canvas.width / 2, 680);
-          // Add decorative elements
-        this.addCertificateDecorations(ctx, canvas.width, canvas.height);
+        ctx.fillText(`Updated: ${APP_VERSION.updateDate}`, canvas.width / 2, canvas.height - 60);
+        
+        // Add enhanced decorative elements
+        this.addEnhancedCertificateDecorations(ctx, canvas.width, canvas.height);
         
         // Test certificate generation capability
-        console.log('🎨 Certificate image generation capability:', {
+        console.log('🎨 Enhanced Certificate v2.3.0 generation capability:', {
             canvas: !!document.createElement('canvas').getContext,
             blob: !!HTMLCanvasElement.prototype.toBlob,
             toDataURL: !!HTMLCanvasElement.prototype.toDataURL,
             download: !!document.createElement('a').download,
+            signatureLoaded: !!signatureImage,
             userAgent: navigator.userAgent
         });
         
@@ -727,7 +1040,7 @@ class QuizApp {
                     a.click();
                     document.body.removeChild(a);
                     URL.revokeObjectURL(url);
-                    console.log('✅ Certificate downloaded via blob method');
+                    console.log('✅ Enhanced Certificate downloaded via blob method');
                 } else {
                     console.warn('⚠️ Blob creation failed, using fallback');
                     this.downloadCertificateFallback(canvas, fileName);
@@ -735,8 +1048,7 @@ class QuizApp {
             }, 'image/png', 1.0);
         } else {
             console.warn('⚠️ toBlob not supported, using fallback');
-            this.downloadCertificateFallback(canvas, fileName);
-        }
+            this.downloadCertificateFallback(canvas, fileName);        }
     }
     
     // Fallback download method for mobile devices
@@ -829,8 +1141,183 @@ class QuizApp {
         ctx.fillText('CERTIFIED', width - 180, height - 185);
         ctx.font = '12px Arial, sans-serif';
         ctx.fillText('PROFESSIONAL', width - 180, height - 170);
+          ctx.globalAlpha = 1;
+    }
+
+    // Load signature image for certificate
+    async loadSignatureImage() {
+        try {
+            const img = new Image();
+            return new Promise((resolve, reject) => {
+                img.onload = () => {
+                    console.log('✅ Signature image loaded successfully');
+                    resolve(img);
+                };
+                img.onerror = (error) => {
+                    console.warn('⚠️ Signature image failed to load:', error);
+                    resolve(null); // Return null instead of rejecting
+                };
+                img.src = 'Signature.png'; // Load from same directory as index.html
+            });
+        } catch (error) {
+            console.warn('⚠️ Error loading signature image:', error);
+            return null;
+        }
+    }
+
+    // Add signature to certificate
+    addSignatureToCertificate(ctx, canvas, signatureImage) {
+        if (!signatureImage) return;
         
-        ctx.globalAlpha = 1;
+        try {
+            // Position signature in bottom right, above version info
+            const signatureWidth = 200;
+            const signatureHeight = 100;
+            const signatureX = canvas.width - 300;
+            const signatureY = canvas.height - 200;
+            
+            // Add signature background
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            this.roundedRect(ctx, signatureX - 10, signatureY - 10, signatureWidth + 20, signatureHeight + 40, 8);
+            ctx.fill();
+            
+            // Draw signature image
+            ctx.drawImage(signatureImage, signatureX, signatureY, signatureWidth, signatureHeight);
+            
+            // Add "Authorized Signature" label
+            ctx.fillStyle = '#666666';
+            ctx.font = '14px Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Authorized Signature', signatureX + signatureWidth / 2, signatureY + signatureHeight + 25);
+            
+            console.log('✅ Signature added to certificate');
+        } catch (error) {
+            console.warn('⚠️ Error adding signature to certificate:', error);
+        }
+    }
+
+    // Render module information on certificate with proper text wrapping
+    renderModuleInformation(ctx, canvas, moduleName, moduleDetails) {
+        ctx.fillStyle = '#2c5aa0';
+        ctx.font = 'bold 28px Georgia, serif';
+        ctx.textAlign = 'center';
+        
+        if (this.isMultiModuleQuiz) {
+            // Multi-module display with text wrapping
+            ctx.fillText(moduleName, canvas.width / 2, 520);
+            
+            // Add module list with proper wrapping
+            ctx.fillStyle = '#555555';
+            ctx.font = '18px Arial, sans-serif';
+            
+            const moduleText = 'Modules Completed: ' + moduleDetails.join(', ');
+            const maxWidth = canvas.width - 300;
+            const lineHeight = 25;
+            const startY = 555;
+            
+            const wrappedLines = this.wrapText(ctx, moduleText, maxWidth);
+            wrappedLines.forEach((line, index) => {
+                ctx.fillText(line, canvas.width / 2, startY + (index * lineHeight));
+            });
+        } else {
+            // Single module display
+            ctx.fillText(moduleName, canvas.width / 2, 520);
+        }
+    }
+
+    // Text wrapping utility for certificates
+    wrapText(ctx, text, maxWidth) {
+        const words = text.split(' ');
+        const lines = [];
+        let currentLine = words[0];
+
+        for (let i = 1; i < words.length; i++) {
+            const word = words[i];
+            const width = ctx.measureText(currentLine + ' ' + word).width;
+            if (width < maxWidth) {
+                currentLine += ' ' + word;
+            } else {
+                lines.push(currentLine);
+                currentLine = word;
+            }
+        }
+        lines.push(currentLine);
+        return lines;
+    }
+
+    // Enhanced decorative elements for certificate
+    addEnhancedCertificateDecorations(ctx, width, height) {
+        // Save current state
+        const originalAlpha = ctx.globalAlpha;
+        const originalFillStyle = ctx.fillStyle;
+        
+        // Add corner decorative elements
+        ctx.fillStyle = '#1976d2';
+        ctx.globalAlpha = 0.15;
+        
+        // Top corners with larger decorative circles
+        ctx.beginPath();
+        ctx.arc(150, 150, 40, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.arc(width - 150, 150, 40, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Bottom corners
+        ctx.beginPath();
+        ctx.arc(150, height - 150, 40, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.arc(width - 150, height - 150, 40, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Add professional certification seal
+        ctx.globalAlpha = 0.9;
+        ctx.fillStyle = '#1976d2';
+        ctx.beginPath();
+        ctx.arc(width - 200, height - 220, 70, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Seal border
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.arc(width - 200, height - 220, 65, 0, Math.PI * 2);
+        ctx.stroke();
+        
+        // Seal text
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 16px Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('CERTIFIED', width - 200, height - 230);
+        ctx.font = '12px Arial, sans-serif';
+        ctx.fillText('PROFESSIONAL', width - 200, height - 215);
+        ctx.font = '10px Arial, sans-serif';
+        ctx.fillText('DATA CENTRE', width - 200, height - 205);
+        
+        // Add decorative borders
+        ctx.globalAlpha = 0.3;
+        ctx.fillStyle = '#42a5f5';
+        
+        // Top border decoration
+        for (let i = 0; i < 5; i++) {
+            ctx.beginPath();
+            ctx.arc(200 + (i * 200), 130, 8, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        // Bottom border decoration  
+        for (let i = 0; i < 5; i++) {
+            ctx.beginPath();
+            ctx.arc(200 + (i * 200), height - 130, 8, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        // Restore original state
+        ctx.globalAlpha = originalAlpha;
+        ctx.fillStyle = originalFillStyle;
     }
 
     // Menu Management
@@ -936,6 +1423,26 @@ class QuizApp {
             opts: newOptions,
             a: newCorrectLetter
         };
+    }
+
+    // Text wrapping utility for certificates
+    wrapText(ctx, text, maxWidth) {
+        const words = text.split(' ');
+        const lines = [];
+        let currentLine = words[0];
+
+        for (let i = 1; i < words.length; i++) {
+            const word = words[i];
+            const width = ctx.measureText(currentLine + ' ' + word).width;
+            if (width < maxWidth) {
+                currentLine += ' ' + word;
+            } else {
+                lines.push(currentLine);
+                currentLine = word;
+            }
+        }
+        lines.push(currentLine);
+        return lines;
     }
 
     // Data Loading
