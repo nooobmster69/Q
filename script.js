@@ -97,7 +97,15 @@ class QuizApp {
         document.getElementById('download-certificate').addEventListener('click', () => this.downloadCertificate());
         document.getElementById('retake-quiz').addEventListener('click', () => this.showScreen('module'));
         document.getElementById('back-to-home').addEventListener('click', () => this.backToHome());
-        document.getElementById('feedback-toggle').addEventListener('click', () => this.toggleFeedback());
+        
+        // Feedback toggle with fallback
+        const feedbackToggle = document.getElementById('feedback-toggle');
+        if (feedbackToggle) {
+            feedbackToggle.addEventListener('click', () => this.toggleFeedback());
+            console.log('Feedback toggle event listener added');
+        } else {
+            console.warn('Feedback toggle button not found during initial binding');
+        }
 
         // Menu Events
         document.getElementById('menu-overlay').addEventListener('click', (e) => {
@@ -844,23 +852,31 @@ class QuizApp {
     }    exitToModules() {
         this.toggleMenu();
         this.showScreen('module');
-    }
-
-    // Toggle feedback section visibility
+    }    // Toggle feedback section visibility
     toggleFeedback() {
+        console.log('toggleFeedback called');
         const feedbackToggle = document.getElementById('feedback-toggle');
         const feedbackContent = document.getElementById('feedback-content');
+        
+        if (!feedbackToggle || !feedbackContent) {
+            console.error('Feedback elements not found');
+            return;
+        }
+        
+        console.log('Current classes:', feedbackContent.className);
         
         if (feedbackContent.classList.contains('collapsed')) {
             // Expand
             feedbackContent.classList.remove('collapsed');
             feedbackContent.classList.add('expanded');
             feedbackToggle.classList.add('expanded');
+            console.log('Expanded feedback section');
         } else {
             // Collapse
             feedbackContent.classList.remove('expanded');
             feedbackContent.classList.add('collapsed');
             feedbackToggle.classList.remove('expanded');
+            console.log('Collapsed feedback section');
         }
     }backToHome() {
         console.log('backToHome called - resetting app state');
