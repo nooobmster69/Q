@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Visibility Test</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #212121;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .app-container {
+            max-width: 420px;
+            min-height: 100vh;
+            margin: 0 auto;
+            background: #fafafa;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        /* Simplified screen management - no transforms */
+        .screen {
+            width: 100%;
+            min-height: 100vh;
+            background: #fafafa;
+            overflow-y: auto;
+        }
+        
+        .screen.hidden {
+            display: none;
+        }
+        
+        .welcome-content {
+            padding: 60px 24px 40px;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .logo-section {
+            margin-bottom: 50px;
+        }
+        
+        .app-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, #1976d2, #42a5f5);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 32px rgba(25, 118, 210, 0.3);
+        }
+        
+        .app-icon .material-icons {
+            font-size: 40px;
+            color: white;
+        }
+        
+        .welcome-content h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #212121;
+            margin-bottom: 8px;
+        }
+        
+        .welcome-content p {
+            font-size: 16px;
+            color: #757575;
+            line-height: 1.5;
+        }
+        
+        .name-input-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 32px;
+        }
+        
+        .input-group {
+            text-align: left;
+        }
+        
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #757575;
+            margin-bottom: 8px;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            background: #ffffff;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #1976d2;
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+        }
+        
+        .primary-btn {
+            width: 100%;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, #1976d2, #42a5f5);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .debug-panel {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            z-index: 9999;
+            max-width: 300px;
+        }
+        
+        .module-screen {
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .modules-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-top: 20px;
+        }
+        
+        .module-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .module-card:hover {
+            border-color: #1976d2;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-panel" id="debug-panel">
+        Status: Loading...
+    </div>
+
+    <div class="app-container">
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="screen">
+            <div class="welcome-content">
+                <div class="logo-section">
+                    <div class="app-icon">
+                        <span class="material-icons">quiz</span>
+                    </div>
+                    <h1>Data Centre Certification</h1>
+                    <p>Professional assessment platform for data centre expertise</p>
+                </div>
+                <div class="name-input-section">
+                    <div class="input-group">
+                        <label for="user-name">Enter your full name for certificate</label>
+                        <input type="text" id="user-name" placeholder="John Smith" autocomplete="name">
+                    </div>
+                    <button id="start-btn" class="primary-btn">
+                        <span>Start Assessment</span>
+                        <span class="material-icons">arrow_forward</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Module Screen -->
+        <div id="module-screen" class="screen hidden">
+            <div class="module-screen">
+                <h2>Select Module</h2>
+                <div class="modules-grid" id="modules-container">
+                    <!-- Modules will be loaded here -->
+                </div>
+                <button onclick="showWelcome()" style="margin-top: 20px; padding: 10px 20px; background: #ccc; border: none; border-radius: 4px;">Back to Welcome</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let debugPanel = document.getElementById('debug-panel');
+        let quizData = null;
+        
+        function updateDebug(message) {
+            debugPanel.innerHTML += `<br>${new Date().toLocaleTimeString()}: ${message}`;
+            console.log(message);
+        }
+        
+        function showScreen(screenName) {
+            updateDebug(`Showing screen: ${screenName}`);
+            
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.add('hidden');
+            });
+            
+            // Show target screen
+            const targetScreen = document.getElementById(`${screenName}-screen`);
+            if (targetScreen) {
+                targetScreen.classList.remove('hidden');
+                updateDebug(`✅ Screen ${screenName} is now visible`);
+            } else {
+                updateDebug(`❌ Screen ${screenName} not found`);
+            }
+        }
+        
+        function showWelcome() {
+            showScreen('welcome');
+        }
+        
+        function showModules() {
+            showScreen('module');
+            if (quizData) {
+                renderModules();
+            } else {
+                loadQuizData();
+            }
+        }
+        
+        async function loadQuizData() {
+            try {
+                updateDebug('Loading quiz data...');
+                const response = await fetch('quiz-modules.json');
+                const data = await response.json();
+                
+                if (Array.isArray(data)) {
+                    quizData = data;
+                    updateDebug(`✅ Loaded ${data.length} modules`);
+                    renderModules();
+                } else {
+                    updateDebug('❌ Invalid data format');
+                }
+            } catch (error) {
+                updateDebug(`❌ Error loading data: ${error.message}`);
+            }
+        }
+        
+        function renderModules() {
+            const container = document.getElementById('modules-container');
+            container.innerHTML = '';
+            
+            if (!quizData) {
+                container.innerHTML = '<p>No modules available</p>';
+                return;
+            }
+            
+            quizData.forEach((module, index) => {
+                const moduleCard = document.createElement('div');
+                moduleCard.className = 'module-card';
+                moduleCard.innerHTML = `
+                    <h3>${module.name}</h3>
+                    <p>${module.questions ? module.questions.length : 0} questions</p>
+                `;
+                container.appendChild(moduleCard);
+            });
+            
+            updateDebug(`✅ Rendered ${quizData.length} module cards`);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateDebug('DOM loaded');
+            
+            // Make sure welcome screen is visible
+            showScreen('welcome');
+            
+            // Add event listeners
+            document.getElementById('start-btn').addEventListener('click', () => {
+                const name = document.getElementById('user-name').value.trim();
+                if (name.length >= 2) {
+                    updateDebug(`User entered name: ${name}`);
+                    showModules();
+                } else {
+                    updateDebug('Invalid name entered');
+                    alert('Please enter your full name');
+                }
+            });
+            
+            updateDebug('Initialization complete');
+        });
+        
+        // Test functions
+        window.testQuizData = loadQuizData;
+        window.testModules = renderModules;
+        window.showWelcome = showWelcome;
+        window.showModules = showModules;
+    </script>
+</body>
+</html>

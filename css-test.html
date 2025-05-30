@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Test - Screen Visibility</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* Debug styles */
+        .debug-info {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            z-index: 9999;
+            font-size: 12px;
+        }
+        
+        .test-buttons {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 9999;
+        }
+        
+        .test-buttons button {
+            display: block;
+            margin: 5px 0;
+            padding: 8px 12px;
+            background: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-info" id="debug-info">
+        Debug Info: Loading...
+    </div>
+    
+    <div class="test-buttons">
+        <button onclick="testWelcomeScreen()">Test Welcome Screen</button>
+        <button onclick="testScreenClasses()">Test Screen Classes</button>
+        <button onclick="testCSSLoading()">Test CSS Loading</button>
+    </div>
+
+    <div class="app-container">
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="screen active">
+            <div class="welcome-content">
+                <div class="logo-section">
+                    <div class="app-icon">
+                        <span class="material-icons">quiz</span>
+                    </div>
+                    <h1>Data Centre Certification</h1>
+                    <p>Professional assessment platform for data centre expertise</p>
+                </div>
+                <div class="name-input-section">
+                    <div class="input-group">
+                        <label for="user-name">Enter your full name for certificate</label>
+                        <input type="text" id="user-name" placeholder="John Smith" autocomplete="name">
+                        <span class="input-error" id="name-error">Please enter your full name</span>
+                    </div>
+                    <button id="start-btn" class="primary-btn">
+                        <span>Start Assessment</span>
+                        <span class="material-icons">arrow_forward</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Test Screen 2 -->
+        <div id="test-screen" class="screen">
+            <div style="padding: 40px; text-align: center;">
+                <h1>Test Screen</h1>
+                <p>This is a test screen</p>
+                <button onclick="showWelcome()">Back to Welcome</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let debugInfo = document.getElementById('debug-info');
+        
+        function updateDebugInfo() {
+            const welcomeScreen = document.getElementById('welcome-screen');
+            const appContainer = document.querySelector('.app-container');
+            
+            if (!welcomeScreen || !appContainer) {
+                debugInfo.innerHTML = '❌ Elements not found';
+                return;
+            }
+            
+            const welcomeStyles = window.getComputedStyle(welcomeScreen);
+            const containerStyles = window.getComputedStyle(appContainer);
+            
+            debugInfo.innerHTML = `
+                Welcome Screen:<br>
+                - Classes: ${welcomeScreen.className}<br>
+                - Transform: ${welcomeStyles.transform}<br>
+                - Position: ${welcomeStyles.position}<br>
+                - Z-Index: ${welcomeStyles.zIndex}<br>
+                - Display: ${welcomeStyles.display}<br>
+                - Visibility: ${welcomeStyles.visibility}<br>
+                - Opacity: ${welcomeStyles.opacity}<br>
+                <br>
+                App Container:<br>
+                - Position: ${containerStyles.position}<br>
+                - Overflow: ${containerStyles.overflow}<br>
+                - Height: ${containerStyles.height}
+            `;
+        }
+        
+        function testWelcomeScreen() {
+            const welcomeScreen = document.getElementById('welcome-screen');
+            console.log('Welcome Screen Element:', welcomeScreen);
+            console.log('Welcome Screen HTML:', welcomeScreen.outerHTML.substring(0, 200) + '...');
+            console.log('Welcome Screen Classes:', welcomeScreen.className);
+            console.log('Welcome Screen Computed Styles:', window.getComputedStyle(welcomeScreen));
+            updateDebugInfo();
+        }
+        
+        function testScreenClasses() {
+            const screens = document.querySelectorAll('.screen');
+            console.log(`Found ${screens.length} screen elements:`);
+            screens.forEach((screen, index) => {
+                console.log(`Screen ${index + 1}:`, screen.id, screen.className);
+                const styles = window.getComputedStyle(screen);
+                console.log(`  Transform: ${styles.transform}`);
+                console.log(`  Z-Index: ${styles.zIndex}`);
+                console.log(`  Position: ${styles.position}`);
+            });
+        }
+        
+        function testCSSLoading() {
+            // Check if our CSS rules are loaded
+            const testElement = document.createElement('div');
+            testElement.className = 'screen active';
+            testElement.style.visibility = 'hidden';
+            testElement.style.position = 'absolute';
+            document.body.appendChild(testElement);
+            
+            const styles = window.getComputedStyle(testElement);
+            console.log('CSS Test Element Transform:', styles.transform);
+            console.log('CSS Rules Applied:', styles.transform === 'matrix(1, 0, 0, 1, 0, 0)' || styles.transform === 'none');
+            
+            document.body.removeChild(testElement);
+        }
+        
+        function showWelcome() {
+            const welcomeScreen = document.getElementById('welcome-screen');
+            const testScreen = document.getElementById('test-screen');
+            
+            // Remove active from all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Add active to welcome
+            welcomeScreen.classList.add('active');
+            
+            updateDebugInfo();
+        }
+        
+        function showTest() {
+            const welcomeScreen = document.getElementById('welcome-screen');
+            const testScreen = document.getElementById('test-screen');
+            
+            // Remove active from all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Add active to test screen
+            testScreen.classList.add('active');
+            
+            updateDebugInfo();
+        }
+        
+        // Auto-update debug info
+        document.addEventListener('DOMContentLoaded', () => {
+            updateDebugInfo();
+            setInterval(updateDebugInfo, 2000);
+            
+            // Add click handler to test screen switching
+            document.getElementById('start-btn').addEventListener('click', showTest);
+        });
+        
+        // Log page load
+        console.log('CSS Test page loaded');
+        console.log('Document ready state:', document.readyState);
+        
+        window.addEventListener('load', () => {
+            console.log('Window loaded');
+            setTimeout(() => {
+                testWelcomeScreen();
+                testScreenClasses();
+                testCSSLoading();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

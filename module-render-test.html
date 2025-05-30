@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module Rendering Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .module-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0; }
+        .module-card { border: 1px solid #ddd; border-radius: 8px; padding: 20px; cursor: pointer; transition: transform 0.2s; }
+        .module-card:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .console { background: #f8f9fa; padding: 10px; border-radius: 3px; font-family: monospace; white-space: pre-wrap; max-height: 300px; overflow-y: auto; }
+        .button { padding: 10px 15px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; background: #007bff; color: white; }
+    </style>
+</head>
+<body>
+    <h1>Module Rendering Debug Test</h1>
+    
+    <div class="debug-section">
+        <h3>Console Output</h3>
+        <div id="console" class="console">Initializing...</div>
+        <button class="button" onclick="clearConsole()">Clear</button>
+        <button class="button" onclick="testModuleLoading()">Test Loading</button>
+        <button class="button" onclick="testModuleRendering()">Test Rendering</button>
+    </div>
+    
+    <div class="debug-section">
+        <h3>Module Data</h3>
+        <div id="module-data">Loading...</div>
+    </div>
+    
+    <div class="debug-section">
+        <h3>Module Grid Test</h3>
+        <div id="modules-container" class="module-grid">
+            <!-- Modules will be rendered here -->
+        </div>
+    </div>
+
+    <script>
+        let moduleData = null;
+        let logs = [];
+        
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            logs.push(logEntry);
+            document.getElementById('console').textContent = logs.join('\n');
+            console.log(message);
+        }
+        
+        function clearConsole() {
+            logs = [];
+            document.getElementById('console').textContent = 'Console cleared...';
+        }
+        
+        async function testModuleLoading() {
+            log('🔄 Testing module loading...');
+            
+            try {
+                const response = await fetch('quiz-modules.json');
+                log(`📡 Fetch response: ${response.status} ${response.statusText}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                moduleData = data;
+                
+                log(`✅ JSON loaded successfully`);
+                log(`📊 Data type: ${typeof data}`);
+                log(`📊 Is array: ${Array.isArray(data)}`);
+                log(`📚 Module count: ${data.length}`);
+                
+                // Display data summary
+                const dataDiv = document.getElementById('module-data');
+                dataDiv.innerHTML = `
+                    <p><strong>Data Type:</strong> ${typeof data}</p>
+                    <p><strong>Is Array:</strong> ${Array.isArray(data)}</p>
+                    <p><strong>Module Count:</strong> ${data.length}</p>
+                    <details>
+                        <summary>Module List</summary>
+                        <ul>
+                            ${data.map((module, index) => 
+                                `<li>${index + 1}. ${module.name} (${module.questions?.length || 0} questions)</li>`
+                            ).join('')}
+                        </ul>
+                    </details>
+                `;
+                
+                log('📋 Module list:');
+                data.forEach((module, index) => {
+                    log(`   ${index + 1}. ${module.name} (${module.questions?.length || 0} questions)`);
+                });
+                
+                return data;
+                
+            } catch (error) {
+                log(`❌ Loading failed: ${error.message}`);
+                document.getElementById('module-data').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+                throw error;
+            }
+        }
+        
+        function testModuleRendering() {
+            log('🎨 Testing module rendering...');
+            
+            if (!moduleData) {
+                log('❌ No module data available. Run "Test Loading" first.');
+                return;
+            }
+            
+            const container = document.getElementById('modules-container');
+            container.innerHTML = '';
+            
+            log(`📦 Rendering ${moduleData.length} modules...`);
+            
+            moduleData.forEach((module, index) => {
+                log(`🔨 Creating card for: ${module.name}`);
+                
+                const moduleCard = document.createElement('div');
+                moduleCard.className = 'module-card';
+                moduleCard.innerHTML = `
+                    <h3>${module.name}</h3>
+                    <p><strong>Questions:</strong> ${module.questions?.length || 0}</p>
+                    <p><strong>Module ID:</strong> ${index + 1}</p>
+                `;
+                
+                moduleCard.addEventListener('click', () => {
+                    log(`🎯 Module ${index + 1} clicked: ${module.name}`);
+                    alert(`Module clicked: ${module.name}`);
+                });
+                
+                container.appendChild(moduleCard);
+                log(`✅ Card added for module ${index + 1}`);
+            });
+            
+            log(`🎉 Rendering complete! ${container.children.length} cards created.`);
+            
+            // Verify DOM state
+            setTimeout(() => {
+                const actualCards = container.querySelectorAll('.module-card');
+                log(`🔍 DOM verification: ${actualCards.length} cards found in DOM`);
+                log(`🔍 Container children: ${container.children.length}`);
+                log(`🔍 Container innerHTML length: ${container.innerHTML.length} characters`);
+            }, 100);
+        }
+        
+        // Auto-run tests on page load
+        window.addEventListener('DOMContentLoaded', async () => {
+            log('🚀 Page loaded, starting auto-tests...');
+            
+            try {
+                await testModuleLoading();
+                await new Promise(resolve => setTimeout(resolve, 500)); // Wait 500ms
+                testModuleRendering();
+            } catch (error) {
+                log(`💥 Auto-test failed: ${error.message}`);
+            }
+        });
+    </script>
+</body>
+</html>

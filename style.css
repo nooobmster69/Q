@@ -41,6 +41,19 @@ body {
     -moz-user-select: none;
     -ms-user-select: none;
     touch-action: manipulation;
+    
+    /* Prevent zoom on mobile */
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    
+    /* Prevent pull-to-refresh */
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+    
+    /* Prevent selection and callouts on touch */
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* Disable text selection except for inputs */
@@ -53,21 +66,34 @@ input, textarea {
 
 /* App Container */
 .app-container {
-    max-width: 420px;
+    width: 100%;
+    max-width: 100vw;
     min-height: 100vh;
-    margin: 0 auto;
+    min-height: 100dvh; /* Dynamic viewport height for mobile */
+    margin: 0;
     background: var(--background);
     position: relative;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    overflow-x: hidden;
+}
+
+/* Mobile-first approach */
+@media (min-width: 768px) {
+    .app-container {
+        max-width: 420px;
+        margin: 0 auto;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
 }
 
 /* Screen Management - Simplified for better compatibility */
 .screen {
     width: 100%;
     min-height: 100vh;
+    min-height: 100dvh; /* Dynamic viewport height for mobile */
     background: var(--background);
     overflow-y: auto;
     display: none;
+    position: relative;
 }
 
 .screen.active {
@@ -284,9 +310,14 @@ input, textarea {
     cursor: pointer;
     transition: var(--transition);
     box-shadow: var(--card-shadow);
+    
+    /* Better touch feedback */
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
 }
 
-.icon-btn:hover {
+.icon-btn:hover,
+.icon-btn:active {
     background: #f5f5f5;
     transform: scale(1.05);
 }
@@ -336,7 +367,9 @@ input, textarea {
     grid-template-columns: 1fr;
     gap: 20px;
     min-height: calc(100vh - 120px);
+    min-height: calc(100dvh - 120px);
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* Desktop: Two columns for better space utilization */
@@ -367,10 +400,14 @@ input, textarea {
     box-shadow: var(--card-shadow);
     border: 2px solid transparent;
     min-height: 80px;
+    
+    /* Better touch feedback */
+    -webkit-tap-highlight-color: rgba(25, 118, 210, 0.1);
 }
 
-.module-card:hover {
-    transform: translateY(-4px);
+.module-card:hover,
+.module-card:active {
+    transform: translateY(-2px);
     box-shadow: var(--card-shadow-hover);
     border-color: var(--primary-light);
 }
@@ -455,6 +492,9 @@ input, textarea {
 .quiz-content {
     padding: 24px;
     min-height: calc(100vh - 140px);
+    min-height: calc(100dvh - 140px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* Loading State */
@@ -550,9 +590,14 @@ input, textarea {
     align-items: center;
     gap: 16px;
     min-height: 60px;
+    
+    /* Better touch feedback */
+    -webkit-tap-highlight-color: rgba(25, 118, 210, 0.1);
+    user-select: none;
 }
 
-.option:hover {
+.option:hover,
+.option:active {
     border-color: var(--primary-light);
     background: #f3f9ff;
 }
@@ -670,9 +715,14 @@ input, textarea {
     gap: 12px;
     min-height: 56px;
     box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+    
+    /* Better touch feedback */
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
 }
 
-.primary-btn:hover {
+.primary-btn:hover,
+.primary-btn:active {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(25, 118, 210, 0.4);
 }
@@ -705,9 +755,14 @@ input, textarea {
     justify-content: center;
     gap: 8px;
     min-height: 56px;
+    
+    /* Better touch feedback */
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
 }
 
-.secondary-btn:hover {
+.secondary-btn:hover,
+.secondary-btn:active {
     border-color: var(--primary-color);
     color: var(--primary-color);
     background: #f3f9ff;
@@ -1092,10 +1147,106 @@ input, textarea {
     color: var(--error-color);
 }
 
-/* Responsive Design */
-@media (max-width: 480px) {
+/* Safe Area Support for devices with notches */
+@supports(padding: max(0px)) {
+    .app-container {
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+    }
+    
+    .screen-header {
+        padding-top: max(16px, env(safe-area-inset-top));
+        padding-left: max(20px, calc(24px + env(safe-area-inset-left)));
+        padding-right: max(20px, calc(24px + env(safe-area-inset-right)));
+    }
+    
+    .welcome-content {
+        padding-top: max(40px, calc(60px + env(safe-area-inset-top)));
+        padding-left: max(20px, calc(24px + env(safe-area-inset-left)));
+        padding-right: max(20px, calc(24px + env(safe-area-inset-right)));
+        padding-bottom: max(32px, calc(40px + env(safe-area-inset-bottom)));
+    }
+    
+    .quiz-content {
+        padding-left: max(20px, calc(24px + env(safe-area-inset-left)));
+        padding-right: max(20px, calc(24px + env(safe-area-inset-right)));
+        padding-bottom: max(20px, calc(24px + env(safe-area-inset-bottom)));
+    }
+    
+    .results-content {
+        padding-left: max(20px, calc(24px + env(safe-area-inset-left)));
+        padding-right: max(20px, calc(24px + env(safe-area-inset-right)));
+        padding-bottom: max(32px, calc(40px + env(safe-area-inset-bottom)));
+    }
+    
+    .modules-grid {
+        padding-left: max(20px, calc(24px + env(safe-area-inset-left)));
+        padding-right: max(20px, calc(24px + env(safe-area-inset-right)));
+        padding-bottom: max(20px, calc(24px + env(safe-area-inset-bottom)));
+    }
+}
+
+/* Responsive Design - Mobile First Approach */
+
+/* Base styles are for mobile */
+
+/* Small tablets and large phones */
+@media (min-width: 480px) {
+    .modules-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        padding: 24px;
+    }
+    
+    .quiz-actions .secondary-buttons {
+        display: flex;
+        gap: 16px;
+    }
+    
+    .quiz-actions .secondary-buttons button {
+        flex: 1;
+    }
+}
+
+/* Tablets */
+@media (min-width: 768px) {
+    .modules-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
+    .quiz-actions {
+        gap: 20px;
+    }
+    
+    .welcome-content {
+        padding: 80px 32px 48px;
+    }
+    
+    .quiz-content {
+        padding: 32px;
+    }
+    
+    .results-content {
+        padding: 48px 32px;
+    }
+}
+
+/* Large screens */
+@media (min-width: 1024px) {
+    .app-container {
+        max-width: 480px;
+    }
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 479px) {
     .app-container {
         max-width: 100%;
+        margin: 0;
+        box-shadow: none;
     }
     
     .welcome-content {
@@ -1104,10 +1255,190 @@ input, textarea {
     
     .quiz-content {
         padding: 20px;
+        min-height: calc(100vh - 120px);
+        min-height: calc(100dvh - 120px);
     }
     
     .results-content {
         padding: 32px 20px;
+    }
+    
+    .screen-header {
+        padding: 16px 20px;
+        min-height: 70px;
+    }
+    
+    .screen-header h2 {
+        font-size: 18px;
+    }
+    
+    .modules-grid {
+        padding: 20px;
+        gap: 16px;
+        min-height: calc(100vh - 110px);
+        min-height: calc(100dvh - 110px);
+    }
+    
+    .module-card {
+        padding: 20px;
+        min-height: 70px;
+    }
+    
+    .module-card h3 {
+        font-size: 15px;
+    }
+    
+    .quiz-header {
+        padding: 12px 20px;
+    }
+    
+    .quiz-info h3 {
+        font-size: 15px;
+    }
+    
+    .progress-info {
+        font-size: 11px;
+    }
+    
+    /* Make buttons touch-friendly */
+    .primary-btn, .secondary-btn {
+        min-height: 48px;
+        font-size: 16px;
+        padding: 16px 20px;
+    }
+    
+    .icon-btn {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
+    }
+    
+    /* Option buttons for quiz */
+    .option-btn {
+        min-height: 52px;
+        padding: 16px 20px;
+        font-size: 15px;
+    }
+    
+    /* Input fields */
+    .input-group input {
+        padding: 16px;
+        font-size: 16px; /* Prevents zoom on iOS */
+        min-height: 48px;
+    }
+    
+    /* Score circle responsive */
+    .score-circle {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .score-circle::before {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .score-percentage {
+        font-size: 20px;
+    }
+}
+
+/* Mobile orientation and device-specific optimizations */
+@media screen and (orientation: landscape) and (max-height: 500px) {
+    .welcome-content {
+        padding: 20px;
+    }
+    
+    .quiz-content {
+        padding: 16px 20px;
+    }
+    
+    .screen-header {
+        padding: 12px 20px;
+        min-height: 60px;
+    }
+    
+    .modules-grid {
+        padding: 16px 20px;
+    }
+}
+
+/* Extra small devices optimization */
+@media (max-width: 320px) {
+    .app-title {
+        font-size: 22px;
+    }
+    
+    .app-subtitle {
+        font-size: 14px;
+    }
+    
+    .primary-btn, .secondary-btn {
+        font-size: 15px;
+        padding: 14px 18px;
+    }
+    
+    .module-card {
+        padding: 16px;
+    }
+    
+    .module-card h3 {
+        font-size: 14px;
+    }
+}
+
+/* Large mobile devices (phablets) */
+@media (min-width: 480px) and (max-width: 767px) {
+    .app-container {
+        max-width: 100%;
+        padding: 0 16px;
+    }
+    
+    .welcome-content {
+        padding: 48px 32px 40px;
+    }
+    
+    .quiz-content {
+        padding: 24px 32px;
+    }
+    
+    .modules-grid {
+        padding: 24px 32px;
+        gap: 20px;
+    }
+}
+
+/* Enhanced touch interactions for all interactive elements */
+button, .option-btn, .module-card, .icon-btn {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+button:active, .option-btn:active, .module-card:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+}
+
+/* Smooth scrolling for all scrollable elements */
+.screen, .quiz-content, .modules-grid {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Hide scrollbars on mobile for cleaner look */
+@media (max-width: 767px) {
+    .screen::-webkit-scrollbar,
+    .quiz-content::-webkit-scrollbar,
+    .modules-grid::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .screen,
+    .quiz-content,
+    .modules-grid {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
     }
 }
 

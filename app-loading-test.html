@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Main App Loading</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .test-section {
+            background: white;
+            margin: 15px 0;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #007AFF;
+        }
+        .console-output {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 11px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+        .test-frame {
+            width: 100%;
+            height: 500px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .link-test {
+            display: inline-block;
+            margin: 5px 10px;
+            padding: 8px 16px;
+            background: #007AFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .link-test:hover {
+            background: #005cbf;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Main App Loading Test</h1>
+    
+    <div class="test-section">
+        <h3>📱 Direct App Test</h3>
+        <p>Testing the main application in an iframe:</p>
+        <iframe src="index.html" class="test-frame" id="app-frame"></iframe>
+    </div>
+
+    <div class="test-section">
+        <h3>🔗 Quick Links</h3>
+        <a href="index.html" class="link-test" target="_blank">Open Main App (New Tab)</a>
+        <a href="debug-blank-page.html" class="link-test" target="_blank">Debug Page</a>
+        <a href="test-modules.html" class="link-test" target="_blank">Module Test</a>
+        <a href="quiz-modules.json" class="link-test" target="_blank">View JSON Data</a>
+    </div>
+
+    <div class="test-section">
+        <h3>🖥️ Console Monitoring</h3>
+        <div id="console-output" class="console-output">Monitoring console...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>📊 App Status Check</h3>
+        <div id="app-status">Checking app status...</div>
+    </div>
+
+    <script>
+        // Console capture
+        const consoleDiv = document.getElementById('console-output');
+        const originalLog = console.log;
+        const originalError = console.error;
+        
+        function addToConsole(type, ...args) {
+            const timestamp = new Date().toLocaleTimeString();
+            const message = args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' ');
+            
+            const line = `[${timestamp}] ${type}: ${message}\n`;
+            consoleDiv.textContent += line;
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+            
+            if (type === 'ERROR') originalError(...args);
+            else originalLog(...args);
+        }
+        
+        console.log = (...args) => addToConsole('LOG', ...args);
+        console.error = (...args) => addToConsole('ERROR', ...args);
+
+        // Monitor iframe loading
+        const iframe = document.getElementById('app-frame');
+        const statusDiv = document.getElementById('app-status');
+        
+        iframe.onload = function() {
+            console.log('✅ Iframe loaded successfully');
+            
+            try {
+                // Try to access iframe content (may fail due to same-origin policy)
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                if (iframeDoc) {
+                    console.log('✅ Iframe document accessible');
+                    
+                    // Check if the welcome screen is visible
+                    const welcomeScreen = iframeDoc.getElementById('welcome-screen');
+                    if (welcomeScreen) {
+                        console.log('✅ Welcome screen found in iframe');
+                        const isActive = welcomeScreen.classList.contains('active');
+                        console.log(`📱 Welcome screen active: ${isActive}`);
+                        
+                        statusDiv.innerHTML = `
+                            ✅ App loaded successfully<br>
+                            📱 Welcome screen: ${isActive ? 'Active' : 'Not active'}<br>
+                            🎯 Status: ${isActive ? 'Ready for user input' : 'Check console for errors'}
+                        `;
+                    } else {
+                        console.log('❌ Welcome screen not found');
+                        statusDiv.innerHTML = '❌ Welcome screen not found - check HTML structure';
+                    }
+                } else {
+                    console.log('⚠️ Cannot access iframe content (same-origin policy)');
+                    statusDiv.innerHTML = '⚠️ App loaded but content not accessible (normal for iframe)';
+                }
+            } catch (error) {
+                console.log('⚠️ Iframe content access restricted:', error.message);
+                statusDiv.innerHTML = '✅ App loaded (iframe restrictions prevent detailed inspection)';
+            }
+        };
+        
+        iframe.onerror = function() {
+            console.error('❌ Iframe failed to load');
+            statusDiv.innerHTML = '❌ Failed to load main application';
+        };
+
+        // Additional tests
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('🚀 Starting main app loading tests...');
+            
+            // Test script.js loading
+            try {
+                const scriptResponse = await fetch('script.js');
+                if (scriptResponse.ok) {
+                    console.log('✅ script.js is accessible');
+                    const scriptText = await scriptResponse.text();
+                    
+                    // Quick syntax check
+                    if (scriptText.includes('class QuizApp {')) {
+                        console.log('✅ QuizApp class declaration found');
+                    } else {
+                        console.error('❌ QuizApp class declaration malformed');
+                    }
+                    
+                    if (scriptText.includes('window.quizApp = new QuizApp()')) {
+                        console.log('✅ QuizApp initialization found');
+                    } else {
+                        console.error('❌ QuizApp initialization missing');
+                    }
+                } else {
+                    console.error('❌ script.js not accessible:', scriptResponse.status);
+                }
+            } catch (error) {
+                console.error('❌ Error testing script.js:', error);
+            }
+
+            // Test CSS loading
+            try {
+                const cssResponse = await fetch('style.css');
+                if (cssResponse.ok) {
+                    console.log('✅ style.css is accessible');
+                } else {
+                    console.error('❌ style.css not accessible:', cssResponse.status);
+                }
+            } catch (error) {
+                console.error('❌ Error testing style.css:', error);
+            }
+
+            // Test JSON data
+            try {
+                const jsonResponse = await fetch('quiz-modules.json');
+                if (jsonResponse.ok) {
+                    const data = await jsonResponse.json();
+                    console.log(`✅ quiz-modules.json loaded (${data.length} modules)`);
+                } else {
+                    console.error('❌ quiz-modules.json not accessible:', jsonResponse.status);
+                }
+            } catch (error) {
+                console.error('❌ Error testing quiz-modules.json:', error);
+            }
+            
+            console.log('✅ File accessibility tests completed');
+        });
+
+        // Monitor for 5 seconds then provide summary
+        setTimeout(() => {
+            console.log('📋 Test Summary after 5 seconds:');
+            console.log('If you see the app in the iframe above, the main issue is resolved.');
+            console.log('If the iframe is blank, there may be a JavaScript runtime error.');
+            console.log('Check the browser developer tools (F12) for additional error details.');
+        }, 5000);
+    </script>
+</body>
+</html>
