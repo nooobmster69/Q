@@ -635,15 +635,16 @@ input, textarea {
 
 .option {
     background: var(--surface);
-    border: 2px solid #e0e0e0;
-    border-radius: var(--border-radius);
-    padding: 20px;
+    border: 2px solid transparent;
+    border-radius: var(--border-radius-large);
+    padding: 24px;
     cursor: pointer;
     transition: var(--transition);
     display: flex;
     align-items: center;
     gap: 16px;
     min-height: 60px;
+    box-shadow: var(--card-shadow);
     
     /* Better touch feedback */
     -webkit-tap-highlight-color: rgba(25, 118, 210, 0.1);
@@ -652,6 +653,8 @@ input, textarea {
 
 .option:hover,
 .option:active {
+    transform: translateY(-2px);
+    box-shadow: var(--card-shadow-hover);
     border-color: var(--primary-light);
     background: #f3f9ff;
 }
@@ -659,16 +662,22 @@ input, textarea {
 .option.selected {
     border-color: var(--primary-color);
     background: #e3f2fd;
+    transform: translateY(-2px);
+    box-shadow: var(--card-shadow-hover);
 }
 
 .option.correct {
     border-color: var(--success-color);
     background: #e8f5e8;
+    transform: translateY(-2px);
+    box-shadow: var(--card-shadow-hover);
 }
 
 .option.incorrect {
     border-color: var(--error-color);
     background: #ffebee;
+    transform: translateY(-2px);
+    box-shadow: var(--card-shadow-hover);
 }
 
 .option-indicator {
