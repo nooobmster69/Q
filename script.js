@@ -1166,28 +1166,22 @@ class QuizApp {
     }    // Add signature to certificate
     addSignatureToCertificate(ctx, canvas, signatureImage) {
         if (!signatureImage) return;
-        
-        try {
-            // Position signature in bottom right corner INSIDE the certificate boundary
-            // Certificate white area: x=100 to x=canvas.width-100, y=100 to y=canvas.height-100
-            const signatureWidth = 180;
-            const signatureHeight = 90;
-            const signatureX = canvas.width - 100 - signatureWidth - 30; // 30px margin from right edge
-            const signatureY = canvas.height - 100 - signatureHeight - 40; // 40px margin from bottom edge
+          try {
+            // Position signature well inside the certificate content area (bottom right)
+            // Certificate content area: x=150 to x=canvas.width-150, y=150 to y=canvas.height-150
+            const signatureWidth = 160;
+            const signatureHeight = 80;
+            const signatureX = canvas.width - 200; // 200px from right edge (well inside)
+            const signatureY = canvas.height - 180; // 180px from bottom edge (above version text)
             
-            // Add signature background
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-            this.roundedRect(ctx, signatureX - 10, signatureY - 10, signatureWidth + 20, signatureHeight + 40, 8);
-            ctx.fill();
-            
-            // Draw signature image
+            // Draw signature image directly (no background rectangle since PNG has transparency)
             ctx.drawImage(signatureImage, signatureX, signatureY, signatureWidth, signatureHeight);
             
-            // Add "Authorized Signature" label
+            // Add "Authorized Signature" label below the signature
             ctx.fillStyle = '#666666';
-            ctx.font = '14px Arial, sans-serif';
+            ctx.font = '12px Arial, sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('Authorized Signature', signatureX + signatureWidth / 2, signatureY + signatureHeight + 25);
+            ctx.fillText('Authorized Signature', signatureX + signatureWidth / 2, signatureY + signatureHeight + 15);
             
             console.log('✅ Signature added to certificate');
         } catch (error) {
