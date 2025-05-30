@@ -1163,34 +1163,42 @@ class QuizApp {
             console.warn('⚠️ Error loading signature image:', error);
             return null;
         }
-    }
-
-    // Add signature to certificate
+    }    // Add signature to certificate
     addSignatureToCertificate(ctx, canvas, signatureImage) {
         if (!signatureImage) return;
         
         try {
-            // Position signature in bottom right, above version info
-            const signatureWidth = 200;
-            const signatureHeight = 100;
-            const signatureX = canvas.width - 300;
-            const signatureY = canvas.height - 200;
+            // Position signature in bottom right INSIDE the certificate white area
+            const signatureWidth = 180;
+            const signatureHeight = 90;
+            const certPadding = 100; // Certificate white area starts at 100px from edges
+            const signaturePadding = 30; // Additional padding from certificate edge
             
-            // Add signature background
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-            this.roundedRect(ctx, signatureX - 10, signatureY - 10, signatureWidth + 20, signatureHeight + 40, 8);
+            // Position within the certificate bounds (100px to canvas.width-100px)
+            const signatureX = canvas.width - certPadding - signaturePadding - signatureWidth;
+            const signatureY = canvas.height - certPadding - signaturePadding - signatureHeight - 40; // Extra space for label
+            
+            // Add subtle signature background within certificate
+            ctx.fillStyle = 'rgba(248, 249, 250, 0.8)';
+            this.roundedRect(ctx, signatureX - 8, signatureY - 8, signatureWidth + 16, signatureHeight + 35, 6);
             ctx.fill();
+            
+            // Add subtle border
+            ctx.strokeStyle = 'rgba(33, 150, 243, 0.2)';
+            ctx.lineWidth = 1;
+            this.roundedRect(ctx, signatureX - 8, signatureY - 8, signatureWidth + 16, signatureHeight + 35, 6);
+            ctx.stroke();
             
             // Draw signature image
             ctx.drawImage(signatureImage, signatureX, signatureY, signatureWidth, signatureHeight);
             
             // Add "Authorized Signature" label
-            ctx.fillStyle = '#666666';
-            ctx.font = '14px Arial, sans-serif';
+            ctx.fillStyle = '#555555';
+            ctx.font = '12px Arial, sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('Authorized Signature', signatureX + signatureWidth / 2, signatureY + signatureHeight + 25);
+            ctx.fillText('Authorized Signature', signatureX + signatureWidth / 2, signatureY + signatureHeight + 20);
             
-            console.log('✅ Signature added to certificate');
+            console.log('✅ Signature positioned inside certificate at:', { x: signatureX, y: signatureY });
         } catch (error) {
             console.warn('⚠️ Error adding signature to certificate:', error);
         }
