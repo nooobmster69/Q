@@ -3,8 +3,8 @@
 
 // Application Version Configuration
 const APP_VERSION = {
-    version: '2.1.2',
-    updateDate: 'May 30, 2025',
+    version: '2.1.3',
+    updateDate: 'May 30, 2025 - Score Display Enhancement',
     appName: 'Data Centre Certification Platform'
 };
 
@@ -511,10 +511,8 @@ class QuizApp {
         const percentage = Math.round((this.score / totalQuestions) * 100);
         const moduleName = this.quizData.modules[this.currentModule].name;
         const passingScore = this.quizData.config.passingScore || 70;
-        const passed = percentage >= passingScore;
-
-        // Update result elements
-        document.getElementById('final-score').textContent = `${percentage}%`;
+        const passed = percentage >= passingScore;        // Update result elements
+        document.getElementById('final-score').textContent = `${this.score}/${totalQuestions}`;
         document.getElementById('correct-count').textContent = `${this.score}/${totalQuestions}`;
         document.getElementById('completed-module').textContent = moduleName;
         document.getElementById('pass-status').textContent = passed ? 'Passed' : 'Failed';
@@ -688,11 +686,10 @@ class QuizApp {
         ctx.fillStyle = '#333333';
         ctx.font = 'bold 26px Arial, sans-serif';
         ctx.fillText(moduleName, canvas.width / 2, 490);
-        
-        // Score
+          // Score
         ctx.fillStyle = '#4caf50';
         ctx.font = 'bold 32px Arial, sans-serif';
-        ctx.fillText(`Score: ${percentage}%`, canvas.width / 2, 550);
+        ctx.fillText(`Score: ${this.score}/${this.questions.length}`, canvas.width / 2, 550);
           // Date
         ctx.fillStyle = '#999999';
         ctx.font = '20px Arial, sans-serif';
