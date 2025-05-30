@@ -3,7 +3,7 @@
 
 // Application Version Configuration
 const APP_VERSION = {
-    version: '2.1.0',
+    version: '2.1.2',
     updateDate: 'May 30, 2025',
     appName: 'Data Centre Certification Platform'
 };
