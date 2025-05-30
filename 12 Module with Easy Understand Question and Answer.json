@@ -1,0 +1,717 @@
+[
+  {
+    "name": "Module 1: History of Data Centres",
+    "questions": [
+      {
+        "q": "What was ENIAC, built by the American Army?",
+        "opts": ["A. The first mechanical calculator", "B. The first general-purpose electronic computer", "C. A large data storage device", "D. A new type of military weapon"],
+        "a": "B"
+      },
+      {
+        "q": "Why were early computers, like ENIAC, kept in special, separate rooms?",
+        "opts": ["A. They were too loud for offices", "B. They were very large, complex, and needed special security and environment", "C. They needed to be hidden from the public", "D. They consumed very little power"],
+        "a": "B"
+      },
+      {
+        "q": "When microcomputers became common, what problem did companies face?",
+        "opts": ["A. They had too much space for computers", "B. It was hard to keep their computer rooms organized", "C. Computers became too cheap to buy", "D. They no longer needed IT staff"],
+        "a": "B"
+      },
+      {
+        "q": "What term became popular for dedicated rooms that housed computer equipment, especially with client-server networks?",
+        "opts": ["A. Server closet", "B. Data Centre", "C. Office server room", "D. IT department"],
+        "a": "C"
+      },
+      {
+        "q": "What led to a huge growth in 'Internet Data Centres' (IDCs) during the 'dot com' era?",
+        "opts": ["A. New programming languages", "B. Commercial business interests", "C. Smaller computers", "D. The end of dial-up internet"],
+        "a": "B"
+      },
+      {
+        "q": "What does an 'Enterprise data centre' usually do?",
+        "opts": ["A. Stores office supplies only", "B. Houses computer systems and related equipment for one company", "C. Rents space to other companies", "D. Only handles phone calls"],
+        "a": "B"
+      },
+      {
+        "q": "What kind of facility lets businesses rent space for their servers and other computer hardware?",
+        "opts": ["A. Enterprise data centre", "B. Colocation data centre (Colo)", "C. Wholesale data centre", "D. Home office"],
+        "a": "B"
+      },
+      {
+        "q": "In a 'Wholesale data centre', what does the customer typically design and operate themselves?",
+        "opts": ["A. The entire building structure", "B. The power, cooling, and network cabling for their server room", "C. The security systems for the whole facility", "D. The chilled water supply for the building"],
+        "a": "B"
+      },
+      {
+        "q": "Based on the global investments chart, which region shows the highest growth rate for data centres?",
+        "opts": ["A. Europe", "B. Asia Pacific", "C. Latin America", "D. NAM"],
+        "a": "C"
+      },
+      {
+        "q": "What does an enterprise data centre typically include to ensure smooth operation?",
+        "opts": ["A. Only basic power connections", "B. Redundant power, data connections, and environmental controls", "C. Only storage for old equipment", "D. A single server rack"],
+        "a": "B"
+      }
+    ]
+  },
+  {
+    "name": "Module 2: The Data Centre and its Relation to the Business",
+    "questions": [
+      {
+        "q": "How important is Information Technology (IT) to modern organizations?",
+        "opts": ["A. It is a minor expense", "B. It is a vital and integrated part", "C. It is only for large companies", "D. It is becoming less important"],
+        "a": "B"
+      },
+      {
+        "q": "What is one key goal of IT that involves improving how a business works?",
+        "opts": ["A. Reducing marketing costs", "B. Improving human resources", "C. Process management and improvement", "D. Increasing office space"],
+        "a": "C"
+      },
+      {
+        "q": "According to Gartner, what does the data centre do for a company?",
+        "opts": ["A. It handles all customer calls", "B. It houses and maintains the main computer systems and databases", "C. It designs new products", "D. It manages employee payroll"],
+        "a": "B"
+      },
+      {
+        "q": "What kind of support does a data centre need to work properly?",
+        "opts": ["A. Only software applications", "B. Physical facility and utility infrastructure like power and cooling", "C. Just a good internet connection", "D. Minimal staff for maintenance"],
+        "a": "B"
+      },
+      {
+        "q": "What is a major negative outcome if a data centre stops working?",
+        "opts": ["A. Employees get more free time", "B. Loss of revenue (money)", "C. Better public image", "D. Less energy use"],
+        "a": "B"
+      },
+      {
+        "q": "Based on the survey, which cause is the biggest reason for data centre downtime?",
+        "opts": ["A. IT equipment failure", "B. Generator failure", "C. UPS system (battery) failure", "D. Accidental / Human error"],
+        "a": "C"
+      },
+      {
+        "q": "What was the average cost of data centre downtime in 2015?",
+        "opts": ["A. Around $100,000", "B. Around $300,000", "C. Around $740,000", "D. Around $1,000,000"],
+        "a": "C"
+      },
+      {
+        "q": "How can a company estimate the financial impact of data centre downtime?",
+        "opts": ["A. By asking employees how much they think it costs", "B. By dividing the yearly income by the number of production hours in a year", "C. By only counting the cost of broken hardware", "D. By looking at competitor's downtime costs"],
+        "a": "B"
+      },
+      {
+        "q": "What is the main idea of Module 2 about data centres?",
+        "opts": ["A. Data centres are simple computer rooms", "B. Data centres are not very important to business success", "C. Data centres are complex, dynamic, and essential to business", "D. Data centre problems are usually small and easy to fix"],
+        "a": "C"
+      },
+      {
+        "q": "Why do companies need to manage data centres well?",
+        "opts": ["A. To avoid paying taxes", "B. To prevent big losses from problems", "C. To impress customers with technology", "D. To reduce employee workload"],
+        "a": "B"
+      }
+    ]
+  },
+  {
+    "name": "Module 3: Data Centre Standards",
+    "questions": [
+      {
+        "q": "Which type of document sets official rules, has audit checks, and is meant for certification?",
+        "opts": ["A. Guideline", "B. White paper", "C. Standard", "D. Blog post"],
+        "a": "C"
+      },
+      {
+        "q": "What type of document gives advice or principles, but is not for certification?",
+        "opts": ["A. Standard", "B. Guideline", "C. White paper", "D. Law"],
+        "a": "B"
+      },
+      {
+        "q": "What kind of document sometimes gives information that favors certain companies?",
+        "opts": ["A. Standard", "B. Guideline", "C. White paper", "D. Technical drawing"],
+        "a": "C"
+      },
+      {
+        "q": "Where do national standards often get their ideas from?",
+        "opts": ["A. Local customs", "B. International standards", "C. Individual companies", "D. Old technologies"],
+        "a": "B"
+      },
+      {
+        "q": "If a national standard and an international standard conflict, which one should you usually follow?",
+        "opts": ["A. The international standard", "B. The older standard", "C. The national standard", "D. The cheapest option"],
+        "a": "C"
+      },
+      {
+        "q": "What is the most common pair of standards that data centre builders and operators follow?",
+        "opts": ["A. ISO and CENELEC", "B. ANSI/BICSI-002 and EN-50600", "C. Uptime Institute and ANSI/TIA-942", "D. UL-3223 and Switch Tier-5"],
+        "a": "C"
+      },
+      {
+        "q": "What is the Uptime Institute known for in data centres?",
+        "opts": ["A. Making networking cables", "B. A commercial company that publishes guidelines/whitepapers for data centre topologies", "C. Setting global electrical standards", "D. Designing computer chips"],
+        "a": "B"
+      },
+      {
+        "q": "What does ANSI/TIA-942 primarily focus on for data centres?",
+        "opts": ["A. Electrical fire safety only", "B. Telecommunications infrastructure", "C. Human resource management", "D. Marketing strategies"],
+        "a": "B"
+      },
+      {
+        "q": "Which of these two standards, Uptime Institute or ANSI/TIA-942, is globally accredited for data centre certification?",
+        "opts": ["A. Uptime Institute only", "B. ANSI/TIA-942 only", "C. Both are equally accredited", "D. Neither are accredited"],
+        "a": "B"
+      },
+      {
+        "q": "How often does the TIA-942 standard typically get updated?",
+        "opts": ["A. Every year", "B. Every 3-5 years", "C. Only when new technology appears", "D. It has no fixed update schedule"],
+        "a": "B"
+      }
+    ]
+  },
+  {
+    "name": "Module 3 properties of ANSI/TIA-942:",
+    "questions": [
+      {
+        "q": "What does a 'Rated-1' data centre mean according to ANSI/TIA-942?",
+        "opts": ["A. It has backup power and cooling paths.", "B. It has a single path for power, cooling, and network with no backup.", "C. It can be repaired without stopping service.", "D. It can handle any equipment failure."],
+        "a": "B"
+      },
+      {
+        "q": "A 'Rated-2' data centre provides what level of redundancy?",
+        "opts": ["A. No redundant components at all.", "B. Redundant components (like backup parts) but still a single main path.", "C. Multiple active paths for all systems.", "D. Full fault tolerance."],
+        "a": "B"
+      },
+      {
+        "q": "What key feature defines a 'Rated-3' data centre?",
+        "opts": ["A. It has only one power supply.", "B. It is fault tolerant (can survive a failure).", "C. It is concurrently maintainable (parts can be fixed without downtime).", "D. It has no cooling systems."],
+        "a": "C"
+      },
+      {
+        "q": "Which ANSI/TIA-942 rating level is designed to be 'fault tolerant'?",
+        "opts": ["A. Rated-1", "B. Rated-2", "C. Rated-3", "D. Rated-4"],
+        "a": "D"
+      },
+      {
+        "q": "When choosing a redundancy level for a data centre, what business factor should be considered?",
+        "opts": ["A. How many employees work there", "B. The cost of downtime if the data centre stops working", "C. The color of the equipment", "D. The type of internet provider"],
+        "a": "B"
+      },
+      {
+        "q": "What is considered the 'overall Rated level' of a data centre?",
+        "opts": ["A. The highest rating achieved in any single part.", "B. The average of all ratings.", "C. The lowest rating level where everything fully meets the standard.", "D. The maximum possible rating for the building."],
+        "a": "C"
+      },
+      {
+        "q": "Which parts of a data centre infrastructure does ANSI/TIA-942 cover in its scope?",
+        "opts": ["A. Only IT equipment like servers and storage.", "B. Only building features like walls and roofs.", "C. Electrical, mechanical, telecommunication, site location, and physical security.", "D. Only software and network management."],
+        "a": "C"
+      },
+      {
+        "q": "For a Rated-1 data centre, what is true about its power support from a generator?",
+        "opts": ["A. It must have a generator for all loads.", "B. A generator is not required to support UPS mechanical loads.", "C. It needs two generators.", "D. It relies solely on battery power."],
+        "a": "B"
+      },
+      {
+        "q": "In a Rated-2 data centre, how many backup components are generally installed?",
+        "opts": ["A. None", "B. N+1 configuration", "C. 2N configuration", "D. N-1 configuration"],
+        "a": "B"
+      },
+      {
+        "q": "What is the key takeaway from this module about ANSI/TIA-942?",
+        "opts": ["A. It is a simple guide for small data centres.", "B. It describes four different levels of reliability for data centres.", "C. It only covers the network cables.", "D. It is an outdated standard not used anymore."],
+        "a": "B"
+      }
+    ]
+  },
+  {
+    "name": "Module 4: Data Centre Site Selection",
+    "questions": [
+      {
+        "q": "Why is choosing a data centre location so important?",
+        "opts": ["A. It's easy to change later", "B. The data centre is expected to run for many years there", "C. It only affects the construction cost", "D. It doesn't impact daily operations"],
+        "a": "B"
+      },
+      {
+        "q": "Who should be involved in deciding where to put a data centre?",
+        "opts": ["A. Only the construction team", "B. Only the IT department", "C. Both business and technical departments", "D. Only real estate agents"],
+        "a": "C"
+      },
+      {
+        "q": "What are some business demands to consider when choosing a site?",
+        "opts": ["A. How many windows the building has", "B. High availability, reliability, and cost of operations", "C. The nearest coffee shop", "D. Employee parking space"],
+        "a": "B"
+      },
+      {
+        "q": "Which of these is NOT a category to think about during a detailed study for site selection?",
+        "opts": ["A. Rules and laws (regulations)", "B. Man-made surroundings (location)", "C. Marketing budget", "D. Natural events (origin elements)"],
+        "a": "C"
+      },
+      {
+        "q": "Which regulation factor is mentioned regarding the sound produced by a data centre?",
+        "opts": ["A. Air quality", "B. Height restrictions", "C. Noise levels", "D. Generator fuel type"],
+        "a": "C"
+      },
+      {
+        "q": "What type of man-made location concern relates to underground cables or pipes?",
+        "opts": ["A. Metro access", "B. Petrol station", "C. Underground utility works", "D. Communication towers"],
+        "a": "C"
+      },
+      {
+        "q": "When thinking about cost, what factor involves financial benefits from the government?",
+        "opts": ["A. Cost of buying land", "B. Demolition costs", "C. Tax incentives", "D. Environmental assessment fees"],
+        "a": "C"
+      },
+      {
+        "q": "Which natural event concern relates to the risk of ground shaking?",
+        "opts": ["A. Flooding", "B. Hurricane", "C. Seismic activity (earthquakes)", "D. Wildfire"],
+        "a": "C"
+      },
+      {
+        "q": "What utility infrastructure element is about getting rid of waste?",
+        "opts": ["A. Power", "B. Water", "C. Communications", "D. Sewer"],
+        "a": "D"
+      },
+      {
+        "q": "When looking at the existing 'facility' (building), what is important to know about its past?",
+        "opts": ["A. Its previous owners", "B. History of the building", "C. The original architect", "D. The building's color"],
+        "a": "B"
+      }
+    ]
+  },
+  {
+    "name": "Module 5: Data Centre Facilities Area",
+    "questions": [
+      {
+        "q": "Why does a data centre have different, separate areas?",
+        "opts": ["A. To make the building look bigger", "B. To give each area a different job and improve overall uptime", "C. To save on construction costs", "D. To keep employees from different teams apart"],
+        "a": "B"
+      },
+      {
+        "q": "What is the main purpose of the 'Holding area'?",
+        "opts": ["A. To store old, broken equipment", "B. To receive, check, and prepare new items before moving them in", "C. To cool down hot servers", "D. To hold meetings for IT staff"],
+        "a": "B"
+      },
+      {
+        "q": "Which area is used to prepare equipment (like servers) by checking, testing, and setting them up before they are put into use?",
+        "opts": ["A. Holding area", "B. Computer room", "C. Staging area", "D. Media room"],
+        "a": "C"
+      },
+      {
+        "q": "What is the 'Computer room / server room' designed for?",
+        "opts": ["A. To store general office supplies", "B. To provide a safe and stable environment for computer equipment to run 24/7", "C. To repair broken computers", "D. To control the building's lights"],
+        "a": "B"
+      },
+      {
+        "q": "Which area is a secure space where support systems (like power and cooling units) can be checked and maintained without disturbing the main computer room?",
+        "opts": ["A. Media room", "B. Service corridor", "C. Entrance room", "D. Battery room"],
+        "a": "B"
+      },
+      {
+        "q": "What is stored in the 'Media room'?",
+        "opts": ["A. Cleaning supplies", "B. Paper documents, magnetic tapes, CDs/DVDs", "C. Food and drinks for staff", "D. Building construction materials"],
+        "a": "B"
+      },
+      {
+        "q": "What kind of equipment is typically found in the 'Entrance room / meet-me room'?",
+        "opts": ["A. Large servers", "B. Telecommunications lines and equipment from different carriers", "C. Backup generators", "D. Security cameras and monitors"],
+        "a": "B"
+      },
+      {
+        "q": "What is the purpose of the 'UPS room'?",
+        "opts": ["A. To charge mobile phones", "B. To house the Uninterruptible Power Supply systems that provide clean and stable power", "C. To store spare server parts", "D. To manage network cables"],
+        "a": "B"
+      },
+      {
+        "q": "Where should batteries for UPS systems ideally be placed?",
+        "opts": ["A. Directly on top of servers", "B. In a separate, secure, and conditioned environment (Battery room)", "C. Outside the building in the open air", "D. In the main office area"],
+        "a": "B"
+      },
+      {
+        "q": "What is the main job of the 'Network Operations Command (NOC) center'?",
+        "opts": ["A. To sell network services", "B. To monitor and control the entire IT infrastructure and supporting systems 24/7", "C. To store network equipment", "D. To install new network cables"],
+        "a": "B"
+      }
+    ]
+  },
+  {
+    "name": "Module 6: Power Infrastructure",
+    "questions": [
+      {
+        "q": "Where does most of the power for a data centre come from?",
+        "opts": ["A. Solar panels on the roof", "B. Diesel generators", "C. The public utility company", "D. Large batteries"],
+        "a": "C"
+      },
+      {
+        "q": "What are 'transmission towers' used for in the power system?",
+        "opts": ["A. To store electricity", "B. To carry high-voltage power lines across the country", "C. To make electricity", "D. To cool down power cables"],
+        "a": "B"
+      },
+      {
+        "q": "What device changes high-voltage power from transmission lines into the right voltage for the data centre?",
+        "opts": ["A. Generator", "B. Transformer", "C. UPS", "D. ATS"],
+        "a": "B"
+      },
+      {
+        "q": "Where can transformers for incoming power be installed?",
+        "opts": ["A. Only inside the data centre building", "B. Only outside the data centre building", "C. Either inside or outside the building", "D. Only underground"],
+        "a": "C"
+      },
+      {
+        "q": "What is the main job of 'generators' at a data centre?",
+        "opts": ["A. To provide power all the time", "B. To supply backup power if the main utility power goes out", "C. To reduce electricity costs", "D. To clean power for sensitive equipment"],
+        "a": "B"
+      },
+      {
+        "q": "What does an 'Automatic Transfer Switch' (ATS) do?",
+        "opts": ["A. It checks the power quality", "B. It automatically switches between the main power and backup generator power", "C. It stores energy for emergencies", "D. It converts power from AC to DC"],
+        "a": "B"
+      },
+      {
+        "q": "What does UPS stand for, and what is its main role in a data centre?",
+        "opts": ["A. Universal Power Saver, to save energy", "B. Uninterruptible Power Supply, to provide continuous, clean power", "C. Under Power System, to manage cables", "D. Ultimate Power Source, to generate all electricity"],
+        "a": "B"
+      },
+      {
+        "q": "What are the two main types of UPS technology?",
+        "opts": ["A. Big and small", "B. Static and Dynamic", "C. Old and new", "D. Air-cooled and water-cooled"],
+        "a": "B"
+      },
+      {
+        "q": "Which type of UPS uses electronic parts like rectifiers and inverters?",
+        "opts": ["A. Dynamic UPS", "B. Static UPS", "C. Diesel UPS", "D. Flywheel UPS"],
+        "a": "B"
+      },
+      {
+        "q": "What is a key benefit of 'Dynamic UPS' systems compared to Static UPS?",
+        "opts": ["A. They are much smaller", "B. They do not need batteries for energy storage", "C. They are completely silent", "D. They are only available for small power needs"],
+        "a": "B"
+      }
+    ]
+  },
+  {
+    "name": "Module 7: Lighting",
+    "questions": [
+      {
+        "q": "What is one standard that gives advice on lighting for data centres?",
+        "opts": ["A. ISO 9001", "B. ANSI/TIA-942", "C. NFPA 101", "D. IEEE 802.3"],
+        "a": "B"
+      },
+      {
+        "q": "What is a 'lumen' a unit of?",
+        "opts": ["A. Light intensity", "B. Light measurement (luminous flux)", "C. Electrical power", "D. Heat output"],
+        "a": "B"
+      },
+      {
+        "q": "What is the recommended minimum light level for 'Rooms' in a data centre?",
+        "opts": ["A. 100 Lux", "B. 250 Lux", "C. 500 Lux", "D. 1000 Lux"],
+        "a": "C"
+      },
+      {
+        "q": "Where should light fixtures generally be placed in a data centre for good lighting?",
+        "opts": ["A. Only at the entrance", "B. In regular intervals, in all aisles", "C. Only above server racks", "D. Hidden from view"],
+        "a": "B"
+      },
+      {
+        "q": "Why is it important for lights to be connected to the backup power source (like a generator set)?",
+        "opts": ["A. To save electricity costs", "B. To provide light during a power failure", "C. To make the lights last longer", "D. To improve network speeds"],
+        "a": "B"
+      },
+      {
+        "q": "What is the main goal of 'emergency lighting' in a building?",
+        "opts": ["A. To make the building look nice", "B. To enable people to escape safely during a power failure", "C. To highlight emergency exits only", "D. To provide light for cleaning staff"],
+        "a": "B"
+      },
+      {
+        "q": "According to standards, what is the minimum light level for escape routes?",
+        "opts": ["A. 1 Lux", "B. 5 Lux", "C. 10 Lux", "D. 20 Lux"],
+        "a": "A"
+      },
+      {
+        "q": "What is a rule for placing emergency lights regarding aisles?",
+        "opts": ["A. They must be on the ceiling only", "B. They should be placed to ensure enough light in each aisle or visible at the end of each aisle", "C. They should only be placed near the data centre entrance", "D. They are not needed if fire alarms are present"],
+        "a": "B"
+      },
+      {
+        "q": "Which type of emergency light system gets its power from a central emergency power supply (EPS)?",
+        "opts": ["A. Standalone", "B. Incandescent", "C. Fluorescent", "D. Centralized"],
+        "a": "D"
+      },
+      {
+        "q": "Besides emergency lights, what else is recommended for staff to use during an emergency?",
+        "opts": ["A. Mobile phone flashlights", "B. Additional torch/glow sticks", "C. Candles", "D. Headlamps with batteries"],
+        "a": "B"
+      }
+    ]
+  },
+  {
+    "name": "Module 8: Cooling Infrastructure",
+    "questions": [
+      {
+        "q": "Why do data centres need cooling?",
+        "opts": ["A. To make the room comfortable for people", "B. Because IT equipment generates heat that needs to be removed", "C. To prevent dust from entering the equipment", "D. To make the lights work better"],
+        "a": "B"
+      },
+      {
+        "q": "What are the two main ways data centres cool their equipment?",
+        "opts": ["A. Fans and open windows", "B. Chilled water and Direct Expansion (DX) air conditioning", "C. Ice and dry ice", "D. Air convection and radiation"],
+        "a": "B"
+      },
+      {
+        "q": "What is the purpose of 'cooling equipment outside the computer room'?",
+        "opts": ["A. To keep the outside air cool", "B. To dissipate (get rid of) the heat extracted from the IT equipment", "C. To store spare cooling units", "D. To generate cold air for the inside"],
+        "a": "B"
+      },
+      {
+        "q": "Which acronym generally refers to air conditioning units used in computer rooms, like Computer Room Air Conditioners?",
+        "opts": ["A. HVAC", "B. CRAH", "C. CRAC", "D. FCU"],
+        "a": "C"
+      },
+      {
+        "q": "What is a key principle of cooling: cold air is not created, it is...?",
+        "opts": ["A. Generated from water", "B. Extracted from warm air (heat is removed)", "C. Supplied by the utility company", "D. Stored in tanks"],
+        "a": "B"
+      },
+      {
+        "q": "What is a limitation of DX-Cooling systems regarding distance?",
+        "opts": ["A. They can only work in very small rooms", "B. There is a limit to the distance between the indoor evaporator and the outdoor condenser unit", "C. They require long refrigerant pipes, which is efficient", "D. They cannot be used far from the main power source"],
+        "a": "B"
+      },
+      {
+        "q": "What do 'Chillers' use as their main cooling substance?",
+        "opts": ["A. Air", "B. Refrigerant gas", "C. Water", "D. Liquid nitrogen"],
+        "a": "C"
+      },
+      {
+        "q": "In a chilled water single stage system, how is heat typically removed from the water?",
+        "opts": ["A. By direct contact with outside air", "B. By a cooling tower using outside air", "C. By a separate DX unit", "D. By a heat pump underground"],
+        "a": "B"
+      },
+      {
+        "q": "What is the purpose of 'Dual systems' (combining DX with chilled water)?",
+        "opts": ["A. To make the cooling system more complex", "B. To allow the DX system to serve as a backup if the chilled water system needs maintenance or fails", "C. To cool different parts of the building separately", "D. To reduce the need for any maintenance"],
+        "a": "B"
+      },
+      {
+        "q": "What is the problem with a traditional 'Classroom' setup for servers (front-to-front)?",
+        "opts": ["A. It looks bad", "B. It leads to inefficient mixing of hot and cold air", "C. It uses too much space", "D. It is too expensive"],
+        "a": "B"
+      }
+    ]
+  },
+  {
+    "name": "Module 9: ICT / Network Infrastructure",
+    "questions": [
+      {
+        "q": "What is an 'equipment rack' used for in a data centre?",
+        "opts": ["A. Storing office supplies", "B. Mounting multiple computer equipment modules in a standard frame", "C. Transporting heavy equipment", "D. Storing network cables only"],
+        "a": "B"
+      },
+      {
+        "q": "How is the height of electronic equipment standardized in racks?",
+        "opts": ["A. In kilograms (kg)", "B. In multiples of 1.752 inches or a Unit (U)", "C. In feet (ft)", "D. In megabytes (MB)"],
+        "a": "B"
+      },
+      {
+        "q": "What is the typical standard height for an equipment rack cabinet?",
+        "opts": ["A. 24U", "B. 32U", "C. 42U", "D. 52U"],
+        "a": "C"
+      },
+      {
+        "q": "What is the purpose of 'Blanking / Blind Panels' in empty spaces on a rack?",
+        "opts": ["A. To make the rack look better", "B. To prevent hot air from the back of the rack from mixing with cool air at the front", "C. To provide a place for notes", "D. To block unused power outlets"],
+        "a": "B"
+      },
+      {
+        "q": "What is considered the 'foundation' to support a high-availability data centre?",
+        "opts": ["A. Strong building walls", "B. Good network cabling", "C. Advanced cooling systems", "D. Large power generators"],
+        "a": "B"
+      },
+      {
+        "q": "Which copper cabling standard is typically used for new data centres?",
+        "opts": ["A. TIA/EIA 568A", "B. TIA/EIA 568B", "C. TIA/EIA 568C", "D. Category 5e"],
+        "a": "C"
+      },
+      {
+        "q": "What is the difference between Unshielded Twisted Pair (UTP) and Shielded Twisted Pair (STP) cables?",
+        "opts": ["A. UTP is faster than STP", "B. STP has a conducting shield to help prevent interference, UTP does not", "C. UTP is more expensive", "D. STP is only for short distances"],
+        "a": "B"
+      },
+      {
+        "q": "What is fiber cabling 'not prone to' due to its light-based transmission?",
+        "opts": ["A. Physical damage", "B. Electromagnetic interference (EMF)", "C. Data loss", "D. High cost"],
+        "a": "B"
+      },
+      {
+        "q": "What is the preferred way to route (run) network cabling in a data centre?",
+        "opts": ["A. Under the raised floor", "B. Overhead (above the racks)", "C. Through walls", "D. Outside the building"],
+        "a": "B"
+      },
+      {
+        "q": "What standard provides guidelines for labeling and documenting network infrastructure?",
+        "opts": ["A. ANSI/TIA-568C", "B. ANSI/TIA-606", "C. ISO/IEC 27001", "D. NFPA 75"],
+        "a": "B"
+      }
+    ]
+  },
+  {
+    "name": "Module 10: Security",
+    "questions": [
+      {
+        "q": "What does 'Information security' aim to protect in an organization?",
+        "opts": ["A. Only the physical building", "B. Confidentiality, integrity, and availability of assets", "C. Employee personal data only", "D. Marketing strategies"],
+        "a": "B"
+      },
+      {
+        "q": "What is the main goal of 'perimeter security' for a data centre?",
+        "opts": ["A. To make the outside look nice", "B. To stop, find, slow down, and prevent unauthorized people from getting inside", "C. To provide easy access for everyone", "D. To protect only against natural disasters"],
+        "a": "B"
+      },
+      {
+        "q": "What is CCTV (Closed Circuit Television system) used for in a data centre?",
+        "opts": ["A. Providing entertainment for staff", "B. Surveillance and security monitoring", "C. Controlling building temperature", "D. Managing network traffic"],
+        "a": "B"
+      },
+      {
+        "q": "When installing CCTV cameras, what is important to ensure about their coverage?",
+        "opts": ["A. They only focus on doors", "B. They monitor key areas and overlap to avoid 'blind spots'", "C. They should be hidden from view", "D. They only record during business hours"],
+        "a": "B"
+      },
+      {
+        "q": "What is a 'badge system' primarily used for in access control?",
+        "opts": ["A. Displaying employee names", "B. Tracking, monitoring, and recording who goes where and when", "C. Opening doors automatically for everyone", "D. Providing a payment method for cafeteria food"],
+        "a": "B"
+      },
+      {
+        "q": "What technology measures and analyzes unique human body characteristics for access control?",
+        "opts": ["A. Card readers", "B. Keypads", "C. Biometrics", "D. Metal detectors"],
+        "a": "C"
+      },
+      {
+        "q": "Which of these is a type of biometric technology mentioned in the document?",
+        "opts": ["A. QR code scanning", "B. Fingerprints", "C. Barcode reading", "D. Magnetic stripe cards"],
+        "a": "B"
+      },
+      {
+        "q": "What should be done with items not allowed in restricted areas when someone enters?",
+        "opts": ["A. They should be thrown away", "B. They should be temporarily stored in a secure place", "C. They should be handed to security guards for safe keeping", "D. They are allowed if they are small"],
+        "a": "B"
+      },
+      {
+        "q": "What should security staff be aware of regarding their duties?",
+        "opts": ["A. They can do anything they want", "B. They must know their limits and boundaries in performing their duties", "C. They only need to monitor cameras", "D. They are responsible for IT support"],
+        "a": "B"
+      },
+      {
+        "q": "What is a 'security incident response' process designed to do?",
+        "opts": ["A. Prevent all security incidents from ever happening", "B. Address security breaches and potential weaknesses when they occur", "C. Only report incidents to law enforcement", "D. Install new security cameras"],
+        "a": "B"
+      }
+    ]
+  },
+  {
+    "name": "Module 11: Fire Safety",
+    "questions": [
+      {
+        "q": "What is a major cause of fire in data centres, according to audits?",
+        "opts": ["A. Flooding", "B. Electrical issues (e.g., overheating, poor connectors)", "C. Earthquakes", "D. Network outages"],
+        "a": "B"
+      },
+      {
+        "q": "Which detection system uses a technique that samples air and counts particles with lasers to find smoke very early?",
+        "opts": ["A. Standard smoke detector", "B. Heat detector", "C. VESDA / HSSD", "D. Water sensor"],
+        "a": "C"
+      },
+      {
+        "q": "How does an 'Ionization detector' work to find smoke?",
+        "opts": ["A. It uses light to see smoke particles", "B. It uses a small amount of radiation that gets disturbed by smoke", "C. It measures the heat in the room", "D. It detects changes in air pressure"],
+        "a": "B"
+      },
+      {
+        "q": "What is the main principle of 'gas-based fire suppression systems'?",
+        "opts": ["A. They use water to put out fires", "B. They spray foam to cover the fire", "C. They release a chemical or inert gas to stop the fire (e.g., by removing heat or oxygen)", "D. They use fire extinguishers manually"],
+        "a": "C"
+      },
+      {
+        "q": "What is a 'double knock' in a gas suppression system?",
+        "opts": ["A. Two people hitting the fire alarm button", "B. The system needs two different detectors to sense fire before it releases the gas", "C. The gas hits the fire twice", "D. Two different types of gas are released"],
+        "a": "B"
+      },
+      {
+        "q": "Why is Carbon Dioxide (CO2) suppression usually avoided in occupied data centre areas?",
+        "opts": ["A. It is very expensive", "B. It can be harmful to people at the levels needed to suppress fire", "C. It damages IT equipment", "D. It doesn't work well on electrical fires"],
+        "a": "B"
+      },
+      {
+        "q": "What is a 'pre-action fire sprinkler system'?",
+        "opts": ["A. A system that always has water in the pipes", "B. A dry pipe system where water is not normally in the pipes, but is released after a detector senses fire", "C. A system that uses foam instead of water", "D. A system that needs manual activation only"],
+        "a": "B"
+      },
+      {
+        "q": "What does the 'PASS' acronym stand for when using a handheld fire extinguisher?",
+        "opts": ["A. Prepare, Attack, Secure, Stop", "B. Pull, Aim, Squeeze, Sweep", "C. Push, Activate, Save, Stop", "D. Place, Alert, Spray, Secure"],
+        "a": "B"
+      },
+      {
+        "q": "What is a safety precaution for fire prevention related to electrical cords?",
+        "opts": ["A. Use old, worn-out cords", "B. Overload extension cords and wall sockets", "C. Use electrical extension cords wisely and avoid overloading", "D. Hide all electrical cords"],
+        "a": "C"
+      },
+      {
+        "q": "What kind of fire suppression system reduces oxygen levels to the point where normal materials will not burn, but is still safe for humans (15% oxygen)?",
+        "opts": ["A. Water mist system", "B. Hypoxic air fire suppression system", "C. CO2 suppression system", "D. Dry chemical system"],
+        "a": "B"
+      }
+    ]
+  },
+  {
+    "name": "Module 12: Monitoring and Reporting",
+    "questions": [
+      {
+        "q": "What is the main purpose of monitoring and reporting in a data centre?",
+        "opts": ["A. To create more jobs for staff", "B. To provide information for making good decisions and improving data centre operations", "C. To reduce the need for security guards", "D. To always keep the temperature at 20 degrees Celsius"],
+        "a": "B"
+      },
+      {
+        "q": "What is a key requirement for a data centre monitoring system to work well?",
+        "opts": ["A. Separate monitoring screens for each device", "B. A single centralized interface to manage many devices and areas", "C. Manual checks of all equipment every hour", "D. No alerts for minor issues"],
+        "a": "B"
+      },
+      {
+        "q": "What type of alarms should a monitoring system manage to help with quick problem-solving?",
+        "opts": ["A. Daily status updates", "B. Alerts about maintenance schedule changes", "C. Unreachable warnings, critical, and device trap alarms", "D. Employee clock-in/out notifications"],
+        "a": "C"
+      },
+      {
+        "q": "What specific type of reporting helps improve energy efficiency in data centres?",
+        "opts": ["A. Reporting on power consumption and PUE (Power Usage Effectiveness) metrics", "B. Reporting on network speeds", "C. Reporting on the number of servers installed", "D. Reporting on human error rates"],
+        "a": "A"
+      },
+      {
+        "q": "What technologies are used to communicate alerts in a data centre's notification system?",
+        "opts": ["A. Carrier pigeons", "B. SMS, e-mail, and voice dialing", "C. Smoke signals", "D. Fax messages only"],
+        "a": "B"
+      },
+      {
+        "q": "What does a good reporting system provide about the data centre?",
+        "opts": ["A. The exact cost of every component", "B. A 'health indication' of its capability and capacity", "C. A list of all employees on duty", "D. Information on local weather conditions"],
+        "a": "B"
+      },
+      {
+        "q": "What does DCIM stand for?",
+        "opts": ["A. Data Center Information Management", "B. Digital Communications Infrastructure Management", "C. Data Center Infrastructure Management", "D. Document Control and Inventory Management"],
+        "a": "C"
+      },
+      {
+        "q": "According to Gartner, what types of systems does DCIM help monitor and manage?",
+        "opts": ["A. Only security cameras", "B. Only human resources systems", "C. Both IT-related equipment (like servers) and facility components (like power units and cooling units)", "D. Only building automation systems"],
+        "a": "C"
+      },
+      {
+        "q": "What is one key challenge when implementing a DCIM solution?",
+        "opts": ["A. It is always very cheap to implement", "B. It is a quick overnight decision with no analysis needed", "C. It requires a careful analysis of existing data, applications, and business needs", "D. It only works for very small data centres"],
+        "a": "C"
+      },
+      {
+        "q": "What does NMS (Network Management System) help supervise?",
+        "opts": ["A. Only power infrastructure", "B. The individual components of a network within a network management framework", "C. Building temperatures and humidity", "D. Physical security access points"],
+        "a": "B"
+      }
+    ]
+  }
+]
