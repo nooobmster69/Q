@@ -65,11 +65,80 @@ class QuizApp {
         // Menu Events
         document.getElementById('menu-overlay').addEventListener('click', (e) => {
             if (e.target.id === 'menu-overlay') this.toggleMenu();
-        });
-        document.getElementById('reset-quiz').addEventListener('click', () => this.resetQuiz());
+        });        document.getElementById('reset-quiz').addEventListener('click', () => this.resetQuiz());
         document.getElementById('exit-quiz').addEventListener('click', () => this.exitToModules());
         document.getElementById('close-menu').addEventListener('click', () => this.toggleMenu());
-    }    // Screen Management
+        
+        // Prevent zoom and drag events
+        this.preventZoomAndDrag();
+    }
+    
+    // Prevent zoom and drag functionality
+    preventZoomAndDrag() {
+        // Prevent zoom with keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '0')) {
+                e.preventDefault();
+            }
+        });
+        
+        // Prevent zoom with mouse wheel
+        document.addEventListener('wheel', (e) => {
+            if (e.ctrlKey) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+        // Prevent touch zoom and drag
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', (e) => {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+        
+        // Prevent pinch zoom
+        document.addEventListener('gesturestart', (e) => {
+            e.preventDefault();
+        });
+        
+        document.addEventListener('gesturechange', (e) => {
+            e.preventDefault();
+        });
+        
+        document.addEventListener('gestureend', (e) => {
+            e.preventDefault();
+        });
+        
+        // Prevent drag and drop
+        document.addEventListener('dragstart', (e) => {
+            e.preventDefault();
+        });
+        
+        document.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+        
+        document.addEventListener('drop', (e) => {
+            e.preventDefault();
+        });
+        
+        // Prevent context menu
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+        
+        // Prevent text selection on touch devices
+        document.addEventListener('selectstart', (e) => {
+            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+            }
+        });
+    }
+
+    // Screen Management
     showScreen(screenName) {
         console.log(`📺 Switching to screen: ${screenName}`);
         
@@ -454,102 +523,186 @@ class QuizApp {
             #e0e0e0 ${degrees}deg,
             #e0e0e0 360deg
         )`;
-    }
-
-    // Certificate Generation
+    }    // Certificate Generation as Image
     downloadCertificate() {
         const moduleName = this.quizData.modules[this.currentModule].name;
         const percentage = Math.round((this.score / this.questions.length) * 100);
         const date = new Date().toLocaleDateString();
 
-        // Create certificate content
-        const certificateHTML = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <title>Certificate of Completion</title>
-                <style>
-                    body {
-                        font-family: 'Georgia', serif;
-                        margin: 0;
-                        padding: 40px;
-                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                        min-height: 100vh;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                    }
-                    .certificate {
-                        background: white;
-                        padding: 60px;
-                        border-radius: 20px;
-                        text-align: center;
-                        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-                        max-width: 800px;
-                        width: 100%;
-                    }
-                    .certificate h1 {
-                        font-size: 48px;
-                        color: #1976d2;
-                        margin-bottom: 20px;
-                        border-bottom: 3px solid #1976d2;
-                        padding-bottom: 20px;
-                    }
-                    .certificate h2 {
-                        font-size: 24px;
-                        color: #333;
-                        margin-bottom: 30px;
-                    }
-                    .name {
-                        font-size: 36px;
-                        color: #1976d2;
-                        margin: 30px 0;
-                        text-decoration: underline;
-                    }
-                    .details {
-                        font-size: 18px;
-                        color: #666;
-                        margin: 20px 0;
-                    }
-                    .score {
-                        font-size: 24px;
-                        color: #4caf50;
-                        font-weight: bold;
-                        margin: 20px 0;
-                    }
-                    .date {
-                        font-size: 16px;
-                        color: #999;
-                        margin-top: 40px;
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="certificate">
-                    <h1>Certificate of Completion</h1>
-                    <h2>Data Centre Professional Assessment</h2>
-                    <p class="details">This certifies that</p>
-                    <div class="name">${this.userName}</div>
-                    <p class="details">has successfully completed</p>
-                    <div class="details"><strong>${moduleName}</strong></div>
-                    <div class="score">Score: ${percentage}%</div>
-                    <div class="date">Completed on ${date}</div>
-                </div>
-            </body>
-            </html>
-        `;
-
-        // Create and download the certificate
-        const blob = new Blob([certificateHTML], { type: 'text/html' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `Certificate_${this.userName.replace(/\s+/g, '_')}_${Date.now()}.html`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        // Create canvas for certificate
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Set canvas size (A4 landscape ratio)
+        canvas.width = 1200;
+        canvas.height = 850;
+        
+        // Create gradient background
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        gradient.addColorStop(0, '#667eea');
+        gradient.addColorStop(1, '#764ba2');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Create white certificate area
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowColor = 'rgba(0,0,0,0.2)';
+        ctx.shadowBlur = 20;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 10;
+        
+        const certX = 80;
+        const certY = 80;
+        const certWidth = canvas.width - 160;
+        const certHeight = canvas.height - 160;
+        
+        // Rounded rectangle function
+        this.roundedRect(ctx, certX, certY, certWidth, certHeight, 15);
+        ctx.fill();
+        
+        // Reset shadow
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+        
+        // Add decorative border
+        ctx.strokeStyle = '#1976d2';
+        ctx.lineWidth = 4;
+        this.roundedRect(ctx, certX + 20, certY + 20, certWidth - 40, certHeight - 40, 10);
+        ctx.stroke();
+        
+        // Certificate Title
+        ctx.fillStyle = '#1976d2';
+        ctx.font = 'bold 48px Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Certificate of Completion', canvas.width / 2, 200);
+        
+        // Subtitle
+        ctx.fillStyle = '#333333';
+        ctx.font = 'bold 28px Arial, sans-serif';
+        ctx.fillText('Data Centre Professional Assessment', canvas.width / 2, 250);
+        
+        // "This certifies that" text
+        ctx.fillStyle = '#666666';
+        ctx.font = '22px Arial, sans-serif';
+        ctx.fillText('This certifies that', canvas.width / 2, 320);
+        
+        // User name (larger and highlighted)
+        ctx.fillStyle = '#1976d2';
+        ctx.font = 'bold 36px Arial, sans-serif';
+        ctx.fillText(this.userName, canvas.width / 2, 380);
+        
+        // Draw underline for name
+        const nameMetrics = ctx.measureText(this.userName);
+        ctx.strokeStyle = '#1976d2';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo((canvas.width - nameMetrics.width) / 2, 390);
+        ctx.lineTo((canvas.width + nameMetrics.width) / 2, 390);
+        ctx.stroke();
+        
+        // "has successfully completed" text
+        ctx.fillStyle = '#666666';
+        ctx.font = '22px Arial, sans-serif';
+        ctx.fillText('has successfully completed', canvas.width / 2, 440);
+        
+        // Module name
+        ctx.fillStyle = '#333333';
+        ctx.font = 'bold 26px Arial, sans-serif';
+        ctx.fillText(moduleName, canvas.width / 2, 490);
+        
+        // Score
+        ctx.fillStyle = '#4caf50';
+        ctx.font = 'bold 32px Arial, sans-serif';
+        ctx.fillText(`Score: ${percentage}%`, canvas.width / 2, 550);
+        
+        // Date
+        ctx.fillStyle = '#999999';
+        ctx.font = '20px Arial, sans-serif';
+        ctx.fillText(`Completed on ${date}`, canvas.width / 2, 620);
+        
+        // Add decorative elements
+        this.addCertificateDecorations(ctx, canvas.width, canvas.height);
+        
+        // Test certificate generation capability
+        console.log('🎨 Certificate image generation capability:', {
+            canvas: !!document.createElement('canvas').getContext,
+            blob: !!HTMLCanvasElement.prototype.toBlob,
+            download: !!document.createElement('a').download
+        });
+        
+        // Convert canvas to blob and download
+        canvas.toBlob((blob) => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Certificate_${this.userName.replace(/\s+/g, '_')}_${Date.now()}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 'image/png');
+    }
+    
+    // Helper function for rounded rectangles
+    roundedRect(ctx, x, y, width, height, radius) {
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.lineTo(x + width - radius, y);
+        ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+        ctx.lineTo(x + width, y + height - radius);
+        ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+        ctx.lineTo(x + radius, y + height);
+        ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+        ctx.lineTo(x, y + radius);
+        ctx.quadraticCurveTo(x, y, x + radius, y);
+        ctx.closePath();
+    }
+    
+    // Add decorative elements to certificate
+    addCertificateDecorations(ctx, width, height) {
+        // Add corner decorations
+        ctx.fillStyle = '#1976d2';
+        ctx.globalAlpha = 0.1;
+        
+        // Top left decoration
+        ctx.beginPath();
+        ctx.arc(120, 120, 30, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Top right decoration
+        ctx.beginPath();
+        ctx.arc(width - 120, 120, 30, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Bottom left decoration
+        ctx.beginPath();
+        ctx.arc(120, height - 120, 30, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Bottom right decoration
+        ctx.beginPath();
+        ctx.arc(width - 120, height - 120, 30, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.globalAlpha = 1;
+        
+        // Add professional seal/badge
+        ctx.fillStyle = '#1976d2';
+        ctx.globalAlpha = 0.8;
+        ctx.beginPath();
+        ctx.arc(width - 180, height - 180, 60, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 16px Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('CERTIFIED', width - 180, height - 185);
+        ctx.font = '12px Arial, sans-serif';
+        ctx.fillText('PROFESSIONAL', width - 180, height - 170);
+        
+        ctx.globalAlpha = 1;
     }
 
     // Menu Management
