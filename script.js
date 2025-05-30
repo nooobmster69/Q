@@ -1171,8 +1171,8 @@ class QuizApp {
             // Certificate content area: x=150 to x=canvas.width-150, y=150 to y=canvas.height-150
             const signatureWidth = 160;
             const signatureHeight = 80;
-            const signatureX = canvas.width - 200; // 200px from right edge (well inside)
-            const signatureY = canvas.height - 180; // 180px from bottom edge (above version text)
+            const signatureX = canvas.width - 010; // 200px from right edge (well inside)
+            const signatureY = canvas.height - 280; // 180px from bottom edge (above version text)
             
             // Draw signature image directly (no background rectangle since PNG has transparency)
             ctx.drawImage(signatureImage, signatureX, signatureY, signatureWidth, signatureHeight);
