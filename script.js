@@ -97,6 +97,7 @@ class QuizApp {
         document.getElementById('download-certificate').addEventListener('click', () => this.downloadCertificate());
         document.getElementById('retake-quiz').addEventListener('click', () => this.showScreen('module'));
         document.getElementById('back-to-home').addEventListener('click', () => this.backToHome());
+        document.getElementById('feedback-toggle').addEventListener('click', () => this.toggleFeedback());
 
         // Menu Events
         document.getElementById('menu-overlay').addEventListener('click', (e) => {
@@ -108,8 +109,7 @@ class QuizApp {
         // Prevent zoom and drag events
         this.preventZoomAndDrag();
     }
-    
-    // Prevent zoom and drag functionality
+      // Prevent zoom and drag functionality
     preventZoomAndDrag() {
         // Prevent zoom with keyboard shortcuts
         document.addEventListener('keydown', (e) => {
@@ -125,27 +125,49 @@ class QuizApp {
             }
         }, { passive: false });
         
-        // Prevent touch zoom and drag
+        // Enhanced iPhone zoom prevention
         let lastTouchEnd = 0;
+        let lastTouchDistance = 0;
+        
+        // Prevent double-tap zoom on iPhone
         document.addEventListener('touchend', (e) => {
             const now = (new Date()).getTime();
             if (now - lastTouchEnd <= 300) {
                 e.preventDefault();
+                e.stopPropagation();
             }
             lastTouchEnd = now;
-        }, false);
+        }, { passive: false });
         
-        // Prevent pinch zoom
+        // Prevent pinch zoom - enhanced for iPhone
+        document.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }, { passive: false });
+        
+        document.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }, { passive: false });
+        
+        // Prevent pinch zoom gestures
         document.addEventListener('gesturestart', (e) => {
             e.preventDefault();
+            e.stopPropagation();
         });
         
         document.addEventListener('gesturechange', (e) => {
             e.preventDefault();
+            e.stopPropagation();
         });
         
         document.addEventListener('gestureend', (e) => {
             e.preventDefault();
+            e.stopPropagation();
         });
         
         // Prevent drag and drop
@@ -172,6 +194,17 @@ class QuizApp {
                 e.preventDefault();
             }
         });
+        
+        // Additional iPhone-specific prevention
+        document.addEventListener('touchcancel', (e) => {
+            e.preventDefault();
+        });
+        
+        // Prevent viewport scaling with meta viewport changes
+        let viewportMeta = document.querySelector('meta[name=viewport]');
+        if (viewportMeta) {
+            viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no, viewport-fit=cover');
+        }
     }
 
     // Screen Management
@@ -661,28 +694,78 @@ class QuizApp {
         ctx.font = '14px Arial, sans-serif';
         ctx.fillText(`${APP_VERSION.appName} v${APP_VERSION.version}`, canvas.width / 2, 660);
         ctx.fillText(`Updated: ${APP_VERSION.updateDate}`, canvas.width / 2, 680);
-        
-        // Add decorative elements
+          // Add decorative elements
         this.addCertificateDecorations(ctx, canvas.width, canvas.height);
         
         // Test certificate generation capability
         console.log('🎨 Certificate image generation capability:', {
             canvas: !!document.createElement('canvas').getContext,
             blob: !!HTMLCanvasElement.prototype.toBlob,
-            download: !!document.createElement('a').download
+            toDataURL: !!HTMLCanvasElement.prototype.toDataURL,
+            download: !!document.createElement('a').download,
+            userAgent: navigator.userAgent
         });
         
-        // Convert canvas to blob and download
-        canvas.toBlob((blob) => {
-            const url = URL.createObjectURL(blob);
+        // Enhanced download with fallback for mobile devices
+        const fileName = `Certificate_${this.userName.replace(/\s+/g, '_')}_${Date.now()}.png`;
+        
+        // Try modern blob method first
+        if (canvas.toBlob && typeof canvas.toBlob === 'function') {
+            canvas.toBlob((blob) => {
+                if (blob) {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    a.style.display = 'none';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    console.log('✅ Certificate downloaded via blob method');
+                } else {
+                    console.warn('⚠️ Blob creation failed, using fallback');
+                    this.downloadCertificateFallback(canvas, fileName);
+                }
+            }, 'image/png', 1.0);
+        } else {
+            console.warn('⚠️ toBlob not supported, using fallback');
+            this.downloadCertificateFallback(canvas, fileName);
+        }
+    }
+    
+    // Fallback download method for mobile devices
+    downloadCertificateFallback(canvas, fileName) {
+        try {
+            // Use data URL as fallback
+            const dataURL = canvas.toDataURL('image/png', 1.0);
             const a = document.createElement('a');
-            a.href = url;
-            a.download = `Certificate_${this.userName.replace(/\s+/g, '_')}_${Date.now()}.png`;
+            a.href = dataURL;
+            a.download = fileName;
+            a.style.display = 'none';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }, 'image/png');
+            console.log('✅ Certificate downloaded via data URL fallback');
+        } catch (error) {
+            console.error('❌ Certificate download failed:', error);
+            // Show user-friendly message
+            alert('Certificate generation completed! Please use your browser\'s save function to save the certificate image.');
+            
+            // Open the image in a new window as last resort
+            const newWindow = window.open();
+            newWindow.document.write(`
+                <html>
+                    <head><title>Certificate - ${this.userName}</title></head>
+                    <body style="margin:0; display:flex; justify-content:center; align-items:center; min-height:100vh; background:#f0f0f0;">
+                        <div style="text-align:center;">
+                            <img src="${canvas.toDataURL('image/png', 1.0)}" style="max-width:100%; height:auto; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" alt="Certificate">
+                            <p style="margin-top:20px; font-family:Arial,sans-serif; color:#666;">Right-click and "Save Image As" to download your certificate</p>
+                        </div>
+                    </body>
+                </html>
+            `);
+        }
     }
     
     // Helper function for rounded rectangles
@@ -761,7 +844,25 @@ class QuizApp {
     }    exitToModules() {
         this.toggleMenu();
         this.showScreen('module');
-    }    backToHome() {
+    }
+
+    // Toggle feedback section visibility
+    toggleFeedback() {
+        const feedbackToggle = document.getElementById('feedback-toggle');
+        const feedbackContent = document.getElementById('feedback-content');
+        
+        if (feedbackContent.classList.contains('collapsed')) {
+            // Expand
+            feedbackContent.classList.remove('collapsed');
+            feedbackContent.classList.add('expanded');
+            feedbackToggle.classList.add('expanded');
+        } else {
+            // Collapse
+            feedbackContent.classList.remove('expanded');
+            feedbackContent.classList.add('collapsed');
+            feedbackToggle.classList.remove('expanded');
+        }
+    }backToHome() {
         console.log('backToHome called - resetting app state');
         // Reset user data and go back to welcome screen
         this.userName = '';

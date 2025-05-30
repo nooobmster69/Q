@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<head>    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no, viewport-fit=cover">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="theme-color" content="#1976d2">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=no, date=no, email=no, address=no"><meta name="theme-color" content="#1976d2">
     <meta name="description" content="Professional Quiz Certification - Test your knowledge with our comprehensive quiz modules">
     <meta name="format-detection" content="telephone=no">
     <title>Professional Quiz Certification</title>
@@ -168,17 +169,17 @@
                         <span class="score-value" id="pass-status">Passed</span>
                     </div>
                 </div>
-                
-                <!-- Detailed Feedback Section -->
+                  <!-- Detailed Feedback Section -->
                 <div id="detailed-feedback" class="feedback-section">
-                    <h3 class="feedback-title">
+                    <button class="feedback-toggle" id="feedback-toggle">
                         <span class="material-icons">analytics</span>
-                        Detailed Review
-                    </h3>
-                    <div id="feedback-content" class="feedback-content">
+                        <span>Show Answer Summary</span>
+                        <span class="material-icons toggle-icon">expand_more</span>
+                    </button>
+                    <div id="feedback-content" class="feedback-content collapsed">
                         <!-- Feedback will be generated dynamically -->
                     </div>
-                </div>                <div class="quiz-actions">
+                </div><div class="quiz-actions">
                     <button id="download-certificate" class="primary-btn">
                         <span class="material-icons">download</span>
                         <span>Download Certificate</span>
