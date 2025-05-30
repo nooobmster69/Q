@@ -1189,12 +1189,17 @@ input, textarea {
 }
 
 .feedback-item {
-    padding: 16px 20px;
+    padding: 20px;
+    margin-bottom: 16px;
     border-bottom: 1px solid #f0f0f0;
+    border-radius: 8px;
+    background: #fafafa;
+    border: 1px solid #e8e8e8;
 }
 
 .feedback-item:last-child {
-    border-bottom: none;
+    border-bottom: 1px solid #e8e8e8;
+    margin-bottom: 0;
 }
 
 .feedback-question {
