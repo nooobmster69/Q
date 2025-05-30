@@ -1,6 +1,13 @@
 // Professional Quiz App - Complete JavaScript Implementation
 // Handles screen navigation, user management, quiz logic, and certificate generation
 
+// Application Version Configuration
+const APP_VERSION = {
+    version: '2.1.0',
+    updateDate: 'May 30, 2025',
+    appName: 'Data Centre Certification Platform'
+};
+
 class QuizApp {
     constructor() {
         this.currentScreen = 'welcome';
@@ -30,14 +37,43 @@ class QuizApp {
             
             await this.loadQuizData();
             console.log('✅ Quiz data loaded successfully');
-            
-            this.showScreen('welcome');
+              this.showScreen('welcome');
             console.log('✅ Welcome screen shown successfully');
+            
+            // Update version information in UI
+            this.updateVersionInfo();
             
         } catch (error) {
             console.error('❌ Initialization failed:', error);
             this.showError(`Initialization failed: ${error.message}`);
         }
+    }
+
+    // Update version information in the UI
+    updateVersionInfo() {
+        // Update welcome screen version
+        const versionElement = document.querySelector('.version');
+        const updateDateElement = document.querySelector('.update-date');
+        
+        if (versionElement) {
+            versionElement.textContent = `Version ${APP_VERSION.version}`;
+        }
+        if (updateDateElement) {
+            updateDateElement.textContent = `Updated: ${APP_VERSION.updateDate}`;
+        }
+        
+        // Update menu version
+        const menuVersionElement = document.querySelector('.version-text');
+        const menuUpdateElement = document.querySelector('.update-text');
+        
+        if (menuVersionElement) {
+            menuVersionElement.textContent = `Version ${APP_VERSION.version}`;
+        }
+        if (menuUpdateElement) {
+            menuUpdateElement.textContent = `Updated: ${APP_VERSION.updateDate}`;
+        }
+        
+        console.log(`✅ Version info updated: ${APP_VERSION.version} (${APP_VERSION.updateDate})`);
     }
 
     // Event Binding
@@ -616,11 +652,15 @@ class QuizApp {
         ctx.fillStyle = '#4caf50';
         ctx.font = 'bold 32px Arial, sans-serif';
         ctx.fillText(`Score: ${percentage}%`, canvas.width / 2, 550);
-        
-        // Date
+          // Date
         ctx.fillStyle = '#999999';
         ctx.font = '20px Arial, sans-serif';
         ctx.fillText(`Completed on ${date}`, canvas.width / 2, 620);
+          // Version and Platform Information
+        ctx.fillStyle = '#bbbbbb';
+        ctx.font = '14px Arial, sans-serif';
+        ctx.fillText(`${APP_VERSION.appName} v${APP_VERSION.version}`, canvas.width / 2, 660);
+        ctx.fillText(`Updated: ${APP_VERSION.updateDate}`, canvas.width / 2, 680);
         
         // Add decorative elements
         this.addCertificateDecorations(ctx, canvas.width, canvas.height);
