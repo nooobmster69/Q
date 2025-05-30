@@ -1,0 +1,20 @@
+# Test Files and Backup
+TEST_FILES_BACKUP/
+*test*.html
+*debug*.html
+*demo*.html
+
+# Production Package
+*.zip
+
+# Temporary files
+*.tmp
+*.bak
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
